@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Book diagnostic tests and health checkups from certified labs at affordable prices.">
+  <title>Diagnostic Tests | Book Medical Tests Online</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="icon" href="images/favicon.ico" type="image/x-icon">
+  <style>
+    /* Basic styling for the page */
+    body {
+      font-family: Arial, sans-serif;
+      line-height: 1.6;
+      color: #1e293b;
+      background-color: #f8fafc;
+      margin: 0;
+      padding: 0;
+    }
+    .container {
+      max-width: 1200px;
+      margin: 2rem auto;
+      padding: 0 1rem;
+    }
+    .header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+    .header h1 {
+      font-size: 2.5rem;
+      color: #2563eb;
+      margin-bottom: 0.5rem;
+    }
+    .header p {
+      color: #64748b;
+      max-width: 700px;
+      margin: 0 auto;
+    }
+    .card-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1.5rem;
+      justify-content: center;
+    }
+    .category-card, .test-card {
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+      padding: 1.5rem;
+      width: 280px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-align: center;
+      border-top: 4px solid #2563eb;
+    }
+    .category-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05);
+    }
+    .test-card {
+      cursor: default;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .test-card h4 {
+      margin-bottom: 0.5rem; color: #2563eb; font-size: 1.1rem;
+    }
+     .test-card p {
+      font-size: 0.9rem; color: #64748b; margin-bottom: 1rem; flex-grow: 1;
+    }
+    .price {
+      font-size: 1.2rem; font-weight: 700; margin: 0.5rem 0; color: #10b981;
+    }
+    .book-btn {
+      background-color: #2563eb;
+      color: white;
+      border: none;
+      padding: 0.6rem 1.2rem;
+      margin-top: 0.5rem;
+      cursor: pointer;
+      border-radius: 8px;
+      transition: all 0.3s ease;
+      font-weight: 500;
+      width: 100%;
+    }
+    .book-btn:hover {
+      background-color: #1d4ed8;
+    }
+    .back-btn {
+      background-color: #e2e8f0; color: #1e293b; border: none; padding: 0.6rem 1.2rem; margin-top: 2rem; cursor: pointer; border-radius: 8px; transition: all 0.3s ease; font-weight: 500; display: block; margin-left: auto; margin-right: auto;
+    }
+    .loader {
+      text-align: center;
+      font-size: 1.2rem;
+      padding: 3rem;
+    }
+    .test-list-title {
+      font-size: 2rem; color: #2563eb; margin-bottom: 1.5rem; border-bottom: 2px solid #e2e8f0; padding-bottom: 0.5rem;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    .fade-in {
+        animation: fadeIn 0.5s ease-in-out;
+    }
+  </style>
+</head>
+<body>
+  
+  <header style="background-color: white; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); padding: 1rem; position: sticky; top: 0; z-index: 100;">
+    <div style="max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center;">
+      <div style="font-weight: 700; font-size: 1.5rem; color: #2563eb; display: flex; align-items: center; gap: 0.5rem;">
+        <i class="fas fa-flask" style="font-size: 1.8rem;"></i>
+        <span>24x7 Health Services</span>
+      </div>
+      <nav>
+        <ul style="display: flex; list-style: none; gap: 1.5rem;">
+          <li><a href="index.html" style="text-decoration: none; color: #1e293b; font-weight: 500; transition: all 0.3s ease;"><i class="fas fa-home"></i> Home</a></li>
+          <li><a href="diagnostic-services.html" style="text-decoration: none; color: #1e293b; font-weight: 500; transition: all 0.3s ease;"><i class="fas fa-book-medical"></i> Tests</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <div class="header">
+      <h1><i class="fas fa-diagnoses"></i> Diagnostic Tests</h1>
+      <p>Book medical tests from certified labs with accurate results and fast turnaround times.</p>
+    </div>
+
+    <!-- This view will be populated dynamically with categories from the API -->
+    <div id="category-view" class="card-grid">
+      <!-- Dynamic category cards will be inserted here -->
+    </div>
+
+    <!-- This view will be populated with tests from the selected category -->
+    <div id="test-list-view" style="display: none;" class="fade-in">
+        <h2 id="test-list-title" class="test-list-title"></h2>
+        <div id="test-list-container" class="card-grid">
+            <!-- Dynamically generated test cards will go here -->
+        </div>
+        <button class="back-btn" onclick="window.location.href='diagnostic-services.html'">
+            <i class="fas fa-arrow-left"></i> Back to All Categories
+        </button>
+    </div>
+  </main>
+
+  <footer style="background-color: #1e293b; color: white; padding: 2rem 1rem; margin-top: 3rem;">
+    <div style="max-width: 1200px; margin: 0 auto; text-align: center; padding-top: 1rem; border-top: 1px solid #334155; color: #94a3b8;">
+      <p>&copy; 2025 24x7 Health Services. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      let allTests = [];
+      const API_BASE_URL = 'https://24x7health.in/api';
+
+      const categoryView = document.getElementById('category-view');
+      const testListView = document.getElementById('test-list-view');
+      const testListContainer = document.getElementById('test-list-container');
+      const testListTitle = document.getElementById('test-list-title');
+
+      const iconMap = {
+          'Complete Blood Count': 'fa-tint',
+          'Pathology Tests': 'fa-microscope',
+          'Microbiology Tests': 'fa-bacteria',
+          'Radiology & Imaging': 'fa-x-ray',
+          'Cardiology': 'fa-heartbeat',
+          'Neurology': 'fa-brain',
+          'Ophthalmology': 'fa-eye',
+          'ENT': 'fa-ear',
+          'Dental': 'fa-tooth',
+          'Prenatal & Fertility': 'fa-baby',
+          'Genetic Testing': 'fa-dna',
+          'Health Packages': 'fa-box-open',
+          'default': 'fa-flask'
+      };
+
+      /**
+       * Creates a URL-friendly slug from a string.
+       * e.g., "Radiology & Imaging" becomes "radiology-imaging"
+       */
+      function createSlug(text) {
+          if (!text) return '';
+          return text.toString().toLowerCase()
+              .replace(/\s+/g, '-')           // Replace spaces with -
+              .replace(/&/g, '-and-')       // Replace & with 'and'
+              .replace(/[^\w\-]+/g, '')       // Remove all non-word chars
+              .replace(/\-\-+/g, '-');        // Replace multiple - with single -
+      }
+
+      /**
+       * Renders the main category cards based on unique categories from the tests.
+       */
+      function renderCategories() {
+        // Get unique categories from the fetched tests
+        const categories = [...new Set(allTests.map(test => test.category))];
+        
+        categoryView.innerHTML = ''; // Clear existing content
+
+        categories.forEach(category => {
+            if(!category) return; // Skip if category is null or empty
+            const categoryCard = document.createElement('div');
+            categoryCard.className = 'category-card';
+            
+            const slug = createSlug(category);
+            const iconClass = iconMap[category] || iconMap['default'];
+            
+            categoryCard.innerHTML = `
+                <i class="fas ${iconClass}" style="font-size: 2rem; margin-bottom: 1rem; color: #2563eb;"></i>
+                <h3 style="margin-bottom: 0.5rem;">${category}</h3>
+            `;
+            categoryCard.onclick = () => navigateToCategory(slug);
+            categoryView.appendChild(categoryCard);
+        });
+
+        categoryView.style.display = 'flex';
+        testListView.style.display = 'none';
+      }
+
+      /**
+       * Renders the test cards for a given category slug.
+       */
+      function renderTestsForCategory(categorySlug) {
+        // Find the full category name that matches the slug
+        const categoryName = [...new Set(allTests.map(test => test.category))]
+                               .find(cat => createSlug(cat) === categorySlug);
+
+        if (!categoryName) {
+          // If category is invalid, show the main category view
+          renderCategories();
+          return;
+        }
+
+        const filteredTests = allTests.filter(test => test.category === categoryName);
+
+        // Update UI
+        categoryView.style.display = 'none';
+        testListView.style.display = 'block';
+        testListTitle.textContent = categoryName;
+        testListContainer.innerHTML = ''; // Clear previous results
+
+        if (filteredTests.length === 0) {
+          testListContainer.innerHTML = `<p>No tests found for this category.</p>`;
+          return;
+        }
+
+        filteredTests.forEach(test => {
+          const testCard = document.createElement('div');
+          testCard.className = 'test-card';
+          testCard.innerHTML = `
+            <div>
+              <h4>${test.test_name}</h4>
+              <p>${test.description || 'Detailed information about this test.'}</p>
+            </div>
+            <div>
+              <div class="price">₹${parseFloat(test.final_price || test.price).toFixed(2)}</div>
+              <button class="book-btn">Book Now</button>
+            </div>
+          `;
+          testCard.querySelector('.book-btn').addEventListener('click', () => bookTest(test));
+          testListContainer.appendChild(testCard);
+        });
+      }
+
+      /**
+       * Main function to fetch data and decide what to display.
+       */
+      async function initializePage() {
+        const params = new URLSearchParams(window.location.search);
+        const categorySlug = params.get('category');
+        
+        // Show a loader
+        if (categorySlug) {
+            testListView.style.display = 'block';
+            testListContainer.innerHTML = `<div class="loader">Loading tests...</div>`;
+        } else {
+            categoryView.innerHTML = `<div class="loader">Loading categories...</div>`;
+        }
+
+        try {
+          const response = await fetch(`${API_BASE_URL}/test/all`);
+          if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+          
+          const data = await response.json();
+          if (data.success && Array.isArray(data.tests)) {
+            allTests = data.tests;
+          } else {
+            throw new Error("Invalid data format from API");
+          }
+
+          // After fetching, decide what to render
+          if (categorySlug) {
+            renderTestsForCategory(categorySlug);
+          } else {
+            renderCategories();
+          }
+
+        } catch (error) {
+          console.error("Failed to initialize page:", error);
+          categoryView.innerHTML = `<p style="text-align: center; color: red;">Error loading data. Please try again later.</p>`;
+          categoryView.style.display = 'block';
+          testListView.style.display = 'none';
+        }
+      }
+
+      initializePage();
+    });
+
+    /**
+     * Handles navigation to a specific category page.
+     * @param {string} categorySlug - The category to navigate to.
+     */
+    function navigateToCategory(categorySlug) {
+        window.location.href = `diagnostic-services.html?category=${categorySlug}`;
+    }
+
+    /**
+     * Handles the booking action for a test.
+     * @param {object} test - The full test object from the API.
+     */
+    function bookTest(test) {
+      console.log('Booking test:', test);
+      alert(`Preparing to book "${test.test_name}" for ₹${test.final_price || test.price}.`);
+      window.location.href = `payment.html?test_id=${encodeURIComponent(test.test_id)}`;
+    }
+  </script>
+
+</body>
+</html>
+

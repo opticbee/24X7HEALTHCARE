@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Diagnostic Center Login | 24x7 Health Services</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body { background: #f8f9fa; }
+    .login-container { max-width: 400px; margin: 80px auto; padding: 30px; background: #fff; border-radius: 10px; box-shadow: 0px 0px 10px rgba(0,0,0,0.1); }
+    .btn-primary { width: 100%; }
+    .btn-primary:disabled { background-color: #6c757d; border-color: #6c757d; }
+    .link { display: block; margin-top: 10px; text-align: center; }
+    #message { margin-top: 15px; text-align: center; }
+  </style>
+</head>
+<body>
+ 
+<div class="container">
+  <div class="login-container">
+    <h3 class="text-center mb-3">Diagnostic Center Login</h3>
+    <form id="loginForm">
+      <div class="mb-3">
+        <label for="loginEmail" class="form-label">Email</label>
+        <input type="email" name="email" id="loginEmail" class="form-control" required>
+      </div>
+      <div class="mb-3">
+        <label for="loginPassword" class="form-label">Password</label>
+        <input type="password" name="password" id="loginPassword" class="form-control" required>
+      </div>
+      <button type="submit" id="loginButton" class="btn btn-primary">Login</button>
+    </form>
+    
+    <div id="message"></div>
+
+    <a href="#" class="link" data-bs-toggle="modal" data-bs-target="#forgotModal">Forgot Password?</a>
+    <p class="text-center mt-2"> Don't have an account?  <a href="diagnosticRegistration.html">Create one</a> </p>
+
+  </div>
+</div>
+
+<!-- Forgot Password Modal -->
+<div class="modal fade" id="forgotModal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content p-3">
+      <h5 class="modal-title">Forgot Password</h5>
+      <div class="modal-body">
+        <div id="forgotStep1">
+          <label class="form-label">Enter your registered email:</label>
+          <input type="email" id="forgotEmail" class="form-control mb-2">
+          <button class="btn btn-warning w-100" onclick="sendOtp()">Send OTP</button>
+        </div>
+
+        <div id="forgotStep2" style="display:none;">
+          <label class="form-label">Enter OTP sent to your email:</label>
+          <input type="text" id="forgotOtp" class="form-control mb-2">
+          <button class="btn btn-info w-100" onclick="verifyOtp()">Verify OTP</button>
+        </div>
+
+        <div id="forgotStep3" style="display:none;">
+          <label class="form-label">Enter New Password:</label>
+          <input type="password" id="newPassword" class="form-control mb-2">
+          <button class="btn btn-success w-100" onclick="resetPassword()">Reset Password</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const API_BASE = "https://24x7health.in/api"; 
+
+// Login functionality
+document.getElementById("loginForm").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const email = document.getElementById("loginEmail").value;
+  const password = document.getElementById("loginPassword").value;
+  const messageElement = document.getElementById("message");
+  const loginButton = document.getElementById("loginButton");
+
+  // Disable button and show loading state
+  loginButton.disabled = true;
+  loginButton.textContent = 'Logging in...';
+  messageElement.textContent = '';
+
+  try {
+    const res = await fetch(`${API_BASE}/diagnostics/login`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include", // Important for session cookies
+      body: JSON.stringify({ email, password })
+    });
+
+    const data = await res.json();
+    if (res.ok) {
+        messageElement.textContent = "Login Successful!";
+        messageElement.className = 'text-success';
+        localStorage.setItem("diagnosticEmail", email);
+        localStorage.setItem("diagnosticId", data.user.id);
+        localStorage.setItem("diagnosticCenterId", data.user.center_id);
+        window.location.href = "diagnosticProfile.html";
+    } else {
+        // Display specific error from the server
+        messageElement.textContent = data.error || "Login failed";
+        messageElement.className = 'text-danger';
+        loginButton.disabled = false;
+        loginButton.textContent = 'Login';
+    }
+  } catch (error) {
+      console.error("Login Error:", error);
+      messageElement.textContent = 'A network error occurred. Please try again.';
+      messageElement.className = 'text-danger';
+      loginButton.disabled = false;
+      loginButton.textContent = 'Login';
+  }
+});
+
+// Forgot Password Workflow
+let userEmail = "";
+
+async function sendOtp() {
+  userEmail = document.getElementById("forgotEmail").value;
+  if (!userEmail) return alert("Please enter your email address.");
+
+  // You can add a loading indicator here
+  const res = await fetch(`${API_BASE}/diagnostics/forgot-password/send-otp`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ email: userEmail })
+  });
+  const data = await res.json();
+
+  if (data.success) {
+    alert("An OTP has been sent to your email.");
+    document.getElementById("forgotStep1").style.display = "none";
+    document.getElementById("forgotStep2").style.display = "block";
+  } else {
+    alert(data.error || "Failed to send OTP.");
+  }
+}
+
+async function verifyOtp() {
+  const otp = document.getElementById("forgotOtp").value;
+  if (!otp) return alert("Please enter the OTP.");
+
+  const res = await fetch(`${API_BASE}/diagnostics/forgot-password/verify-otp`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ email: userEmail, otp })
+  });
+  const data = await res.json();
+
+  if (data.success) {
+    alert("OTP Verified! You can now set a new password.");
+    document.getElementById("forgotStep2").style.display = "none";
+    document.getElementById("forgotStep3").style.display = "block";
+  } else {
+    alert(data.error || "Invalid OTP.");
+  }
+}
+
+async function resetPassword() {
+  const newPass = document.getElementById("newPassword").value;
+  if (!newPass) return alert("Please enter a new password.");
+
+  const res = await fetch(`${API_BASE}/diagnostics/forgot-password/reset`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ email: userEmail, newPassword: newPass })
+  });
+  const data = await res.json();
+
+  if (data.success) {
+    alert("Your password has been reset successfully! Please log in with your new password.");
+    location.reload();
+  } else {
+    alert(data.error || "Failed to reset password.");
+  }
+}
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

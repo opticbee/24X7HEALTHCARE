@@ -1,0 +1,1054 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Doctor Dashboard - 24x7 Health Services</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="icon" href="images/favicon.ico" type="image/x-icon">
+  <style>
+    :root {
+      --primary: #2A6BC9;
+      --primary-light: #E8F1FD;
+      --secondary: #6C63FF;
+      --success: #28A745;
+      --warning: #FFC107;
+      --danger: #DC3545;
+      --light: #F8F9FA;
+      --white: #FFFFFF;
+      --dark: #343A40;
+      --gray-100: #F8F9FA;
+      --gray-200: #E9ECEF;
+      --gray-300: #DEE2E6;
+      --gray-400: #CED4DA;
+      --gray-500: #ADB5BD;
+      --gray-600: #6C757D;
+      --gray-700: #495057;
+      --gray-800: #343A40;
+      --gray-900: #212529;
+      --text-muted: var(--gray-600);
+      --border-color: var(--gray-300);
+      --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
+      --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
+      --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
+      --border-radius: 12px;
+      --border-radius-sm: 8px;
+      --transition: all 0.3s ease;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background-color: #F5F7FB;
+      color: var(--gray-800);
+      line-height: 1.6;
+    }
+
+    .main-container {
+      display: flex;
+      min-height: 100vh;
+    }
+
+    /* Sidebar Styles */
+    .sidebar {
+      width: 380px;
+      background: var(--white);
+      box-shadow: var(--shadow-md);
+      display: flex;
+      flex-direction: column;
+      transition: var(--transition);
+      z-index: 1000;
+      stroke: #ADB5BD;
+    }
+
+    .sidebar-header {
+      padding: 24px;
+      text-align: center;
+      border-bottom: 1px solid var(--gray-200);
+    }
+
+    .sidebar-profile-img {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      object-fit: cover;
+      margin-bottom: 16px;
+      border: 3px solid var(--primary);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .sidebar-header h2 {
+      font-size: 1.2rem;
+      margin-bottom: 4px;
+      color: var(--gray-800);
+    }
+
+    .sidebar-header p {
+      color: var(--gray-600);
+      font-size: 0.9rem;
+    }
+
+    .sidebar-nav {
+      padding: 16px;
+      flex-grow: 1;
+    }
+
+    .nav-button {
+      display: flex;
+      align-items: center;
+      padding: 14px 16px;
+      margin-bottom: 8px;
+      border-radius: var(--border-radius-sm);
+      color: var(--gray-700);
+      text-decoration: none;
+      transition: var(--transition);
+      font-weight: 500;
+      border: none;
+      background: transparent;
+      width: 100%;
+      text-align: left;
+      cursor: pointer;
+    }
+
+    .nav-button i {
+      margin-right: 12px;
+      width: 20px;
+      text-align: center;
+      font-size: 1.1rem;
+    }
+
+    .nav-button:hover {
+      background-color: var(--primary-light);
+      color: var(--primary);
+    }
+
+    .nav-button.active {
+      background-color: var(--primary);
+      color: var(--white);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .nav-button.logout {
+      color: var(--danger);
+    }
+
+    .nav-button.logout:hover {
+      background-color: var(--danger);
+      color: var(--white);
+    }
+
+    .sidebar-footer {
+      padding: 16px;
+      border-top: 1px solid var(--gray-200);
+    }
+
+    /* Main Content Area */
+    .content-area {
+      flex: 1;
+      padding: 24px;
+      overflow-y: auto;
+    }
+
+    .page-header {
+      margin-bottom: 24px;
+    }
+
+    .page-header h1 {
+      font-size: 1.8rem;
+      font-weight: 600;
+      color: var(--gray-800);
+      margin-bottom: 8px;
+    }
+
+    .page-header p {
+      color: var(--gray-600);
+    }
+
+    .section {
+      background: var(--white);
+      border-radius: var(--border-radius);
+      box-shadow: var(--shadow-sm);
+      padding: 24px;
+      margin-bottom: 24px;
+    }
+
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .section-title {
+      font-size: 1.4rem;
+      font-weight: 600;
+      color: var(--gray-800);
+    }
+
+    /* Stats Grid */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 20px;
+      margin-bottom: 24px;
+    }
+
+    .stat-card {
+      background: var(--white);
+      padding: 24px;
+      border-radius: var(--border-radius);
+      box-shadow: var(--shadow-sm);
+      display: flex;
+      align-items: center;
+      transition: var(--transition);
+    }
+
+    .stat-card:hover {
+      transform: translateY(-5px);
+      box-shadow: var(--shadow-md);
+    }
+
+    .stat-icon {
+      width: 60px;
+      height: 60px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-right: 16px;
+      font-size: 1.5rem;
+    }
+
+    .stat-icon.blue {
+      background-color: #E8F1FD;
+      color: var(--primary);
+    }
+
+    .stat-icon.green {
+      background-color: #E6F4EA;
+      color: var(--success);
+    }
+
+    .stat-icon.orange {
+      background-color: #FFF6E0;
+      color: var(--warning);
+    }
+
+    .stat-content h3 {
+      font-size: 0.9rem;
+      font-weight: 500;
+      color: var(--gray-600);
+      margin-bottom: 8px;
+    }
+
+    .stat-content p {
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--gray-800);
+    }
+
+    /* Tables */
+    .table-container {
+      background: var(--white);
+      border-radius: var(--border-radius);
+      box-shadow: var(--shadow-sm);
+      overflow: hidden;
+    }
+
+    .table-header {
+      padding: 16px 24px;
+      background: var(--gray-100);
+      border-bottom: 1px solid var(--gray-200);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .table-title {
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: var(--gray-800);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    th, td {
+      padding: 16px 24px;
+      text-align: left;
+      border-bottom: 1px solid var(--gray-200);
+    }
+
+    th {
+      background-color: var(--gray-100);
+      font-weight: 600;
+      color: var(--gray-700);
+      font-size: 0.9rem;
+    }
+
+    tbody tr {
+      transition: var(--transition);
+    }
+
+    tbody tr:hover {
+      background-color: var(--gray-100);
+    }
+
+    .status-badge {
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 500;
+      display: inline-block;
+    }
+
+    .status-paid {
+      background-color: #E6F4EA;
+      color: var(--success);
+    }
+
+    .status-pending {
+      background-color: #FFF6E0;
+      color: var(--warning);
+    }
+
+    /* Forms */
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 20px;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 500;
+      color: var(--gray-700);
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      width: 100%;
+      padding: 12px 16px;
+      border: 1px solid var(--gray-300);
+      border-radius: var(--border-radius-sm);
+      font-size: 1rem;
+      transition: var(--transition);
+    }
+
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(42, 107, 201, 0.1);
+    }
+
+    .full-width {
+      grid-column: 1 / -1;
+    }
+
+    .profile-image-updater {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px;
+      border: 2px dashed var(--gray-300);
+      border-radius: var(--border-radius);
+      margin-bottom: 24px;
+    }
+
+    #imagePreview {
+      width: 150px;
+      height: 150px;
+      border-radius: 50%;
+      object-fit: cover;
+      margin-bottom: 16px;
+      border: 3px solid var(--primary);
+    }
+
+    .btn {
+      display: inline-block;
+      padding: 12px 24px;
+      background-color: var(--primary);
+      color: var(--white);
+      border: none;
+      border-radius: var(--border-radius-sm);
+      font-size: 1rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: var(--transition);
+      text-align: center;
+    }
+
+    .btn:hover {
+      background-color: #1c5bb3;
+      transform: translateY(-2px);
+    }
+
+    .btn-secondary {
+      background-color: var(--gray-300);
+      color: var(--gray-800);
+    }
+
+    .btn-secondary:hover {
+      background-color: var(--gray-400);
+    }
+
+    .btn-success {
+      background-color: var(--success);
+    }
+
+    .btn-success:hover {
+      background-color: #218838;
+    }
+
+    /* Call Invitation Banner */
+    .call-invitation-banner {
+      background: linear-gradient(135deg, var(--primary) 0%, #3A7BD5 100%);
+      color: white;
+      padding: 16px 24px;
+      border-radius: var(--border-radius);
+      box-shadow: var(--shadow-lg);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+      animation: fadeIn 0.5s ease-out;
+    }
+
+    .call-invitation-banner p {
+      margin: 0;
+      font-weight: 600;
+      font-size: 1.1rem;
+    }
+
+    .call-invitation-banner .btn-group {
+      display: flex;
+      gap: 12px;
+    }
+
+    .call-invitation-banner .join-btn {
+      background-color: white;
+      color: var(--primary);
+      border: none;
+    }
+
+    .call-invitation-banner .join-btn:hover {
+      background-color: #f0f0f0;
+      transform: none;
+    }
+
+    .call-invitation-banner .dismiss-btn {
+      background-color: transparent;
+      color: white;
+      border: 2px solid white;
+    }
+
+    .call-invitation-banner .dismiss-btn:hover {
+      background-color: rgba(255, 255, 255, 0.2);
+      transform: none;
+    }
+
+    /* Messages */
+    #pageMessage {
+      padding: 16px;
+      border-radius: var(--border-radius-sm);
+      text-align: center;
+      font-weight: 500;
+      display: none;
+      margin-bottom: 24px;
+    }
+
+    #pageMessage.success {
+      background-color: #E6F4EA;
+      color: var(--success);
+      border: 1px solid #C4E5D1;
+    }
+
+    #pageMessage.error {
+      background-color: #FDE8E8;
+      color: var(--danger);
+      border: 1px solid #F5C6C6;
+    }
+
+    #loadingIndicator {
+      text-align: center;
+      padding: 40px;
+      font-size: 1.2rem;
+      color: var(--gray-600);
+    }
+
+    /* Animations */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Responsive Design */
+    @media (max-width: 992px) {
+      .main-container {
+        flex-direction: column;
+      }
+      
+      .sidebar {
+        width: 100%;
+        position: static;
+      }
+      
+      .form-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .content-area {
+        padding: 16px;
+      }
+      
+      .stats-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .call-invitation-banner {
+        flex-direction: column;
+        text-align: center;
+        gap: 16px;
+      }
+      
+      .call-invitation-banner .btn-group {
+        width: 100%;
+        justify-content: center;
+      }
+      
+      th, td {
+        padding: 12px 16px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="main-container">
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <div class="sidebar-header">
+        <img id="sidebarDoctorImage" src="https://placehold.co/120x120/007BFF/FFFFFF?text=Dr" alt="Doctor" class="sidebar-profile-img">
+        <h2 id="sidebarDoctorName">Loading...</h2>
+        <p id="sidebarDoctorSpecialization"></p>
+      </div>
+      
+      <div class="sidebar-nav">
+        <button onclick="showSection('dashboard')" class="nav-button active" data-section="dashboard"><i class="fas fa-tachometer-alt"></i> Dashboard</button>
+        <button onclick="showSection('appointments')" class="nav-button" data-section="appointments"><i class="fas fa-calendar-check"></i> Appointments</button>
+        <button onclick="showSection('history')" class="nav-button" data-section="history"><i class="fas fa-history"></i> Treatment History</button>
+        <button onclick="showSection('update')" class="nav-button" data-section="update"><i class="fas fa-user-edit"></i> Update Profile</button>
+      </div>
+      
+      <div class="sidebar-footer">
+        <button onclick="logout()" class="nav-button logout"><i class="fas fa-sign-out-alt"></i> Logout</button>
+      </div>
+    </div>
+  
+    <!-- Main Content Area -->
+    <div class="content-area">
+      <div id="pageMessage"></div>
+      
+      <!-- Call Invitation Section -->
+      <div id="call-invitation-container" style="display: none;">
+          <!-- Call invitation banner will be inserted here by JavaScript -->
+      </div>
+      
+      <div id="loadingIndicator" class="section">Loading profile data...</div>
+
+      <!-- Dashboard Section -->
+      <div id="dashboard" class="section" style="display: none;">
+        <div class="page-header">
+          <h1>Dashboard</h1>
+          <p>Welcome back, <span id="welcomeName">Dr. ...</span>! Here's a quick overview of your day.</p>
+        </div>
+        
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-icon blue">
+              <i class="fas fa-calendar-day"></i>
+            </div>
+            <div class="stat-content">
+              <h3>Today's Appointments</h3>
+              <p id="todayAppointments">0</p>
+            </div>
+          </div>
+          
+          <div class="stat-card">
+            <div class="stat-icon green">
+              <i class="fas fa-check-circle"></i>
+            </div>
+            <div class="stat-content">
+              <h3>Completed Treatments</h3>
+              <p id="completedAppointments">0</p>
+            </div>
+          </div>
+          
+          <div class="stat-card">
+            <div class="stat-icon orange">
+              <i class="fas fa-clock"></i>
+            </div>
+            <div class="stat-content">
+              <h3>Pending Appointments</h3>
+              <p id="pendingAppointments">0</p>
+            </div>
+          </div>
+        </div>
+        
+        <div class="table-container">
+          <div class="table-header">
+            <h3 class="table-title">Today's Appointments</h3>
+          </div>
+          <table>
+            <thead>
+              <tr>
+                <th>Patient Name</th>
+                <th>Time</th>
+                <th>Mode</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody id="dashboardAppointmentTableBody">
+              <!-- JS will populate this -->
+              <tr>
+                <td colspan="4" style="text-align: center; padding: 20px;">No appointments for today</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Appointments Section -->
+      <div id="appointments" class="section" style="display: none;">
+        <div class="page-header">
+          <h1>Appointments</h1>
+          <p>Manage your upcoming appointments</p>
+        </div>
+        
+        <div class="table-container">
+          <div class="table-header">
+            <h3 class="table-title">All Appointments</h3>
+          </div>
+          <table>
+            <thead>
+              <tr>
+                <th>Patient Name</th>
+                <th>Email</th>
+                <th>Patient ID</th>
+                <th>Mode</th>
+                <th>Date</th>
+                <th>Time</th>
+                <th>Payment Status</th>
+              </tr>
+            </thead>
+            <tbody id="appointmentTableBody">
+              <!-- JS will populate this -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+      
+      <!-- History Section -->
+      <div id="history" class="section" style="display: none;">
+        <div class="page-header">
+          <h1>Treatment History</h1>
+          <p>Review your past patient treatments</p>
+        </div>
+        
+        <div class="table-container">
+          <div class="table-header">
+            <h3 class="table-title">Patient History</h3>
+          </div>
+          <table>
+            <thead>
+              <tr>
+                <th>Patient Name</th>
+                <th>Email</th>
+                <th>Patient ID</th>
+                <th>Last Visit Date</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody id="historyTableBody">
+              <!-- JS will populate this -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Update Profile Section -->
+      <div id="update" class="section" style="display: none;">
+        <div class="page-header">
+          <h1>Update Profile</h1>
+          <p>Keep your information up to date</p>
+        </div>
+        
+        <form id="updateForm" enctype="multipart/form-data">
+          <div class="profile-image-updater">
+            <img id="imagePreview" src="https://placehold.co/150x150/007BFF/FFFFFF?text=Dr" alt="Profile Preview">
+            <input type="file" id="profile_image" name="profile_image" accept="image/*" style="display: none;">
+            <button type="button" class="btn btn-secondary" onclick="document.getElementById('profile_image').click()">Change Profile Picture</button>
+          </div>
+          
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="first_name">First Name</label>
+              <input type="text" id="first_name" name="first_name" placeholder="First Name" required>
+            </div>
+            
+            <div class="form-group">
+              <label for="last_name">Last Name</label>
+              <input type="text" id="last_name" name="last_name" placeholder="Last Name" required>
+            </div>
+            
+            <div class="form-group">
+              <label for="email">Email</label>
+              <input type="email" id="email" name="email" placeholder="Email" required>
+            </div>
+            
+            <div class="form-group">
+              <label for="mobile">Mobile</label>
+              <input type="text" id="mobile" name="mobile" placeholder="Mobile" required>
+            </div>
+            
+            <div class="form-group full-width">
+              <label for="address">Address</label>
+              <textarea id="address" name="address" placeholder="Address" required rows="3"></textarea>
+            </div>
+            
+            <div class="form-group">
+              <label for="degree">Degree</label>
+              <input type="text" id="degree" name="degree" placeholder="Degree" required>
+            </div>
+            
+            <div class="form-group">
+              <label for="university">University</label>
+              <input type="text" id="university" name="university" placeholder="University" required>
+            </div>
+            
+            <div class="form-group">
+              <label for="experience">Years of Experience</label>
+              <input type="number" id="experience" name="experience" placeholder="Years of Experience" required>
+            </div>
+            
+            <div class="form-group">
+              <label for="aadhar_card">Aadhar Card</label>
+              <input type="text" id="aadhar_card" name="aadhar_card" placeholder="Aadhar Card" required>
+            </div>
+            
+            <div class="form-group">
+              <label for="license_number">License Number</label>
+              <input type="text" id="license_number" name="license_number" placeholder="License Number" required>
+            </div>
+            
+            <div class="form-group">
+              <label for="specialization">Specialization</label>
+              <input type="text" id="specialization" name="specialization" placeholder="Specialization" required>
+            </div>
+            
+            <div class="form-group">
+              <label for="clinic">Clinic</label>
+              <input type="text" id="clinic" name="clinic" placeholder="Clinic" required>
+            </div>
+            
+            <div class="form-group">
+              <label for="availability">Availability</label>
+              <select id="availability" name="availability" required>
+                <option value="">-- Select Availability --</option>
+                <option value="Diagnostic Center">Diagnostic Center</option>
+                <option value="Online Only">Online Only</option>
+                <option value="Both">Both</option>
+              </select>
+            </div>
+            
+            <div class="form-group">
+              <label for="from_time">From Time</label>
+              <input type="time" id="from_time" name="from_time" required>
+            </div>
+            
+            <div class="form-group">
+              <label for="to_time">To Time</label>
+              <input type="time" id="to_time" name="to_time" required>
+            </div>
+            
+            <div class="form-group full-width">
+              <label for="additional_info">Additional Info</label>
+              <textarea id="additional_info" name="additional_info" placeholder="Additional Info" rows="4"></textarea>
+            </div>
+            
+            <div class="form-group full-width">
+              <button type="submit" class="btn btn-success" style="width: 100%;">Save Changes</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.5/socket.io.min.js"></script>
+  <script>
+    let doctorUid = null;
+    const API_BASE = '/api'; // Use relative path
+
+    function displayPageMessage(message, type = 'success') {
+      const msgDiv = document.getElementById('pageMessage');
+      msgDiv.textContent = message;
+      msgDiv.className = type;
+      msgDiv.style.display = 'block';
+      setTimeout(() => { msgDiv.style.display = 'none'; }, 4000);
+    }
+
+    function showLoading(isLoading) {
+      document.getElementById('loadingIndicator').style.display = isLoading ? 'block' : 'none';
+      const sections = ['dashboard', 'appointments', 'history', 'update'];
+      sections.forEach(id => {
+          const el = document.getElementById(id);
+          if (el) el.style.display = isLoading ? 'none' : el.style.display;
+      });
+    }
+
+    function showSection(sectionId) {
+      document.querySelectorAll('.content-area .section').forEach(sec => sec.style.display = 'none');
+      document.getElementById(sectionId).style.display = 'block';
+
+      document.querySelectorAll('.sidebar .nav-button').forEach(btn => {
+          btn.classList.toggle('active', btn.dataset.section === sectionId);
+      });
+      
+      // Dynamically load data when a section is shown
+      if (sectionId === 'appointments') loadAppointments();
+      if (sectionId === 'history') loadHistory();
+    }
+    
+    function populateProfileData(doctor) {
+      const fullName = `Dr. ${doctor.first_name || ''} ${doctor.last_name || ''}`;
+      const defaultImage = 'https://placehold.co/120x120/007BFF/FFFFFF?text=Dr';
+      const profileImageUrl = doctor.profile_image_url ? doctor.profile_image_url : defaultImage;
+
+      // Sidebar & Welcome Message
+      document.getElementById("sidebarDoctorImage").src = profileImageUrl;
+      document.getElementById("sidebarDoctorName").innerText = fullName;
+      document.getElementById("sidebarDoctorSpecialization").innerText = doctor.specialization || '';
+      document.getElementById("welcomeName").innerText = fullName;
+      
+      // Update Form Pre-fill
+      for (const key in doctor) {
+          const element = document.getElementById(key);
+          if (element) {
+              element.value = doctor[key] || '';
+          }
+      }
+      // Update image preview in the form
+      document.getElementById("imagePreview").src = profileImageUrl;
+    }
+
+    async function initializeProfile() {
+      showLoading(true);
+      doctorUid = localStorage.getItem("doctorUid");
+
+      if (!doctorUid) {
+        displayPageMessage("Authentication error. Redirecting to login...", 'error');
+        setTimeout(() => window.location.href = "login.html", 1500);
+        return;
+      }
+      
+      // Initialize the WebSocket connection for real-time calls
+      initializeSocket(doctorUid);
+
+      try {
+        const response = await fetch(`${API_BASE}/gdoctors/${doctorUid}`);
+        if (!response.ok) throw new Error(`Server error: ${response.status}`);
+        
+        const doctorData = await response.json();
+        populateProfileData(doctorData);
+        loadDashboardStats(); // Load stats after getting profile
+        
+        showLoading(false);
+        showSection('dashboard');
+      } catch (error) {
+        console.error("Failed to load profile:", error);
+        displayPageMessage("Could not load your profile. Please log in again.", 'error');
+        showLoading(false);
+      }
+    }
+    
+    // --- New Socket.IO for Doctor Profile ---
+    function initializeSocket(doctorUid) {
+        const socket = io("https://24x7health.in", { transports: ["websocket", "polling"] });
+        const invitationContainer = document.getElementById('call-invitation-container');
+
+        socket.on('connect', () => {
+            console.log(`Socket connected. Joining doctor notification room: doctor-notify-${doctorUid}`);
+            socket.emit('join-doctor-room', doctorUid);
+        });
+
+        socket.on('new-call', (data) => {
+            console.log("New call invitation received:", data);
+            const { patientId, patientName, roomId } = data;
+            
+            const banner = document.createElement('div');
+            banner.className = 'call-invitation-banner';
+            banner.innerHTML = `
+                <p>Incoming video call from Patient: ${patientName}</p>
+                <div class="btn-group">
+                    <a href="meet.html?roomId=${roomId}" class="btn join-btn">Join Call</a>
+                    <button class="btn dismiss-btn" onclick="this.parentNode.parentNode.remove()">Dismiss</button>
+                </div>
+            `;
+            invitationContainer.innerHTML = ''; // Clear any previous banners
+            invitationContainer.style.display = 'block';
+            invitationContainer.appendChild(banner);
+        });
+
+        socket.on('disconnect', () => {
+            console.log("Socket disconnected.");
+        });
+    }
+
+    async function loadDashboardStats() {
+      try {
+          const res = await fetch(`${API_BASE}/doctors/${doctorUid}/stats`);
+          const data = await res.json();
+          if (data.success) {
+              document.getElementById('todayAppointments').textContent = data.stats.today || 0;
+              document.getElementById('completedAppointments').textContent = data.stats.completed || 0;
+              document.getElementById('pendingAppointments').textContent = data.stats.pending || 0;
+          }
+      } catch (error) {
+          console.error("Failed to load stats:", error);
+      }
+    }
+
+    async function loadAppointments() {
+      const tableBody = document.getElementById("appointmentTableBody");
+      tableBody.innerHTML = '<tr><td colspan="7">Loading appointments...</td></tr>';
+      try {
+          const res = await fetch(`${API_BASE}/doctors/${doctorUid}/appointments`);
+          const data = await res.json();
+          tableBody.innerHTML = ''; // Clear loading message
+          if (data.success && data.appointments.length > 0) {
+              data.appointments.forEach(app => {
+                  const row = `
+                      <tr>
+                          <td>${app.patient_name || 'N/A'}</td>
+                          <td>${app.patient_email || 'N/A'}</td>
+                          <td>${app.patient_id || 'N/A'}</td>
+                          <td>${app.mode || 'N/A'}</td>
+                          <td>${new Date(app.date).toLocaleDateString()}</td>
+                          <td>${app.time || 'N/A'}</td>
+                          <td><span class="status-badge status-${app.payment_status?.toLowerCase()}">${app.payment_status || 'N/A'}</span></td>
+                      </tr>
+                  `;
+                  tableBody.innerHTML += row;
+              });
+          } else {
+              tableBody.innerHTML = '<tr><td colspan="7" style="text-align:center;">No appointments found.</td></tr>';
+          }
+      } catch (error) {
+          console.error("Failed to load appointments:", error);
+          tableBody.innerHTML = '<tr><td colspan="7" style="text-align:center;">Error loading data.</td></tr>';
+      }
+    }
+
+    async function loadHistory() {
+      const tableBody = document.getElementById("historyTableBody");
+      tableBody.innerHTML = '<tr><td colspan="5">Loading history...</td></tr>';
+      try {
+          const res = await fetch(`${API_BASE}/doctors/${doctorUid}/history`);
+          const data = await res.json();
+          tableBody.innerHTML = '';
+          if (data.success && data.history.length > 0) {
+              data.history.forEach(item => {
+                  const row = `
+                      <tr>
+                          <td>${item.patient_name || 'N/A'}</td>
+                          <td>${item.patient_email || 'N/A'}</td>
+                          <td>${item.patient_id || 'N/A'}</td>
+                          <td>${new Date(item.last_visit_date).toLocaleDateString()}</td>
+                          <td>${item.status || 'Completed'}</td>
+                      </tr>
+                  `;
+                  tableBody.innerHTML += row;
+              });
+          } else {
+              tableBody.innerHTML = '<tr><td colspan="5" style="text-align:center;">No treatment history found.</td></tr>';
+          }
+      } catch (error) {
+          console.error("Failed to load history:", error);
+          tableBody.innerHTML = '<tr><td colspan="5" style="text-align:center;">Error loading data.</td></tr>';
+      }
+    }
+
+    function logout() {
+      localStorage.clear();
+      fetch(`${API_BASE}/logout`, { method: "POST" })
+        .finally(() => {
+          window.location.href = "login.html";
+        });
+    }
+
+    document.getElementById("updateForm").addEventListener("submit", async function (e) {
+      e.preventDefault();
+      if (!doctorUid) {
+        displayPageMessage("Cannot update: Doctor ID is missing.", 'error');
+        return;
+      }
+
+      const formData = new FormData(this);
+      // Note: FormData will automatically set the correct Content-Type for file uploads
+      
+      try {
+        const response = await fetch(`${API_BASE}/updatedoctors/${doctorUid}`, {
+          method: "PUT",
+          body: formData // Send FormData directly
+        });
+
+        const result = await response.json();
+        if (response.ok && result.success) {
+          displayPageMessage("Profile updated successfully!", 'success');
+          // The result should contain the updated doctor data, including the new image URL
+          populateProfileData(result.updatedDoctor);
+          showSection('dashboard');
+        } else {
+          throw new Error(result.message || "Update failed.");
+        }
+      } catch (error) {
+        console.error("Update error:", error);
+        displayPageMessage(error.message, 'error');
+      }
+    });
+
+    // Image preview logic
+    document.getElementById('profile_image').addEventListener('change', function(event) {
+      if (event.target.files && event.target.files[0]) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          document.getElementById('imagePreview').src = e.target.result;
+        };
+        reader.readAsDataURL(event.target.files[0]);
+      }
+    });
+
+    document.addEventListener('DOMContentLoaded', initializeProfile);
+  </script>
+
+</body>
+</html>

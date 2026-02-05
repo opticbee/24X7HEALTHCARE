@@ -1,0 +1,820 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Provider Portal | 24x7 Health Services</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .sidebar-link.active { background-color: #1e293b; border-left: 4px solid #3b82f6; color: white; }
+        .loader { border-top-color: #3498db; animation: spinner 1.5s linear infinite; }
+        @keyframes spinner { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        [v-cloak] { display: none; }
+        
+        /* Toast Notification Styles */
+        .toast-container {
+            position: fixed;
+            bottom: 24px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            flex-direction: column-reverse;
+            gap: 12px;
+            z-index: 9999;
+            pointer-events: none;
+        }
+        .toast-item {
+            pointer-events: auto;
+            animation: slideUp 0.3s ease-out forwards;
+        }
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-900">
+
+    <div id="app" class="flex min-h-screen">
+        <!-- Sidebar -->
+        <aside id="sidebar" class="fixed inset-y-0 left-0 z-50 w-64 bg-slate-900 text-gray-300 transform -translate-x-full lg:translate-x-0 transition-transform duration-300 ease-in-out">
+            <div class="p-6 flex flex-col h-full">
+                <div class="mb-8">
+                    <h1 class="text-xl font-bold text-white flex items-center gap-2">
+                        <span class="p-2 bg-blue-600 rounded-lg">HH</span>
+                        Provider Portal
+                    </h1>
+                </div>
+
+                <nav class="flex-1 space-y-1">
+                    <button onclick="showTab('dashboard')" class="sidebar-link w-full flex items-center gap-3 px-4 py-3 rounded-md transition-colors hover:bg-slate-800 active" id="btn-dashboard">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
+                        Dashboard
+                    </button>
+                    <button onclick="showTab('ambulances')" class="sidebar-link w-full flex items-center gap-3 px-4 py-3 rounded-md transition-colors hover:bg-slate-800" id="btn-ambulances">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17a2 2 0 11-4 0 2 2 0 014 0zM19 17a2 2 0 11-4 0 2 2 0 014 0zM13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h1m8-1a1 1 0 01-1 1H9m4-1V8a1 1 0 011-1h2.586a1 1 0 01.707.293l3.414 3.414a1 1 0 01.293.707V16a1 1 0 01-1 1h-1m-6-1a1 1 0 001 1h1M5 17a2 2 0 104 0m-4 0a2 2 0 114 0m6 0a2 2 0 104 0m-4 0a2 2 0 114 0"></path></svg>
+                        Ambulances
+                    </button>
+                    <button onclick="showTab('drivers')" class="sidebar-link w-full flex items-center gap-3 px-4 py-3 rounded-md transition-colors hover:bg-slate-800" id="btn-drivers">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+                        Drivers
+                    </button>
+                    <button onclick="showTab('shifts')" class="sidebar-link w-full flex items-center gap-3 px-4 py-3 rounded-md transition-colors hover:bg-slate-800" id="btn-shifts">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        Assign Shifts
+                    </button>
+
+                    <button onclick="showTab('allocated')" class="sidebar-link w-full flex items-center gap-3 px-4 py-3 rounded-md transition-colors hover:bg-slate-800" id="btn-allocated">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5l5 5v11a2 2 0 01-2 2z" />
+                        </svg>
+                        Allocated
+                    </button>
+
+                    <button onclick="showTab('history')" class="sidebar-link w-full flex items-center gap-3 px-4 py-3 rounded-md transition-colors hover:bg-slate-800" id="btn-history">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        History
+                    </button>
+
+                </nav>
+
+                <div class="mt-auto pt-6 border-t border-slate-800">
+                    <div class="flex items-center gap-3 mb-4 px-4">
+                        <div class="w-10 h-10 rounded-full bg-blue-500 flex items-center justify-center text-white font-bold" id="user-initial">P</div>
+                        <div class="overflow-hidden">
+                            <p class="text-sm font-medium text-white truncate" id="provider-name-display">Loading...</p>
+                            <p class="text-xs text-gray-500 truncate" id="provider-id-display">ID: ...</p>
+                        </div>
+                    </div>
+                    <button onclick="logout()" class="w-full flex items-center gap-3 px-4 py-3 rounded-md text-red-400 hover:bg-red-900/20 transition-colors">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
+                        Logout
+                    </button>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="flex-1 lg:ml-64 p-4 lg:p-8">
+            <!-- Header -->
+            <header class="flex items-center justify-between mb-8">
+                <button onclick="toggleSidebar()" class="lg:hidden p-2 rounded-md bg-white shadow-sm">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+                </button>
+                <h2 class="text-2xl font-bold" id="current-tab-title">Dashboard</h2>
+                <div class="text-sm text-gray-500 bg-white px-4 py-2 rounded-full shadow-sm border" id="live-time"></div>
+            </header>
+
+            <!-- Dashboard Tab -->
+            <section id="tab-dashboard" class="tab-content">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                    <div class="bg-white p-6 rounded-xl shadow-sm border-l-4 border-blue-500">
+                        <p class="text-sm text-gray-500 font-medium">Total Ambulances</p>
+                        <h3 class="text-3xl font-bold mt-1" id="stat-total-amb">0</h3>
+                    </div>
+                    <div class="bg-white p-6 rounded-xl shadow-sm border-l-4 border-green-500">
+                        <p class="text-sm text-gray-500 font-medium">Ready (On-Duty)</p>
+                        <h3 class="text-3xl font-bold mt-1" id="stat-ready-amb">0</h3>
+                    </div>
+                    <div class="bg-white p-6 rounded-xl shadow-sm border-l-4 border-orange-500">
+                        <p class="text-sm text-gray-500 font-medium">Currently Responding</p>
+                        <h3 class="text-3xl font-bold mt-1">0</h3>
+                        <p class="text-xs text-gray-400">Live missions</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-xl shadow-sm border-l-4 border-purple-500">
+                        <p class="text-sm text-gray-500 font-medium">Total Drivers</p>
+                        <h3 class="text-3xl font-bold mt-1" id="stat-total-drivers">0</h3>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <!-- Recent Activity -->
+                    <div class="bg-white rounded-xl shadow-sm border p-6">
+                        <h4 class="font-bold mb-4">Fleet Status Overview</h4>
+                        <div class="space-y-4" id="fleet-overview-list">
+                            <p class="text-gray-400 italic">Fetch live fleet status...</p>
+                        </div>
+                    </div>
+                    <!-- Shift Alerts -->
+                    <div class="bg-white rounded-xl shadow-sm border p-6">
+                        <h4 class="font-bold mb-4">Upcoming Shifts</h4>
+                        <div class="space-y-4" id="upcoming-shifts-list">
+                            <p class="text-gray-400 italic">No shifts scheduled for today.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Ambulances Tab -->
+            <section id="tab-ambulances" class="tab-content hidden">
+                <div class="flex justify-between items-center mb-6">
+                    <h3 class="text-lg font-semibold">Vehicle Management</h3>
+                    <button onclick="toggleModal('modal-ambulance')" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition">
+                        + Add Ambulance
+                    </button>
+                </div>
+                <div class="overflow-x-auto bg-white rounded-xl shadow-sm border">
+                    <table class="w-full text-left">
+                        <thead class="bg-gray-50 border-b">
+                            <tr>
+                                <th class="px-6 py-4 font-semibold text-sm">Vehicle No.</th>
+                                <th class="px-6 py-4 font-semibold text-sm">Type</th>
+                                <th class="px-6 py-4 font-semibold text-sm">Model</th>
+                                <th class="px-6 py-4 font-semibold text-sm">Status</th>
+                                <th class="px-6 py-4 font-semibold text-sm">GPS</th>
+                            </tr>
+                        </thead>
+                        <tbody id="ambulance-table-body"></tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Drivers Tab -->
+            <section id="tab-drivers" class="tab-content hidden">
+                <div class="flex justify-between items-center mb-6">
+                    <h3 class="text-lg font-semibold">Driver Records</h3>
+                    <button onclick="toggleModal('modal-driver')" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition">
+                        + Add Driver
+                    </button>
+                </div>
+                <div class="overflow-x-auto bg-white rounded-xl shadow-sm border">
+                    <table class="w-full text-left">
+                        <thead class="bg-gray-50 border-b">
+                            <tr>
+                                <th class="px-6 py-4 font-semibold text-sm">Driver Name</th>
+                                <th class="px-6 py-4 font-semibold text-sm">Mobile</th>
+                                <th class="px-6 py-4 font-semibold text-sm">License No.</th>
+                                <th class="px-6 py-4 font-semibold text-sm">Exp. Years</th>
+                                <th class="px-6 py-4 font-semibold text-sm">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="driver-table-body"></tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Shifts Tab -->
+            <section id="tab-shifts" class="tab-content hidden">
+                <div class="max-w-2xl bg-white p-8 rounded-xl shadow-sm border">
+                    <h3 class="text-lg font-bold mb-6">Assign New Shift</h3>
+                    <form id="shift-form" onsubmit="handleShiftSubmit(event)" class="space-y-4">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium mb-1">Select Ambulance</label>
+                                <select name="ambulance_id" id="select-ambulance" class="w-full border p-2 rounded-lg" required></select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium mb-1">Select Driver</label>
+                                <select name="driver_id" id="select-driver" class="w-full border p-2 rounded-lg" required></select>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-1">Shift Type</label>
+                            <select name="shift_type" class="w-full border p-2 rounded-lg" required>
+                                <option value="Shift1">Shift 1 (6AM - 2PM)</option>
+                                <option value="Shift2">Shift 2 (2PM - 10PM)</option>
+                                <option value="Shift3">Shift 3 (10PM - 6AM)</option>
+                            </select>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium mb-1">Shift Date</label>
+                                <input
+                                    type="date"
+                                    name="shift_date"
+                                    class="w-full border p-2 rounded-lg"
+                                    required />
+                            </div>
+
+                        </div>
+                        <button type="submit" class="w-full bg-blue-600 text-white font-bold py-3 rounded-lg hover:bg-blue-700 transition">
+                            Confirm Assignment
+                        </button>
+                    </form>
+                </div>
+            </section>
+
+            <!-- Allocated Tab -->
+            <section id="tab-allocated" class="tab-content hidden">
+                <div class="bg-white p-8 rounded-xl shadow-sm border">
+                    <h3 class="text-lg font-bold mb-4">Allocated Shifts</h3>
+
+                    <div class="flex gap-4 mb-6">
+                        <input type="date" id="allocated-date" class="border p-2 rounded-lg">
+                        <select id="allocated-shift" class="border p-2 rounded-lg">
+                            <option value="Shift1">Shift 1</option>
+                            <option value="Shift2">Shift 2</option>
+                            <option value="Shift3">Shift 3</option>
+                        </select>
+                        <button onclick="loadAllocated()" class="bg-green-600 text-white px-4 py-2 rounded-lg">
+                            View
+                        </button>
+                    </div>
+
+                    <div id="allocated-result"></div>
+                </div>
+            </section>
+
+            <!-- History Tab -->
+            <section id="tab-history" class="tab-content hidden">
+                <div class="bg-white p-8 rounded-xl shadow-sm border">
+                    <h3 class="text-lg font-bold mb-4">Shift History</h3>
+
+                    <button onclick="loadHistory()" class="mb-4 bg-gray-700 text-white px-4 py-2 rounded-lg">
+                        Load History
+                    </button>
+
+                    <div id="history-result"></div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- Modals -->
+    <!-- Add Ambulance Modal -->
+    <div id="modal-ambulance" class="fixed inset-0 z-[60] hidden flex items-center justify-center p-4 bg-black/50">
+        <div class="bg-white rounded-xl w-full max-w-md p-6">
+            <h3 class="text-xl font-bold mb-4">Register Ambulance</h3>
+            <form id="ambulance-form" onsubmit="handleAmbulanceSubmit(event)" class="space-y-4" enctype="multipart/form-data">
+
+            <input type="text" name="vehicle_number"
+                    placeholder="Vehicle Number (e.g. MH01AB1234)"
+                    class="w-full border p-2 rounded-lg" required />
+
+                <select name="ambulance_type" class="w-full border p-2 rounded-lg" required>
+                    <option value="">Select Type</option>
+                    <option value="Basic">Basic Life Support</option>
+                    <option value="ICU">ICU Ambulance</option>
+                    <option value="Cardiac">Cardiac Ambulance</option>
+                    <option value="Neonatal">Neonatal Ambulance</option>
+                </select>
+
+
+
+            <input type="text" name="vehicle_model"
+                    placeholder="Model Name"
+                    class="w-full border p-2 rounded-lg" />
+
+            <!-- 🔴 REQUIRED FILES -->
+            <div>
+                <label class="text-sm font-medium">RC Document (PDF / Image)</label>
+                <input type="file" name="rc_document" accept=".pdf,image/*"
+                    class="w-full border p-2 rounded-lg" required />
+            </div>
+
+            <div>
+                <label class="text-sm font-medium">Insurance Document (PDF / Image)</label>
+                <input type="file" name="insurance_document" accept=".pdf,image/*"
+                    class="w-full border p-2 rounded-lg" required />
+            </div>
+
+            <div class="flex items-center gap-2">
+                <input type="checkbox"  id="gps-check">
+                <label for="gps-check" class="text-sm">GPS Tracking Available</label>
+            </div>
+
+            <div class="flex justify-end gap-3 pt-4">
+                <button type="button" onclick="toggleModal('modal-ambulance')" class="px-4 py-2 text-gray-500">
+                Cancel
+                </button>
+                <button type="submit" class="bg-blue-600 text-white px-6 py-2 rounded-lg">
+                Save Vehicle
+                </button>
+            </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Add Driver Modal -->
+    <div id="modal-driver" class="fixed inset-0 z-[60] hidden flex items-center justify-center p-4 bg-black/50">
+        <div class="bg-white rounded-xl w-full max-w-md p-6">
+            <h3 class="text-xl font-bold mb-4">Register New Driver</h3>
+            <form id="driver-form" onsubmit="handleDriverSubmit(event)" class="space-y-4">
+                <input type="text" name="full_name" placeholder="Full Name" class="w-full border p-2 rounded-lg" required />
+                <input type="tel" name="mobile" placeholder="Mobile Number" class="w-full border p-2 rounded-lg" required />
+                <input type="text" name="driving_license_no" placeholder="Driving License No." class="w-full border p-2 rounded-lg" required />
+                <div class="flex flex-col">
+                    <label class="text-xs text-gray-500 mb-1">License Expiry Date</label>
+                    <input type="date" name="license_expiry" class="w-full border p-2 rounded-lg" required />
+                </div>
+                <input type="number" name="experience_years" placeholder="Years of Experience" class="w-full border p-2 rounded-lg" required />
+                <div class="flex justify-end gap-3 pt-4">
+                    <button type="button" onclick="toggleModal('modal-driver')" class="px-4 py-2 text-gray-500">Cancel</button>
+                    <button type="submit" class="bg-blue-600 text-white px-6 py-2 rounded-lg">Save Driver</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div id="toast-container" class="toast-container"></div>
+
+    <script>
+        const API_BASE_URL = "https://www.24x7health.in/api";
+        let providerData = null;
+
+        // Check Auth
+        window.onload = () => {
+        const saved = localStorage.getItem("provider");
+
+        if (!saved) {
+            // 🚫 Not logged in
+            window.location.href = "ProvidersLogin.html";
+            return;
+        }
+
+        try {
+            providerData = JSON.parse(saved);
+        } catch {
+            localStorage.removeItem("provider");
+            window.location.href = "ProvidersLogin.html";
+            return;
+        }
+
+        // ✅ FINAL SAFETY CHECK
+        if (!providerData.provider_uid) {
+            localStorage.removeItem("provider");
+            window.location.href = "ProvidersLogin.html";
+            return;
+        }
+
+        document.getElementById("provider-name-display").innerText =
+            providerData.provider_name || "Provider";
+
+        document.getElementById("provider-id-display").innerText =
+            `ID: ${providerData.provider_uid}`;
+
+        document.getElementById("user-initial").innerText =
+            providerData.provider_name?.[0]?.toUpperCase() || "P";
+
+        updateTime();
+        setInterval(updateTime, 1000);
+
+        loadDashboardStats();
+        };
+
+        function updateTime() {
+            const now = new Date();
+            document.getElementById('live-time').innerText = now.toLocaleString();
+        }
+
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('-translate-x-full');
+        }
+
+        function toggleModal(id) {
+            const modal = document.getElementById(id);
+            modal.classList.toggle('hidden');
+        }
+
+        function showTab(tabName) {
+            const titles = {
+                dashboard: 'Dashboard Overview',
+                ambulances: 'Fleet Management',
+                drivers: 'Team Management',
+                shifts: 'Assign Shifts',
+                allocated: 'Allocated Shifts',
+                history: 'Shift History'
+            };
+
+            document.getElementById('current-tab-title').innerText = titles[tabName];
+
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.add('hidden'));
+            document.getElementById(`tab-${tabName}`).classList.remove('hidden');
+
+            document.querySelectorAll('.sidebar-link').forEach(l => l.classList.remove('active'));
+            document.getElementById(`btn-${tabName}`).classList.add('active');
+
+            if (window.innerWidth < 1024) toggleSidebar();
+
+            // ✅ LOAD DATA ON TAB OPEN
+            if (tabName === 'ambulances') loadAmbulances();
+            if (tabName === 'drivers') loadDrivers();
+            if (tabName === 'shifts') prepareShiftDropdowns();
+            if (tabName === 'allocated') loadAllocated();
+            if (tabName === 'history') loadHistory();
+        }
+
+        async function loadDashboardStats() {
+        try {
+            const ambRes = await fetch(
+            `${API_BASE_URL}/ambulances/provider/${providerData.provider_uid}`
+            );
+
+            if (!ambRes.ok) {
+            throw new Error("Ambulance API failed");
+            }
+
+            const drvRes = await fetch(
+            `${API_BASE_URL}/drivers/provider/${providerData.provider_uid}`
+            );
+
+            if (!drvRes.ok) {
+            throw new Error("Drivers API failed");
+            }
+
+            const ambData = await ambRes.json();
+            const drvData = await drvRes.json();
+
+            const ambulances = ambData.ambulances || [];
+            const drivers = drvData.drivers || [];
+
+            document.getElementById("stat-total-amb").innerText = ambulances.length;
+            document.getElementById("stat-total-drivers").innerText = drivers.length;
+
+            const ready = ambulances.filter(a => a.active_status === "Active").length;
+            document.getElementById("stat-ready-amb").innerText = ready;
+
+        } catch (err) {
+            console.error("Dashboard stats error:", err.message);
+        }
+        }
+
+        async function loadAmbulances() {
+        try {
+            const res = await fetch(`${API_BASE_URL}/ambulances/provider/${providerData.provider_uid}`);
+            const data = await res.json();
+
+            const ambulances = data.ambulances || [];
+            const body = document.getElementById('ambulance-table-body');
+
+            if (ambulances.length === 0) {
+            body.innerHTML = `
+                <tr>
+                <td colspan="5" class="text-center py-6 text-gray-400">
+                    No ambulances found
+                </td>
+                </tr>`;
+            return;
+            }
+
+            body.innerHTML = ambulances.map(a => `
+            <tr class="border-b hover:bg-gray-50 transition">
+                <td class="px-6 py-4 font-medium">${a.vehicle_number}</td>
+                <td class="px-6 py-4">${a.ambulance_type}</td>
+                <td class="px-6 py-4">${a.vehicle_model || '-'}</td>
+                <td class="px-6 py-4">
+                <span class="px-2 py-1 text-xs font-bold rounded-full ${
+                    a.active_status === 'Active'
+                    ? 'bg-green-100 text-green-700'
+                    : 'bg-gray-200 text-gray-600'
+                }">
+                    ${a.active_status}
+                </span>
+                </td>
+                <td class="px-6 py-4 text-center">
+                ${a.gps_enabled === 'Yes' ? '✅' : '❌'}
+                </td>
+            </tr>
+            `).join('');
+
+        } catch (err) {
+            console.error("Load ambulances error:", err);
+        }
+        }
+
+        async function loadDrivers() {
+        try {
+            const res = await fetch(`${API_BASE_URL}/drivers/provider/${providerData.provider_uid}`);
+            const data = await res.json();
+
+            const drivers = data.drivers || [];
+            const body = document.getElementById('driver-table-body');
+
+            if (drivers.length === 0) {
+            body.innerHTML = `
+                <tr>
+                <td colspan="5" class="text-center py-6 text-gray-400">
+                    No drivers found
+                </td>
+                </tr>`;
+            return;
+            }
+
+            body.innerHTML = drivers.map(d => `
+            <tr class="border-b hover:bg-gray-50 transition">
+                <td class="px-6 py-4 font-medium">${d.full_name}</td>
+                <td class="px-6 py-4">${d.mobile}</td>
+                <td class="px-6 py-4">${d.driving_license_no}</td>
+                <td class="px-6 py-4 text-center">${d.experience_years ?? '-'}</td>
+                <td class="px-6 py-4">
+                <span class="px-2 py-1 text-xs font-bold rounded-full ${
+                    d.status === 'Active'
+                    ? 'bg-blue-100 text-blue-700'
+                    : 'bg-gray-200 text-gray-600'
+                }">
+                    ${d.status}
+                </span>
+                </td>
+            </tr>
+            `).join('');
+
+        } catch (err) {
+            console.error("Load drivers error:", err);
+        }
+        }
+
+        async function handleAmbulanceSubmit(e) {
+        e.preventDefault();
+
+        const form = e.target;
+        const fd = new FormData(form);
+
+        fd.append("provider_uid", providerData.provider_uid);
+        const gpsCheckbox = document.getElementById("gps-check");
+        fd.append("gps_enabled", gpsCheckbox && gpsCheckbox.checked ? "Yes" : "No");
+
+
+        const res = await fetch(`${API_BASE_URL}/ambulances/add`, {
+            method: "POST",
+            body: fd // ❗ DO NOT set Content-Type
+        });
+
+        const data = await res.json();
+
+        if (!res.ok) {
+            showToast(data.error || "Failed to add ambulance", true);
+            return;
+        }
+
+        showToast("Ambulance added successfully!");
+        toggleModal("modal-ambulance");
+        loadAmbulances();
+        form.reset();
+        }
+
+        async function handleDriverSubmit(e) {
+            e.preventDefault();
+            const fd = new FormData(e.target);
+            const data = Object.fromEntries(fd);
+            data.provider_uid = providerData.provider_uid;
+            const res = await fetch(`${API_BASE_URL}/drivers/add`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+            if (res.ok) {
+                showToast("Driver registered successfully!");
+                toggleModal('modal-driver');
+                loadDrivers();
+                e.target.reset();
+            } else {
+                showToast("Error registering driver", true);
+            }
+        }
+
+        async function prepareShiftDropdowns() {
+        try {
+            const [ambRes, drvRes] = await Promise.all([
+            fetch(`${API_BASE_URL}/ambulances/provider/${providerData.provider_uid}`).then(r => r.json()),
+            fetch(`${API_BASE_URL}/drivers/provider/${providerData.provider_uid}`).then(r => r.json())
+            ]);
+
+            const ambulances = ambRes.ambulances || [];
+            const drivers = drvRes.drivers || [];
+
+            const ambSel = document.getElementById('select-ambulance');
+            const drvSel = document.getElementById('select-driver');
+
+            ambSel.innerHTML =
+            `<option value="">Select Ambulance</option>` +
+            ambulances.map(a =>
+                `<option value="${a.ambulance_id}">
+                ${a.vehicle_number} (${a.ambulance_type})
+                </option>`
+            ).join('');
+
+            drvSel.innerHTML =
+            `<option value="">Select Driver</option>` +
+            drivers.map(d =>
+                `<option value="${d.driver_id}">
+                ${d.full_name}
+                </option>`
+            ).join('');
+
+        } catch (err) {
+            console.error("Prepare shifts error:", err);
+        }
+        }
+
+        async function handleShiftSubmit(e) {
+        e.preventDefault();
+
+        const fd = new FormData(e.target);
+        const data = Object.fromEntries(fd);
+
+        // 🔐 Force numeric IDs
+        data.ambulance_id = Number(data.ambulance_id);
+        data.driver_id = Number(data.driver_id);
+
+        const res = await fetch(`${API_BASE_URL}/shifts/assign`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+        });
+
+        const result = await res.json();
+
+        if (!res.ok) {
+            showToast(result.error || "Error assigning shift", true);
+            return;
+        }
+
+        showToast("Shift assigned successfully!");
+        e.target.reset();
+        showTab('dashboard');
+        }
+
+        function showToast(msg, isError = false) {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            
+            toast.className = `toast-item px-6 py-3 rounded-lg text-white font-medium shadow-xl flex items-center gap-3 border ${
+                isError ? 'bg-red-500 border-red-600' : 'bg-emerald-600 border-emerald-700'
+            }`;
+            
+            const icon = isError ? 
+                `<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>` : 
+                `<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>`;
+            
+            toast.innerHTML = `${icon} <span>${msg}</span>`;
+            container.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                toast.style.transform = 'translateY(10px)';
+                toast.style.transition = 'all 0.3s ease';
+                setTimeout(() => toast.remove(), 300);
+            }, 4000);
+        }
+
+        function logout() {
+            localStorage.removeItem('provider');
+            window.location.href = 'ProvidersLogin.html';
+        }
+    
+        async function loadAllocated() {
+            const date = document.getElementById("allocated-date")?.value;
+            const shift = document.getElementById("allocated-shift")?.value;
+
+            if (!date || !shift) return;
+
+            const res = await fetch(
+                `${API_BASE_URL}/shifts/allocated?date=${date}&shift_type=${shift}`
+            );
+            const data = await res.json();
+
+            renderResultTable(data.data, "allocated-result");
+        }
+
+        async function loadHistory() {
+            const res = await fetch(`${API_BASE_URL}/shifts/history`);
+            const data = await res.json();
+
+            renderResultTable(data.data, "history-result", true);
+        }
+
+        function renderResultTable(rows, targetId, allowExport = false) {
+            let html = `
+                <table class="w-full border">
+                    <tr class="bg-gray-100">
+                        <th>Date</th><th>Shift</th><th>Ambulance</th><th>Driver</th>
+                    </tr>
+            `;
+
+            rows.forEach(r => {
+                html += `
+                    <tr>
+                        <td>${r.shift_date}</td>
+                        <td>${r.shift_type}</td>
+                        <td>${r.vehicle_number}</td>
+                        <td>${r.driver_name}</td>
+                    </tr>
+                `;
+            });
+
+            html += `</table>`;
+
+            if (allowExport) {
+                html += `<button onclick="exportCSV()" class="mt-4 bg-blue-600 text-white px-4 py-2 rounded">Export CSV</button>`;
+            }
+
+            document.getElementById(targetId).innerHTML = html;
+        }
+
+
+        async function openAllocated() {
+            const date = prompt("Enter date (YYYY-MM-DD)");
+            const shift = prompt("Enter shift (Shift1 / Shift2 / Shift3)");
+
+            const res = await fetch(
+                `${API_BASE_URL}/shifts/allocated?date=${date}&shift_type=${shift}`
+            );
+            const data = await res.json();
+
+            renderTable(data.data);
+            }
+
+        async function openHistory() {
+        const res = await fetch(`${API_BASE_URL}/shifts/history`);
+        const data = await res.json();
+        renderTable(data.data, true);
+        }
+
+        function renderTable(rows, allowExport = false) {
+        let html = `
+            <table class="w-full border mt-4">
+            <tr class="bg-gray-100">
+                <th>Date</th><th>Shift</th><th>Ambulance</th><th>Driver</th>
+            </tr>
+        `;
+
+        rows.forEach(r => {
+            html += `
+            <tr>
+                <td>${r.shift_date}</td>
+                <td>${r.shift_type}</td>
+                <td>${r.vehicle_number}</td>
+                <td>${r.driver_name}</td>
+            </tr>
+            `;
+        });
+
+        html += `</table>`;
+
+        if (allowExport) {
+            html += `<button onclick="exportCSV()" class="mt-4 bg-blue-600 text-white px-4 py-2 rounded">
+            Export CSV
+            </button>`;
+        }
+
+        document.getElementById("allocation-result").innerHTML = html;
+        }
+
+        function exportCSV() {
+        let csv = "Date,Shift,Ambulance,Driver\n";
+        document.querySelectorAll("table tr").forEach((row, i) => {
+            if (i === 0) return;
+            const cols = row.querySelectorAll("td");
+            csv += [...cols].map(td => td.innerText).join(",") + "\n";
+        });
+
+        const blob = new Blob([csv], { type: "text/csv" });
+        const a = document.createElement("a");
+        a.href = URL.createObjectURL(blob);
+        a.download = "shift_history.csv";
+        a.click();
+        }
+
+
+    </script>
+</body>
+</html>

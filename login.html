@@ -1,0 +1,1692 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Unified Login</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Font Awesome for icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #6366f1;
+      --primary-dark: #4f46e5;
+      --primary-light: #c7d2fe;
+      --success: #10b981;
+      --error: #ef4444;
+      --warning: #f59e0b;
+      --dark: #1e293b;
+      --light: #f8fafc;
+      --gray: #94a3b8;
+      --gray-light: #e2e8f0;
+    }
+    
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    
+    html, body {
+        height: 100%;
+        width: 100%;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column; /* Changed to column to stack nav and content */
+      animation: gradientBG 15s ease infinite;
+      background-size: 400% 400%;
+    }
+    
+    @keyframes gradientBG {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+    
+    /* NEW: Wrapper to center the login box */
+    .content-wrapper {
+        display: flex;
+        flex-grow: 1;
+        justify-content: center;
+        align-items: center;
+        padding: 20px;
+        width: 100%;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    /* --- NEW STYLES FOR TWO-COLUMN LAYOUT --- */
+    .main-login-wrapper {
+        display: flex;
+        width: 100%;
+        max-width: 1000px;
+        background: rgba(255, 255, 255, 0.95);
+        border-radius: 20px;
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        overflow: hidden;
+        margin: 20px;
+        position: relative;
+        transform: translateY(0);
+        transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    .main-login-wrapper:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 30px 60px -12px rgba(0, 0, 0, 0.3);
+    }
+
+    .main-login-wrapper::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 8px;
+      background: linear-gradient(90deg, var(--primary), var(--success), var(--warning));
+      animation: rainbow 8s linear infinite;
+      background-size: 400% 400%;
+    }
+
+    @keyframes rainbow {
+      0% { background-position: 0% 50%; }
+      100% { background-position: 100% 50%; }
+    }
+
+    .info-panel {
+        flex: 1;
+        padding: 40px;
+        /* background: linear-gradient(135deg, var(--primary-dark), var(--primary)); */
+        background-color: #e1edff;
+        color: var(--light);
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+
+    .info-panel h3 {
+        color: black;
+        font-size: 28px;
+        font-weight: 700;
+        margin-bottom: 20px;
+    }
+
+    .info-panel h4 {
+        color: black;
+        font-size: 20px;
+        font-weight: 600;
+        margin-top: 30px;
+        margin-bottom: 10px;
+        border-bottom: 2px solid var(--primary-light);
+        padding-bottom: 5px;
+    }
+
+    .info-panel p {
+        color: black;
+        font-size: 16px;
+        line-height: 1.6;
+        /* color: var(--primary-light); */
+    }
+
+    .login-form-wrapper {
+        flex: 1.1;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 40px;
+    }
+    
+    /* --- ADJUSTMENTS TO ORIGINAL STYLES --- */
+    .login-container {
+      background: transparent;
+      border-radius: 0;
+      box-shadow: none;
+      padding: 0;
+      width: 100%;
+      max-width: 450px;
+      transform: none;
+      transition: none;
+      overflow: visible;
+      position: static; /* Reset position */
+    }
+    
+    .login-container:hover {
+      transform: none;
+      box-shadow: none;
+    }
+
+    .login-container::before {
+        display: none; /* Hide the original top bar */
+    }
+    
+    .logo {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    
+    .logo i {
+      font-size: 48px;
+      color: var(--primary);
+      background: linear-gradient(135deg, var(--primary), var(--success));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    
+    h2 {
+      text-align: center;
+      margin-bottom: 30px;
+      color: var(--dark);
+      font-weight: 700;
+      font-size: 28px;
+      position: relative;
+    }
+    
+    h2::after {
+      content: '';
+      position: absolute;
+      bottom: -12px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 60px;
+      height: 4px;
+      background: linear-gradient(90deg, var(--primary), var(--success));
+      border-radius: 4px;
+    }
+    
+    .input-group {
+      position: relative;
+      margin-bottom: 1.5rem;
+    }
+    
+    .input-group i {
+      position: absolute;
+      left: 15px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--gray);
+      z-index: 5;
+      transition: all 0.3s ease;
+    }
+    .input-group i.password-toggle {
+      left: auto;
+      right: 15px;
+    }
+    
+    .form-control {
+      padding-left: 45px;
+      height: 50px;
+      border-radius: 12px;
+      border: 2px solid var(--gray-light);
+      transition: all 0.3s ease;
+    }
+    
+    .form-control:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.2);
+    }
+    
+    .form-control:focus ~ i {
+      color: var(--primary);
+    }
+    
+    .password-toggle {
+      position: absolute;
+      right: 15px;
+      top: 50%;
+      transform: translateY(-50%);
+      cursor: pointer;
+      color: var(--gray);
+      z-index: 5;
+      transition: all 0.3s ease;
+    }
+    
+    .password-toggle:hover {
+      color: var(--primary);
+    }
+    
+    .btn-login {
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      color: white;
+      border: none;
+      padding: 12px;
+      border-radius: 12px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      letter-spacing: 0.5px;
+      position: relative;
+      overflow: hidden;
+      width: 100%;
+    }
+    
+    .btn-login:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 20px rgba(99, 102, 241, 0.3);
+    }
+    
+    .btn-login:active {
+      transform: translateY(0);
+    }
+    
+    .btn-login::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+      transition: all 0.5s ease;
+    }
+    
+    .btn-login:hover::before {
+      left: 100%;
+    }
+    
+    #message {
+      text-align: center;
+      margin-top: 20px;
+      padding: 12px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 500;
+      opacity: 0;
+      transform: translateY(10px);
+      transition: all 0.4s ease;
+    }
+    
+    #message.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    
+    .forgot-password {
+      text-align: center;
+      margin-top: 20px;
+    }
+    
+    .forgot-password a {
+      color: var(--gray);
+      text-decoration: none;
+      font-size: 14px;
+      transition: all 0.3s ease;
+    }
+    
+    .forgot-password a:hover {
+      color: var(--primary);
+      text-decoration: underline;
+    }
+    
+    /* Modal Styling */
+    .modal-content {
+      border-radius: 15px;
+      overflow: hidden;
+      border: none;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    }
+    
+    .modal-header {
+      border-bottom: none;
+      padding-bottom: 0;
+      position: relative;
+    }
+    
+    .modal-header .btn-close {
+      position: absolute;
+      right: 20px;
+      top: 20px;
+    }
+    
+    .modal-title {
+      font-weight: 600;
+      color: var(--dark);
+    }
+    
+    .modal-body {
+      padding: 25px;
+    }
+    
+    .modal-footer {
+      border-top: none;
+    }
+    
+    /* Loading animation */
+    .loader {
+      display: none;
+      width: 20px;
+      height: 20px;
+      border: 3px solid rgba(255, 255, 255, 0.3);
+      border-radius: 50%;
+      border-top-color: white;
+      animation: spin 1s ease-in-out infinite;
+      margin-left: 10px;
+    }
+    
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    
+    .btn-loading {
+      pointer-events: none;
+    }
+    
+    .btn-loading .loader {
+      display: inline-block;
+    }
+    
+    /* Responsive adjustments */
+    @media (max-width: 860px) {
+        .main-login-wrapper {
+            flex-direction: column;
+            max-width: 500px;
+        }
+        .info-panel {
+            border-radius: 20px 20px 0 0;
+        }
+    }
+
+    @media (max-width: 576px) {
+      .login-form-wrapper {
+        padding: 30px;
+      }
+      
+      h2 {
+        font-size: 24px;
+      }
+    }
+
+  </style>
+</head>
+<body>
+
+
+
+    <!-- Navbar Code -->
+        <style>
+            /* General navbar styling */
+            .navbar-container {
+                font-family: Arial, sans-serif;
+                width: 100%;
+            }
+
+            #hamburger-icon {
+                display: none;
+                font-size: 26px;
+                color: white;
+                cursor: pointer;
+                padding: 10px;
+            }
+
+            .nav-link {
+                color: white;
+                text-decoration: none;
+                padding: 0.5rem 1rem;
+                font-weight: bold;
+                display: block;
+                border-radius: 5px;
+                transition: background-color 0.3s;
+                white-space: nowrap;
+            }
+
+            .nav-link:hover, .nav-link.active {
+                background-color: #1a6ab5;
+            }
+            
+            .dropdown {
+                position: relative;
+            }
+
+            .dropdown-menu {
+                display: none;
+                position: absolute;
+                background-color: white;
+                min-width: 200px;
+                border-radius: 5px;
+                overflow: hidden;
+                box-shadow: 0px 4px 20px rgba(0,0,0,0.2);
+                z-index: 1001;
+                margin-top: 1px;
+            }
+
+            .dropdown:hover .dropdown-menu {
+                display: block;
+            }
+            
+            .dropdown-menu a {
+                padding: 12px 16px;
+                text-decoration: none;
+                display: block;
+                color: #333;
+                font-weight: normal;
+            }
+
+            .dropdown-menu a:hover, .dropdown-menu a.active {
+                background-color: #f0f0f0;
+            }
+
+            .mega-menu {
+                width: 660px;
+                padding: 20px;
+                left: 0;
+            }
+            
+            .mega-menu-grid {
+                display: grid;
+                grid-template-columns: repeat(3, 1fr);
+                gap: 10px;
+            }
+
+            .menu-item {
+                padding: 12px;
+                text-decoration: none;
+                background: #fff;
+                border-radius: 6px;
+                color: #333;
+                font-weight: 500;
+                transition: background 0.2s, color 0.2s;
+                box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+            }
+
+            .menu-item:hover, .menu-item.active {
+                background: #f0f0f0;
+                color: #000;
+            }
+
+            /* Top Navigation Bar */
+            .top-nav {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 15px;
+                align-items: center;
+                justify-content: space-between;
+                background: #007bff;
+                padding: 10px 30px;
+            }
+
+            .logo-section {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                flex: 1;
+                min-width: 250px;
+            }
+
+            .logo-text {
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                line-height: 1;
+                min-width: 120px;
+            }
+
+            .logo-title {
+                color: #fff;
+                font-size: 18px;
+                font-weight: bold;
+            }
+
+            .logo-subtitle {
+                color: #fff;
+                font-size: 18px;
+            }
+
+            .search-container {
+                position: relative;
+                flex-grow: 1;
+                max-width: 400px;
+                min-width: 200px;
+            }
+
+            #searchInput {
+                padding: 10px 40px 10px 15px;
+                width: 100%;
+                font-size: 16px;
+                border-radius: 15px;
+                border: 1px solid #ccc;
+                box-sizing: border-box;
+            }
+
+            .search-icon {
+                position: absolute;
+                right: 15px;
+                top: 50%;
+                transform: translateY(-50%);
+                color: #888;
+                cursor: pointer;
+            }
+
+            #suggestionsBox {
+                display: none;
+                position: absolute;
+                top: 110%;
+                left: 0;
+                right: 0;
+                background: white;
+                border: 1px solid #ccc;
+                max-height: 300px;
+                overflow-y: auto;
+                z-index: 1100;
+                box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+                border-radius: 8px;
+            }
+
+            .top-nav-contact {
+                display: flex;
+                align-items: center;
+                gap: 10px; /* Reduced gap for smaller screens */
+                color: white;
+                font-size: 14px;
+                flex: 1;
+                justify-content: center;
+                flex-wrap: wrap; /* Allow wrapping */
+            }
+
+            .contact-link {
+                color: white;
+                text-decoration: none;
+                display: flex;
+                align-items: center;
+                gap: 5px;
+            }
+            
+            .contact-separator {
+                display: block;
+            }
+
+            .top-nav-right {
+                display: flex;
+                align-items: center;
+                gap: 20px;
+                flex-wrap: wrap;
+                flex: 1;
+                justify-content: flex-end;
+            }
+
+            .top-nav-social {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+            }
+
+            .social-link {
+                color: white;
+                font-size: 18px;
+            }
+
+            .language-container {
+                position: relative;
+                display: inline-block;
+            }
+
+            #languageTab {
+                cursor: pointer;
+                padding: 6px 12px;
+                background: #fff;
+                border-radius: 6px;
+                color: #000;
+                font-size: 14px;
+                display: flex;
+                align-items: center;
+                gap: 5px;
+            }
+
+            #languageMenu {
+                display: none;
+                position: absolute;
+                top: 40px;
+                right: 0;
+                background: #fff;
+                border-radius: 6px;
+                box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+                min-width: 160px;
+                z-index: 2000;
+                max-height: 300px;
+                overflow-y: auto;
+            }
+
+            .language-option {
+                padding: 8px 12px;
+                cursor: pointer;
+            }
+
+            .language-option:hover {
+                background: #f0f0f0;
+            }
+
+            /* Second Navigation Bar */
+            .second-nav {
+                background-color: #135597;
+                position: sticky;
+                top: 0;
+                box-shadow: 0px 4px 10px rgba(0,0,0,0.1);
+                z-index: 1000;
+                padding: 0 10px !important;
+            }
+
+            .nav-inner {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                min-height: 60px;
+                position: relative;
+            }
+
+            #navLinks2 {
+                display: flex;
+                flex-grow: 1;
+                align-items: center;
+                justify-content: center;
+                gap: 8px;
+                flex-wrap: wrap;
+            }
+
+            /* Mobile Responsive Design */
+            @media (max-width: 1200px) {
+                .top-nav-social {
+                    display: none;
+                }
+                
+                .mega-menu {
+                    width: 500px;
+                }
+                
+                .mega-menu-grid {
+                    grid-template-columns: repeat(2, 1fr);
+                }
+            }
+
+            @media screen and (max-width: 992px) {
+                .top-nav {
+                    padding: 10px 15px !important;
+                    justify-content: center;
+                }
+                
+                .logo-section {
+                    flex-basis: 100%;
+                    justify-content: center;
+                }
+                
+                .search-container {
+                    order: 3;
+                    max-width: 100% !important;
+                    margin-top: 10px;
+                    flex-basis: 100%;
+                }
+
+                .top-nav-contact {
+                    order: 2;
+                    flex-direction: column;
+                    gap: 8px;
+                    margin-top: 10px;
+                    text-align: center;
+                    flex-basis: 100%;
+                }
+
+                .contact-separator {
+                display: none; /* Hide separators on mobile */
+                }
+                
+                #navLinks2 {
+                    display: none;
+                    flex-direction: column;
+                    align-items: flex-start;
+                    width: 100%;
+                    background-color: #135597;
+                    position: absolute;
+                    top: 100%;
+                    left: 0;
+                    padding: 10px 0;
+                    z-index: 1000;
+                    box-shadow: 0 5px 10px rgba(0,0,0,0.2);
+                }
+
+                #hamburger-icon {
+                    display: block;
+                }
+
+                .dropdown {
+                    width: 100%;
+                }
+
+                #navLinks2 .nav-link {
+                    padding: 0.8rem 1.5rem;
+                    width: 100%;
+                    box-sizing: border-box;
+                    text-align: left;
+                }
+
+                .dropdown-menu {
+                    position: static;
+                    display: none;
+                    width: 100%;
+                    box-shadow: none;
+                    background-color: #1a6ab5;
+                    border-radius: 0;
+                }
+
+                .dropdown-menu a, .mega-menu .menu-item {
+                    color: white;
+                    background-color: transparent;
+                    box-shadow: none;
+                    border-bottom: 1px solid #3385d1;
+                    padding-left: 2.5rem;
+                }
+
+                .dropdown-menu a.active, .mega-menu .menu-item.active {
+                    background-color: #135597;
+                }
+
+                .mega-menu-grid {
+                    grid-template-columns: 1fr;
+                }
+                
+                .mega-menu {
+                    width: 100%;
+                    padding: 10px;
+                }
+            }
+            
+            @media screen and (max-width: 768px) {
+                .top-nav {
+                    gap: 10px;
+                }
+                
+                .logo-section {
+                    min-width: auto;
+                    flex-direction: column;
+                    gap: 5px;
+                }
+                .logo-text {
+                    align-items: center;
+                }
+                
+                .logo-title {
+                    font-size: 18px !important;
+                }
+                
+                .logo-subtitle {
+                    font-size: 18px !important;
+                }
+                
+                .logo-section img {
+                    height: 35px !important;
+                }
+                
+                #searchInput {
+                    font-size: 14px !important;
+                    padding: 8px 35px 8px 12px !important;
+                }
+                
+                .top-nav-right {
+                    gap: 10px;
+                    justify-content: center;
+                    flex-basis: 100%;
+                }
+            }
+            
+            @media screen and (max-width: 480px) {
+                .logo-section > div span:first-child {
+                    font-size: 18px !important;
+                }
+                
+                .logo-section > div span:last-child {
+                    font-size: 14px !important;
+                }
+                
+                .top-nav {
+                    padding: 8px 10px !important;
+                }
+                
+                .nav-link {
+                    padding: 0.4rem 0.8rem;
+                    font-size: 14px;
+                }
+            }
+        </style>
+
+        <!-- Top Navigation Bar -->
+        <div class="top-nav">
+            <!-- Left: Logo, Title & Search Bar -->
+            <div class="logo-section">
+                <img src="img/24x7health-logo.png" alt="Logo" style="height: 40px; border-radius: 10%;">
+                <div class="logo-text">
+                    <span class="logo-title">HEALTHCARE</span>
+                    <span class="logo-subtitle">SERVICES</span>
+                </div>
+                
+                <!-- Search Bar -->
+                <div class="search-container">
+                    <input type="text" id="searchInput" placeholder="Search Doctors, Diagnostics, Tests" autocomplete="off"/>
+                    <i class="fas fa-search search-icon"></i>
+                    <div id="suggestionsBox"></div>
+                </div>
+            </div>
+
+            <!-- Center: Contact Info -->
+            <div class="top-nav-contact">
+                <a href="mailto:support@24x7health.in" class="contact-link">
+                    <i class="fas fa-envelope"></i> support@24x7health.in
+                </a> <span class="contact-separator" style="margin: 0 5px;">|</span>
+                <a href="tel:+919908793602" class="contact-link">
+                    <i class="fas fa-phone"></i>  +91-9908793602,  +91-8790170525
+                </a>
+            </div>
+
+            <!-- Right: Social Icons, Language & Profile -->
+            <div class="top-nav-right">
+                <!-- Social Media -->
+                <div class="top-nav-social">
+                    <a href="https://www.facebook.com/share/1CC3vxsppD/" target="_blank" class="social-link"><i class="fab fa-facebook"></i></a>
+                    <a href="https://x.com/BeeOptic?t=LB5TDI4096CJEldX9Ccswg&s=09" target="_blank" class="social-link"><i class="fab fa-twitter"></i></a>
+                    <a href="https://www.instagram.com/optic.bee/" target="_blank" class="social-link"><i class="fab fa-instagram"></i></a>
+                    <a href="https://linkedin.com" target="_blank" class="social-link"><i class="fab fa-linkedin"></i></a>
+                    <a href="https://youtube.com/@opticbee-i7j?si=w9ynFoGer27Kb82g" target="_blank" class="social-link"><i class="fab fa-youtube"></i></a>
+                </div>
+                
+                <!-- Language Dropdown -->
+                <div class="language-container">
+                    <div id="languageTab">
+                        <span id="currentLang">English</span> ▼
+                    </div>
+
+                    <!-- Dropdown -->
+                    <div id="languageMenu">
+                        <div class="language-option" onclick="setLanguage('en','English',event)">English</div>
+                        <div class="language-option" onclick="setLanguage('hi','हिंदी',event)">हिंदी</div>
+                        <div class="language-option" onclick="setLanguage('te','తెలుగు',event)">తెలుగు</div>
+                        <div class="language-option" onclick="setLanguage('ta','தமிழ்',event)">தமிழ்</div>
+                        <div class="language-option" onclick="setLanguage('kn','ಕನ್ನಡ',event)">ಕನ್ನಡ</div>
+                        <div class="language-option" onclick="setLanguage('ml','മലയാളം',event)">മലയാളം</div>
+                        <div class="language-option" onclick="setLanguage('mr','मराठी',event)">मराठी</div>
+                        <div class="language-option" onclick="setLanguage('gu','ગુજરાતી',event)">ગુજરાતી</div>
+                        <div class="language-option" onclick="setLanguage('bn','বাংলা',event)">বাংলা</div>
+                        <div class="language-option" onclick="setLanguage('ur','اردو',event)">اردو</div>
+                        <div class="language-option" onclick="setLanguage('fr','Français',event)">Français</div>
+                        <div class="language-option" onclick="setLanguage('de','Deutsch',event)">Deutsch</div>
+                    </div>
+                </div>
+                
+                <!-- Profile Icon -->
+                <a href="login.html" id="loginNav1" title="Login/Profile" class="social-link" style="margin-left: 10px;">
+                    <i class="fas fa-user-circle"></i>
+                    <span id="userName1"></span>
+                </a>
+            </div>
+        </div>
+
+        <!-- Second Navigation Bar -->
+        <div class="second-nav">
+            <div class="nav-inner">
+                <!-- Hamburger Icon -->
+                <div id="hamburger-icon">&#9776;</div>
+                
+                <div id="navLinks2">
+                    <a href="index.html" class="nav-link">Home</a>
+                    
+                    <div class="dropdown">
+                        <a href="healthRecords.html" class="nav-link">Health Records <i class="fas fa-caret-down fa-xs"></i></a>
+                        <div class="dropdown-menu">
+                            <a href="bloodtest.html">Blood Tests</a>
+                            <a href="donations.html">Donations</a>
+                            <a href="inventory.html">Inventory</a>
+                        </div>
+                    </div>
+
+                    <div class="dropdown">
+                        <a href="#" class="nav-link">Appointments <i class="fas fa-caret-down fa-xs"></i></a>
+                        <div class="dropdown-menu">
+                            <a href="doctors.html">Doctors</a>
+                            <a href="DiagnosticsAppointments.html">Diagnostics</a>
+                        </div>
+                    </div>
+                    
+                    <div class="dropdown">
+                        <a href="Diagnostics.html" class="nav-link">Diagnostics <i class="fas fa-caret-down fa-xs"></i></a>
+                        <div class="dropdown-menu mega-menu">
+                        <div class="mega-menu-grid">
+                                <a href="xray.html" class="menu-item">X-Ray</a>
+                                <a href="ultrasound.html" class="menu-item">Ultrasound</a>
+                                <a href="mri.html" class="menu-item">MRI</a>
+                                <a href="diagnostic-services.html?category=cbc" class="menu-item">Complete Blood Count</a>
+                                <a href="diagnostic-services.html?category=pathology" class="menu-item">Pathology Tests</a>
+                                <a href="diagnostic-services.html?category=microbiology" class="menu-item">Microbiology Tests</a>
+                                <a href="diagnostic-services.html?category=radiology" class="menu-item">Radiology & Imaging</a>
+                                <a href="diagnostic-services.html?category=cardiology" class="menu-item">Cardiology</a>
+                                <a href="diagnostic-services.html?category=neurology" class="menu-item">Neurology</a>
+                                <a href="diagnostic-services.html?category=ophthalmology" class="menu-item">Ophthalmology</a>
+                                <a href="diagnostic-services.html?category=ent" class="menu-item">ENT</a>
+                                <a href="diagnostic-services.html?category=dental" class="menu-item">Dental</a>
+                                <a href="diagnostic-services.html?category=fertility" class="menu-item">Prenatal & Fertility</a>
+                                <a href="diagnostic-services.html?category=genetic" class="menu-item">Genetic Testing</a>
+                                <a href="diagnostic-services.html?category=packages" class="menu-item">Health Packages</a>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <a href="clinic.html" class="nav-link">Clinic</a>
+                    
+                    <div class="dropdown">
+                        <a href="Physician.html" class="nav-link">Physicians <i class="fas fa-caret-down fa-xs"></i></a>
+                        <div class="dropdown-menu mega-menu">
+                            <div class="mega-menu-grid">
+                                <a href="cardiologist.html" class="menu-item">Cardiologist</a>
+                                <a href="neurologist.html" class="menu-item">Neurologist</a>
+                                <a href="dermatologist.html" class="menu-item">Dermatologist</a>
+                                <a href="orthopedic.html" class="menu-item">Orthopedic</a>
+                                <a href="pediatrician.html" class="menu-item">Pediatrician</a>
+                                <a href="gynecologist.html" class="menu-item">Gynecologist</a>
+                                <a href="urologist.html" class="menu-item">Urologist</a>
+                                <a href="oncologist.html" class="menu-item">Oncologist</a>
+                                <a href="endocrinologist.html" class="menu-item">Endocrinologist</a>
+                                <a href="gastroenterologist.html" class="menu-item">Gastroenterologist</a>
+                                <a href="pulmonologist.html" class="menu-item">Pulmonologist</a>
+                                <a href="rheumatologist.html" class="menu-item">Rheumatologist</a>
+                                <a href="psychiatrist.html" class="menu-item">Psychiatrist</a>
+                                <a href="ophthalmologist.html" class="menu-item">Ophthalmologist</a>
+                                <a href="general-physician.html" class="menu-item">General Physician</a>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="dropdown">
+                        <a href="fertility.html" class="nav-link">Fertility <i class="fas fa-caret-down fa-xs"></i></a>
+                        <div class="dropdown-menu mega-menu">
+                            <div class="mega-menu-grid">
+                                <a href="IVF.html" class="menu-item">IVF</a>
+                                <a href="iui.html" class="menu-item">IUI</a>
+                                <a href="sarogasi.html" class="menu-item">Surrogacy</a>
+                                <a href="fertility.html#egg-donation" class="menu-item">Egg Donation</a>
+                                <a href="fertility.html#sperm-donation" class="menu-item">Sperm Donation</a>
+                                <a href="fertility.html#embryo-transfer" class="menu-item">Embryo Transfer</a>
+                                <a href="fertility.html#fertility-preservation" class="menu-item">Fertility Preservation</a>
+                                <a href="fertility.html#pcos-treatment" class="menu-item">PCOS Treatment</a>
+                                <a href="fertility.html#male-infertility" class="menu-item">Male Infertility</a>
+                                <a href="fertility.html#female-infertility" class="menu-item">Female Infertility</a>
+                                <a href="fertility.html#prenatal-care" class="menu-item">Prenatal Care</a>
+                                <a href="fertility.html#genetic-testing" class="menu-item">Genetic Testing</a>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <a href="blood.html" class="nav-link">Blood</a>
+                    <a href="Eyecare.html" class="nav-link">Eye Care</a>
+                    <a href="Dental.html" class="nav-link">Dental</a>
+                    <a href="ENT.html" class="nav-link">ENT</a>
+                    
+                    <div class="dropdown">
+                        <a href="Cancer.html" class="nav-link">Cancer <i class="fas fa-caret-down fa-xs"></i></a>
+                        <div class="dropdown-menu mega-menu" style="right: 0; left: auto;">
+                        <div class="mega-menu-grid">
+                                <a href="Cancer.html#breast-cancer" class="menu-item">Breast Cancer</a>
+                                <a href="Cancer.html#lung-cancer" class="menu-item">Lung Cancer</a>
+                                <a href="Cancer.html#prostate-cancer" class="menu-item">Prostate Cancer</a>
+                                <a href="Cancer.html#colorectal-cancer" class="menu-item">Colorectal Cancer</a>
+                                <a href="Cancer.html#skin-cancer" class="menu-item">Skin Cancer</a>
+                                <a href="Cancer.html#leukemia" class="menu-item">Leukemia</a>
+                                <a href="Cancer.html#lymphoma" class="menu-item">Lymphoma</a>
+                                <a href="Cancer.html#pancreatic-cancer" class="menu-item">Pancreatic Cancer</a>
+                                <a href="Cancer.html#ovarian-cancer" class="menu-item">Ovarian Cancer</a>
+                                <a href="Cancer.html#bladder-cancer" class="menu-item">Bladder Cancer</a>
+                                <a href="Cancer.html#kidney-cancer" class="menu-item">Kidney Cancer</a>
+                                <a href="Cancer.html#thyroid-cancer" class="menu-item">Thyroid Cancer</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ambulance -->
+                    <a href="Ambulance.html" class="nav-link">Ambulance</a>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            document.addEventListener('DOMContentLoaded', () => {
+                // --- ADVANCED LOCATION SERVICES SCRIPT ---
+
+                /**
+                 * Appends the encoded location to a given URL.
+                 * @param {string} url The URL to modify.
+                 * @returns {string} The new URL with the location parameter.
+                 */
+                function appendLocationToUrl(url) {
+                    const encodedLocation = localStorage.getItem('userEncodedLocation');
+                    if (!encodedLocation) return url;
+                    if (url.includes('location=')) return url;
+                    const separator = url.includes('?') ? '&' : '?';
+                    return `${url}${separator}location=${encodedLocation}`;
+                }
+
+                // --- Mobile Menu Functionality ---
+                const hamburger = document.getElementById('hamburger-icon');
+                const navLinks = document.getElementById('navLinks2');
+                const dropdownLinks = navLinks.querySelectorAll('.dropdown > a');
+                
+                if (window.innerWidth <= 992) {
+                    navLinks.style.display = 'none';
+                }
+
+                hamburger.addEventListener('click', () => {
+                    const isVisible = navLinks.style.display === 'flex';
+                    navLinks.style.display = isVisible ? 'none' : 'flex';
+                });
+
+                dropdownLinks.forEach(link => {
+                    link.addEventListener('click', (e) => {
+                        if (window.innerWidth <= 992) {
+                            e.preventDefault();
+                            const menu = link.nextElementSibling;
+                            const isMenuVisible = menu.style.display === 'block';
+                            
+                            navLinks.querySelectorAll('.dropdown-menu').forEach(m => {
+                                if (m !== menu) {
+                                    m.style.display = 'none';
+                                }
+                            });
+
+                            menu.style.display = isMenuVisible ? 'none' : 'block';
+                        }
+                    });
+                });
+
+                window.addEventListener('resize', () => {
+                    if (window.innerWidth > 992) {
+                        navLinks.style.display = 'flex';
+                        navLinks.querySelectorAll('.dropdown-menu').forEach(m => {
+                            m.style.display = ''; 
+                        });
+                    } else {
+                        navLinks.style.display = 'none';
+                        navLinks.querySelectorAll('.dropdown-menu').forEach(m => {
+                            m.style.display = 'none';
+                        });
+                    }
+                });
+
+                // --- Search Suggestions Functionality ---
+                const searchInput = document.getElementById('searchInput');
+                const suggestionsBox = document.getElementById('suggestionsBox');
+                let debounceTimer;
+
+                searchInput.addEventListener('input', () => {
+                    clearTimeout(debounceTimer);
+                    const query = searchInput.value.trim();
+                    if (query.length < 2) {
+                        suggestionsBox.style.display = 'none';
+                        return;
+                    }
+                    debounceTimer = setTimeout(() => fetchSuggestions(query), 300);
+                });
+
+                async function fetchSuggestions(query) {
+                    try {
+                        const response = await fetch(`https://24x7health.in/api/specializations?q=${encodeURIComponent(query)}`);
+                        if (!response.ok) throw new Error('Network response was not ok');
+                        const suggestions = await response.json();
+                        displaySuggestions(suggestions);
+                    } catch (error) {
+                        console.error('Error fetching suggestions:', error);
+                        suggestionsBox.style.display = 'none';
+                    }
+                }
+
+                function displaySuggestions(suggestions) {
+                    if (suggestions.length === 0) {
+                        suggestionsBox.style.display = 'none';
+                        return;
+                    }
+                    suggestionsBox.innerHTML = '';
+                    suggestions.forEach(spec => {
+                        const item = document.createElement('div');
+                        item.textContent = spec;
+                        item.style.padding = '12px 15px';
+                        item.style.cursor = 'pointer';
+                        item.onmouseenter = () => item.style.backgroundColor = '#f0f0f0';
+                        item.onmouseleave = () => item.style.backgroundColor = 'white';
+                        item.onclick = () => {
+                            const baseUrl = `doctors.html?specialization=${encodeURIComponent(spec)}`;
+                            // Use the helper function to ensure location is appended
+                            window.location.href = appendLocationToUrl(baseUrl);
+                        };
+                        suggestionsBox.appendChild(item);
+                    });
+                    suggestionsBox.style.display = 'block';
+                }
+
+                document.addEventListener('click', (event) => {
+                    if (!searchInput.contains(event.target) && !suggestionsBox.contains(event.target)) {
+                        suggestionsBox.style.display = 'none';
+                    }
+                });
+
+                // --- Active Nav Link Highlighting ---
+                const currentPath = window.location.pathname;
+                const currentSearch = window.location.search;
+                const currentFullPath = currentPath + currentSearch;
+                let bestMatchLink = null;
+                let longestMatch = -1;
+                document.querySelectorAll('#navLinks2 a[href]').forEach(link => {
+                    const linkHref = link.getAttribute('href');
+                    if (linkHref === '#') return;
+                    const linkUrl = new URL(linkHref, window.location.href);
+                    const linkFullPath = linkUrl.pathname + linkUrl.search;
+                    if (currentFullPath.startsWith(linkFullPath)) {
+                        if (linkFullPath.length > longestMatch) {
+                            longestMatch = linkFullPath.length;
+                            bestMatchLink = link;
+                        }
+                    }
+                });
+                if (bestMatchLink) {
+                    bestMatchLink.classList.add('active');
+                    const parentDropdown = bestMatchLink.closest('.dropdown');
+                    if (parentDropdown) {
+                        const mainDropdownLink = parentDropdown.querySelector('a.nav-link');
+                        if (mainDropdownLink) mainDropdownLink.classList.add('active');
+                    }
+                } else if (currentPath === '/' || currentPath.endsWith('index.html')) {
+                    const homeLink = document.querySelector('#navLinks2 a[href="index.html"]');
+                    if (homeLink) homeLink.classList.add('active');
+                }
+
+                // --- User Authentication ---
+                const userName1 = document.getElementById("userName1");
+                const loginLink1 = document.getElementById("loginNav1");
+                const doctorName = localStorage.getItem("doctorName");
+                const patientName = localStorage.getItem("fullName");
+                const diagnosticName = localStorage.getItem("diagnosticName");
+                let currentUser = patientName || doctorName || diagnosticName;
+                if (currentUser) {
+                    userName1.textContent = currentUser;
+                    loginLink1.innerHTML = `<i class="fas fa-user-circle"></i><span id="userName1" style="margin-right: 5px; font-size: 14px;">${currentUser}</span>`;
+                    loginLink1.addEventListener("click", (e) => {
+                        e.preventDefault();
+                        localStorage.clear();
+                        sessionStorage.clear();
+                        window.location.href = "index.html";
+                    });
+                }
+                
+                // --- Language Menu Toggle ---
+                const languageTab = document.getElementById("languageTab");
+                const languageMenu = document.getElementById("languageMenu");
+                if (languageTab && languageMenu) {
+                    languageTab.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        languageMenu.style.display = languageMenu.style.display === "block" ? "none" : "block";
+                    });
+                    document.addEventListener('click', () => { languageMenu.style.display = "none"; });
+                    languageMenu.addEventListener('click', (e) => { e.stopPropagation(); });
+                }
+
+                // --- Location Services Logic ---
+
+                /**
+                 * Updates all navigation links on the page with the stored location.
+                 */
+                function updateNavLinksWithLocation() {
+                    document.querySelectorAll('nav a[href]').forEach(link => {
+                        const originalHref = link.getAttribute('href');
+                        if (!originalHref || originalHref.startsWith('#') || originalHref.startsWith('javascript:')) return;
+                        link.setAttribute('href', appendLocationToUrl(originalHref));
+                    });
+                }
+
+                /**
+                 * Stores an encoded string (lat,lng) in localStorage.
+                 */
+                function storeEncodedLocation(latitude, longitude) {
+                    const locationString = `${latitude},${longitude}`;
+                    const encodedString = btoa(locationString);
+                    localStorage.setItem('userEncodedLocation', encodedString);
+                    console.log('Stored Encoded Location:', encodedString);
+                    updateNavLinksWithLocation();
+                }
+
+                /**
+                 * Fetches location using IP address as a fallback.
+                 */
+                async function fetchLocationByIp() {
+                    console.log("User denied geolocation. Falling back to IP-based location.");
+                    try {
+                        const response = await fetch('https://ipapi.co/json/');
+                        if (!response.ok) throw new Error('IP API request failed');
+                        const data = await response.json();
+                        if (data.latitude && data.longitude) {
+                            storeEncodedLocation(data.latitude, data.longitude);
+                        } else {
+                        console.error("Could not determine location from IP.");
+                        }
+                    } catch (error) {
+                        console.error("Error fetching location by IP:", error);
+                    }
+                }
+                
+                /**
+                 * Asks for browser's geolocation and handles success or failure.
+                 */
+                function requestBrowserLocation() {
+                    if (navigator.geolocation) {
+                        navigator.geolocation.getCurrentPosition(
+                            (position) => {
+                                console.log("Geolocation permission granted.");
+                                storeEncodedLocation(position.coords.latitude, position.coords.longitude);
+                            },
+                            fetchLocationByIp 
+                        );
+                    } else {
+                        console.error("Geolocation is not supported by this browser.");
+                        fetchLocationByIp(); 
+                    }
+                }
+
+                // --- Main Location Execution ---
+                const isIndexPage = window.location.pathname.endsWith('/') || window.location.pathname.endsWith('index.html');
+                const locationExists = localStorage.getItem('userEncodedLocation');
+
+                if (isIndexPage && !locationExists) {
+                    requestBrowserLocation();
+                }
+                
+                if(locationExists){
+                    updateNavLinksWithLocation();
+                }
+                // --- END OF LOCATION SERVICES SCRIPT ---
+
+            });
+
+            // --- Language Functionality ---
+            async function setLanguage(lang, label, event) {
+                if (event) event.stopPropagation();
+                localStorage.setItem("language", lang);
+                document.getElementById("currentLang").innerText = label;
+                document.getElementById("languageMenu").style.display = "none";
+
+                const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, null, false);
+                const nodes = [];
+                while (walker.nextNode()) {
+                    const node = walker.currentNode;
+                    if (node.parentNode.nodeName === "SCRIPT" || node.parentNode.nodeName === "STYLE" || !node.nodeValue.trim()) continue;
+                    if (!node.originalText) node.originalText = node.nodeValue;
+                    nodes.push(node);
+                }
+
+                if (lang === 'en') {
+                    nodes.forEach(node => { if (node.originalText) node.nodeValue = node.originalText; });
+                    return;
+                }
+
+                const originals = nodes.map(n => n.originalText);
+                const apiKey = "AIzaSyB3ebJaiaYFyB30sGAx1PmfmgnDPFCajKk";
+                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
+                const textToTranslate = originals.join("|||");
+                const prompt = `Translate the following text parts into ${label}. The parts are separated by "|||". Maintain the "|||" separator in your output. Do not translate "24x7 Health" or "24x7 Health Service". If a part is a number or symbol, return it as is. \n\nTEXT: ${textToTranslate}`;
+                
+                document.body.style.opacity = '0.5';
+                document.body.style.pointerEvents = 'none';
+
+                try {
+                    const payload = {
+                        contents: [{ parts: [{ text: prompt }] }],
+                        safetySettings: [
+                            { category: "HARM_CATEGORY_HARASSMENT", threshold: "BLOCK_NONE" },
+                            { category: "HARM_CATEGORY_HATE_SPEECH", threshold: "BLOCK_NONE" },
+                            { category: "HARM_CATEGORY_SEXUALLY_EXPLICIT", threshold: "BLOCK_NONE" },
+                            { category: "HARM_CATEGORY_DANGEROUS_CONTENT", threshold: "BLOCK_NONE" },
+                        ]
+                    };
+                    const response = await fetch(apiUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+                    if (!response.ok) throw new Error(`API request failed: ${response.status}`);
+                    const result = await response.json();
+                    const translatedText = result?.candidates?.[0]?.content?.parts?.[0]?.text;
+
+                    if (translatedText) {
+                        const parts = translatedText.split("|||");
+                        nodes.forEach((node, i) => { node.nodeValue = (parts[i] || originals[i]).trim(); });
+                    } else {
+                    throw new Error("Invalid API response format");
+                    }
+                } catch (err) {
+                    console.error("Translation failed", err);
+                    nodes.forEach(node => { if (node.originalText) node.nodeValue = node.originalText; });
+                } finally {
+                    document.body.style.opacity = '1';
+                    document.body.style.pointerEvents = 'auto';
+                }
+            }
+
+            document.addEventListener("click", function(e) {
+                const menu = document.getElementById("languageMenu");
+                const tab = document.getElementById("languageTab");
+                if (menu && tab && !menu.contains(e.target) && !tab.contains(e.target)) {
+                    menu.style.display = "none";
+                }
+            });
+        </script>
+    <!-- Navbar Code Ends -->
+
+  <!-- NEW CONTENT WRAPPER -->
+  <div class="content-wrapper">
+      <!-- TWO-COLUMN WRAPPER -->
+      <div class="main-login-wrapper">
+        <!-- Left Info Panel -->
+        <div class="info-panel">
+            <h3>Unified Login </h3>
+            <p>This is the central login point for all 24x7 Healthcare services. Access patient records, doctor portals, and diagnostic center information securely.</p>
+            <h4>About 24x7 Healthcare</h4>
+            <p>24x7 Healthcare is dedicated to providing comprehensive and accessible medical services through innovative technology and a patient-first approach. Our integrated platform ensures seamless communication and care coordination.</p>
+        </div>
+
+        <!-- Right Login Form Wrapper -->
+        <div class="login-form-wrapper">
+          <div class="login-container">
+            <div class="logo">
+              <i class="fas fa-user-shield"></i>
+            </div>
+            <h2>Welcome Back</h2>
+            <form id="loginForm">
+              <div class="input-group">
+                <i class="fas fa-envelope"></i>
+                <input type="email" class="form-control" id="email" placeholder="Email" required>
+              </div>
+              
+              <div class="input-group">
+                <i class="fas fa-lock"></i>
+                <input type="password" class="form-control" id="password" placeholder="Password" required>
+                <i class="fas fa-eye password-toggle" id="togglePassword"></i>
+              </div>
+              
+              <button type="submit" class="btn btn-login" id="submitBtn">
+                Login
+                <span class="loader"></span>
+              </button>
+            </form>
+            
+            <p id="message"></p>
+            
+            <div class="forgot-password">
+              <a href="#" data-bs-toggle="modal" data-bs-target="#forgotPasswordModal">Forgot Password?</a>
+            </div>
+
+            <div class="text-center mt-3">
+              <p>Don't have an account? <a href="patient.html" class="text-primary">Create one</a></p>
+            </div>
+          </div>
+        </div>
+      </div>
+  </div>
+
+
+  <!-- Forgot Password Modal -->
+  <div class="modal fade" id="forgotPasswordModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Reset Password</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div id="reset-message" class="alert" style="display: none;"></div>
+          
+          <!-- Step 1: Enter Email -->
+          <div id="step1">
+            <div class="input-group mb-3">
+              <i class="fas fa-envelope"></i>
+              <input type="email" id="resetEmail" class="form-control" placeholder="Your Email Address">
+            </div>
+            <button id="sendOtpBtn" class="btn btn-login">
+              Send OTP
+              <span class="loader"></span>
+            </button>
+          </div>
+
+          <!-- Step 2: Verify OTP -->
+          <div id="step2" style="display: none;">
+            <div class="input-group mb-3">
+              <i class="fas fa-key"></i>
+              <input type="text" id="otp" class="form-control" placeholder="6-Digit OTP">
+            </div>
+            <button id="verifyOtpBtn" class="btn btn-login">
+              Verify OTP
+              <span class="loader"></span>
+            </button>
+          </div>
+
+          <!-- Step 3: Reset Password -->
+          <div id="step3" style="display: none;">
+            <div class="input-group mb-3">
+              <i class="fas fa-lock"></i>
+              <input type="password" id="newPassword" class="form-control" placeholder="New Password">
+              <i class="fas fa-eye password-toggle" id="toggleNewPassword"></i>
+            </div>
+            <button id="resetPasswordBtn" class="btn btn-login" style="background: var(--success);">
+              Reset Password
+              <span class="loader"></span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bootstrap JS Bundle with Popper -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+    // --- Standard Login Logic ---
+    document.getElementById("loginForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
+      const message = document.getElementById("message");
+      const submitBtn = document.getElementById("submitBtn");
+      
+      submitBtn.classList.add("btn-loading");
+      message.classList.remove("show");
+      message.className = '';
+
+      try {
+        const res = await fetch("/api/unified-login", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          credentials: "include",
+          body: JSON.stringify({ email, password })
+        });
+        const data = await res.json();
+
+        if (res.ok && data.success) {
+          message.classList.add('text-success', 'show');
+          message.textContent = "Login successful! Redirecting...";
+          
+          // Store necessary info in localStorage and redirect
+          if (data.role === "doctor") {
+            localStorage.setItem("doctorUid", data.user.uid);
+            localStorage.setItem("doctorName", data.user.first_name);
+            window.location.href = "doctorProfile.html";
+            } else if (data.role === "patient") {
+                // --- For Local Storage (Long-term memory) ---
+                // You can keep this if you need to remember the user ID for other parts of your site.
+                localStorage.setItem("userId", data.user.id);
+                // store patient unique id unique_id
+                localStorage.setItem("uniqueId", data.user.unique_id);
+                localStorage.setItem("fullName", `${data.user.first_name} ${data.user.last_name}`);
+
+                // --- For Session Storage (Required for the booking page) ---
+                // 1. Create the object the booking page is looking for.
+                const patientData = {
+                    id: data.user.id,
+                    uniqueId: data.user.unique_id,
+                    firstName: data.user.first_name,
+                    lastName: data.user.last_name,
+                    email: data.user.email,
+                    mobile: data.user.mobile
+                };
+
+                // 2. Store the object in sessionStorage.
+                sessionStorage.setItem('patientUser', JSON.stringify(patientData));
+
+                // 3. Redirect to the correct page.
+                window.location.href = 'index.html';
+        
+          } else if (data.role === "diagnostic") {
+            localStorage.removeItem("diagnosticId"); 
+            localStorage.removeItem("diagnosticCenterId"); 
+            localStorage.setItem("diagnosticCenterId", data.user.center_id);
+            localStorage.setItem("diagnosticName", data.user.center_name);
+            window.location.href = "diagnosticProfile.html";
+          }
+        } else {
+          message.classList.add('text-danger', 'show');
+          message.textContent = data.error || "Login failed";
+        }
+      } catch (err) {
+        console.error(err);
+        message.classList.add('text-danger', 'show');
+        message.textContent = "A network error occurred.";
+      } finally {
+        submitBtn.classList.remove("btn-loading");
+      }
+    });
+
+ 
+
+    // Toggle password visibility
+    const togglePassword = document.getElementById('togglePassword');
+    const password = document.getElementById('password');
+    
+    togglePassword.addEventListener('click', function() {
+      const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
+      password.setAttribute('type', type);
+      this.classList.toggle('fa-eye');
+      this.classList.toggle('fa-eye-slash');
+    });
+
+    // Toggle new password visibility in modal
+    const toggleNewPassword = document.getElementById('toggleNewPassword');
+    const newPassword = document.getElementById('newPassword');
+    
+    if (toggleNewPassword && newPassword) {
+      toggleNewPassword.addEventListener('click', function() {
+        const type = newPassword.getAttribute('type') === 'password' ? 'text' : 'password';
+        newPassword.setAttribute('type', type);
+        this.classList.toggle('fa-eye');
+        this.classList.toggle('fa-eye-slash');
+      });
+    }
+
+    // --- Forgot Password Logic ---
+    const resetMsg = document.getElementById('reset-message');
+    const sendOtpBtn = document.getElementById('sendOtpBtn');
+    const verifyOtpBtn = document.getElementById('verifyOtpBtn');
+    const resetPasswordBtn = document.getElementById('resetPasswordBtn');
+
+    let userEmailForReset = ''; // To store the email across steps
+
+    function showResetMessage(message, type) {
+      resetMsg.textContent = message;
+      resetMsg.className = `alert alert-${type}`;
+      resetMsg.style.display = 'block';
+    }
+
+    // Step 1: Send OTP
+    sendOtpBtn.addEventListener('click', async () => {
+      userEmailForReset = document.getElementById('resetEmail').value;
+      if (!userEmailForReset) return showResetMessage('Please enter an email.', 'danger');
+      
+      sendOtpBtn.classList.add('btn-loading');
+      showResetMessage('Sending OTP...', 'info');
+
+      try {
+        const res = await fetch('/api/unified-password/send-otp', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: userEmailForReset })
+        });
+        const data = await res.json();
+
+        if (res.ok) {
+          showResetMessage(data.message, 'success');
+          document.getElementById('step1').style.display = 'none';
+          document.getElementById('step2').style.display = 'block';
+        } else {
+          showResetMessage(data.error, 'danger');
+        }
+      } catch (err) {
+        showResetMessage('Failed to send OTP. Please try again.', 'danger');
+      } finally {
+        sendOtpBtn.classList.remove('btn-loading');
+      }
+    });
+
+    // Step 2: Verify OTP
+    verifyOtpBtn.addEventListener('click', async () => {
+      const otp = document.getElementById('otp').value;
+      if (!otp) return showResetMessage('Please enter the OTP.', 'danger');
+
+      verifyOtpBtn.classList.add('btn-loading');
+      showResetMessage('Verifying OTP...', 'info');
+
+      try {
+        const res = await fetch('/api/unified-password/verify-otp', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: userEmailForReset, otp })
+        });
+        const data = await res.json();
+        
+        if (res.ok) {
+          showResetMessage(data.message, 'success');
+          document.getElementById('step2').style.display = 'none';
+          document.getElementById('step3').style.display = 'block';
+        } else {
+          showResetMessage(data.error, 'danger');
+        }
+      } catch (err) {
+        showResetMessage('Failed to verify OTP. Please try again.', 'danger');
+      } finally {
+        verifyOtpBtn.classList.remove('btn-loading');
+      }
+    });
+
+    // Step 3: Reset Password
+    resetPasswordBtn.addEventListener('click', async () => {
+      const newPassword = document.getElementById('newPassword').value;
+      const otp = document.getElementById('otp').value;
+      if (!newPassword) return showResetMessage('Please enter a new password.', 'danger');
+
+      resetPasswordBtn.classList.add('btn-loading');
+      showResetMessage('Resetting password...', 'info');
+
+      try {
+        const res = await fetch('/api/unified-password/reset-password', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: userEmailForReset, otp, newPassword })
+        });
+        const data = await res.json();
+        
+        if (res.ok) {
+          showResetMessage(data.message, 'success');
+          setTimeout(() => {
+              const modal = bootstrap.Modal.getInstance(document.getElementById('forgotPasswordModal'));
+              modal.hide();
+              location.reload();
+          }, 2000);
+        } else {
+          showResetMessage(data.error, 'danger');
+        }
+      } catch (err) {
+        showResetMessage('Failed to reset password. Please try again.', 'danger');
+      } finally {
+        resetPasswordBtn.classList.remove('btn-loading');
+      }
+    });
+  </script>
+</body>
+</html>

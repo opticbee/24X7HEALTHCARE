@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Partner Registration | 24x7 HealthCare Services</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #e11d48; /* Healthcare Red */
+            --primary-hover: #be123c;
+            --secondary-color: #0f172a;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --bg-light: #f8fafc;
+            --white: #ffffff;
+            --border-color: #e2e8f0;
+            --success: #10b981;
+            --error: #ef4444;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-light);
+            color: var(--text-main);
+            line-height: 1.6;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+            position: relative;
+        }
+
+        /* Back Button */
+        .back-button {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: linear-gradient(135deg, #e11d48 0%, #be123c 100%);
+            color: white;
+            padding: 12px 20px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 16px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(225, 29, 72, 0.3);
+        }
+
+        .back-button:hover {
+            background: linear-gradient(135deg, #be123c 0%, #9d174d 100%);
+            transform: translateX(-5px);
+            box-shadow: 0 6px 20px rgba(225, 29, 72, 0.4);
+        }
+
+        .back-button i {
+            font-size: 18px;
+        }
+
+        .container {
+            background: var(--white);
+            max-width: 850px;
+            width: 100%;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header {
+            background: var(--secondary-color);
+            color: var(--white);
+            padding: 40px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 1.875rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            letter-spacing: -0.025em;
+        }
+
+        .header p {
+            color: #94a3b8;
+            font-size: 1rem;
+        }
+
+        .form-content {
+            padding: 40px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 24px;
+        }
+
+        @media (max-width: 640px) {
+            .grid {
+                grid-template-columns: 1fr;
+            }
+            .header {
+                padding: 30px 20px;
+            }
+            .form-content {
+                padding: 24px;
+            }
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .form-group.full-width {
+            grid-column: span 2;
+        }
+
+        @media (max-width: 640px) {
+            .form-group.full-width {
+                grid-column: span 1;
+            }
+        }
+
+        label {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--text-main);
+        }
+
+        label span {
+            color: var(--primary-color);
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 0.95rem;
+            transition: all 0.2s ease;
+            outline: none;
+            background-color: var(--white);
+        }
+
+        input:focus, select:focus, textarea:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(225, 29, 72, 0.1);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .btn-submit {
+            background-color: var(--primary-color);
+            color: var(--white);
+            padding: 14px 28px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+            margin-top: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn-submit:hover {
+            background-color: var(--primary-hover);
+        }
+
+        .btn-submit:disabled {
+            background-color: var(--text-muted);
+            cursor: not-allowed;
+        }
+
+        /* Message Box */
+        #messageBox {
+            display: none;
+            padding: 16px;
+            border-radius: 8px;
+            margin-bottom: 24px;
+            font-size: 0.95rem;
+            font-weight: 500;
+            text-align: center;
+        }
+
+        #messageBox.success {
+            display: block;
+            background-color: #ecfdf5;
+            color: var(--success);
+            border: 1px solid #a7f3d0;
+        }
+
+        #messageBox.error {
+            display: block;
+            background-color: #fef2f2;
+            color: var(--error);
+            border: 1px solid #fecaca;
+        }
+
+        /* Loader */
+        .loader {
+            width: 20px;
+            height: 20px;
+            border: 2px solid #FFF;
+            border-bottom-color: transparent;
+            border-radius: 50%;
+            display: none;
+            animation: rotation 1s linear infinite;
+        }
+
+        @keyframes rotation {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Back Button -->
+<a href="Ambulance.html" class="back-button">
+    <i class="fas fa-arrow-left"></i> Back
+</a>
+
+<div class="container">
+    <div class="header">
+        <h1>Ambulance Partner Registration</h1>
+        <p>Join the 24x7health network and save lives more efficiently.</p>
+    </div>
+
+    <div class="form-content">
+        <div id="messageBox"></div>
+
+        <form id="registrationForm">
+            <div class="grid">
+                <!-- Provider Name -->
+                <div class="form-group full-width">
+                    <label for="provider_name">Provider / Organization Name <span>*</span></label>
+                    <input type="text" id="provider_name" name="provider_name" placeholder="e.g. LifeGuard Ambulance Services" required>
+                </div>
+
+                <!-- Provider Type -->
+                <div class="form-group">
+                    <label for="provider_type">Provider Type <span>*</span></label>
+                    <select id="provider_type" name="provider_type" required>
+                        <option value="" disabled selected>Select type</option>
+                        <option value="Individual">Individual</option>
+                        <option value="Hospital">Hospital</option>
+                        <option value="Company">Company</option>
+                    </select>
+                </div>
+
+                <!-- GST Number -->
+                <div class="form-group">
+                    <label for="gst_number">GST Number (Optional)</label>
+                    <input type="text" id="gst_number" name="gst_number" placeholder="22AAAAA0000A1Z5">
+                </div>
+
+                <!-- Contact Person -->
+                <div class="form-group">
+                    <label for="contact_person">Contact Person Name <span>*</span></label>
+                    <input type="text" id="contact_person" name="contact_person" placeholder="Full Name" required>
+                </div>
+
+                <!-- Contact Phone -->
+                <div class="form-group">
+                    <label for="contact_phone">Contact Phone Number <span>*</span></label>
+                    <input type="tel" id="contact_phone" name="contact_phone" placeholder="10-digit mobile number" required pattern="[0-9]{10}">
+                </div>
+
+                <!-- Contact Email -->
+                <div class="form-group full-width">
+                    <label for="contact_email">Email Address <span>*</span></label>
+                    <input type="email" id="contact_email" name="contact_email" placeholder="email@example.com" required>
+                </div>
+
+                <!-- Address -->
+                <div class="form-group full-width">
+                    <label for="address">Full Address <span>*</span></label>
+                    <textarea id="address" name="address" placeholder="Building, Street, Area details..." required></textarea>
+                </div>
+
+                <!-- City -->
+                <div class="form-group">
+                    <label for="city">City</label>
+                    <input type="text" id="city" name="city" placeholder="City Name">
+                </div>
+
+                <!-- State -->
+                <div class="form-group">
+                    <label for="state">State</label>
+                    <input type="text" id="state" name="state" placeholder="State Name">
+                </div>
+            </div>
+
+            <button type="submit" class="btn-submit" id="submitBtn">
+                <span>Register as Partner</span>
+                <div class="loader" id="loader"></div>
+            </button>
+        </form>
+    </div>
+</div>
+
+<script>
+    const form = document.getElementById('registrationForm');
+    const submitBtn = document.getElementById('submitBtn');
+    const loader = document.getElementById('loader');
+    const messageBox = document.getElementById('messageBox');
+
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        // Reset state
+        messageBox.className = '';
+        messageBox.innerText = '';
+        submitBtn.disabled = true;
+        loader.style.display = 'inline-block';
+
+        // Collect Form Data
+        const formData = {
+            provider_name: form.provider_name.value,
+            provider_type: form.provider_type.value,
+            contact_person: form.contact_person.value,
+            contact_phone: form.contact_phone.value,
+            contact_email: form.contact_email.value,
+            address: form.address.value,
+            city: form.city.value,
+            state: form.state.value,
+            gst_number: form.gst_number.value
+        };
+
+        try {
+            // Updated Endpoint as per your request
+            const response = await fetch('https://www.24x7health.in/api/providers/register', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(formData)
+            });
+
+            const result = await response.json();
+
+            if (response.ok) {
+                messageBox.classList.add('success');
+                messageBox.innerHTML = `Success! Registration complete.<br><small>Provider ID: ${result.provider_uid || 'N/A'}</small>`;
+                form.reset();
+            } else {
+                messageBox.classList.add('error');
+                messageBox.innerText = result.error || 'Something went wrong. Please try again.';
+            }
+        } catch (error) {
+            console.error('Fetch Error:', error);
+            messageBox.classList.add('error');
+            messageBox.innerText = 'Unable to connect to the server. Please check your internet.';
+        } finally {
+            submitBtn.disabled = false;
+            loader.style.display = 'none';
+            // Scroll to message
+            messageBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+    });
+</script>
+
+</body>
+</html>

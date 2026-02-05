@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Patient Login Page</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" href="images/favicon.ico" type="image/x-icon">
+    <style>
+        /* Basic styles for the login form to make it look good */
+        body {
+            overflow-x: hidden;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f0f2f5;
+        }
+        .login-page-wrapper {
+            min-height: 100vh; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            background: url('https://img.freepik.com/free-photo/abstract-modern-blue-flowing-lines_1048-14309.jpg') no-repeat center center / cover;
+        }
+        .login-form-container {
+            background: rgba(255, 255, 255, 0.1); 
+            backdrop-filter: blur(12px); 
+            padding: 40px 30px; 
+            border-radius: 16px; 
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25); 
+            width: 90%; 
+            max-width: 400px; 
+            text-align: center; 
+            color: white;
+        }
+        .login-form-container h2 {
+            margin-bottom: 25px; 
+            font-size: 28px; 
+            font-weight: 600;
+        }
+        .login-form-container label {
+            font-weight: 600;
+            text-align: left;
+            display: block;
+            margin-bottom: 5px;
+        }
+        .login-form-container input {
+            width: 100%; 
+            padding: 14px; 
+            margin-bottom: 15px; 
+            border: none; 
+            border-radius: 8px; 
+            background-color: rgba(255,255,255,0.9); 
+            color: #333; 
+            font-size: 15px; 
+            outline: none;
+            box-sizing: border-box;
+        }
+        .login-form-container button {
+            width: 100%; 
+            padding: 12px; 
+            background: #007BFF; 
+            border: none; 
+            color: white; 
+            font-size: 16px; 
+            font-weight: 500; 
+            border-radius: 8px; 
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .login-form-container button:hover {
+            background: #0056b3;
+        }
+        .login-form-container button:disabled {
+            background: #999;
+            cursor: not-allowed;
+        }
+        .login-form-container #message {
+            margin-top: 15px; 
+            font-size: 14px;
+        }
+        .login-form-container .links p {
+            margin-top: 20px; 
+            font-size: 14px;
+        }
+        .login-form-container .links a {
+            color: #fff; 
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+
+<!-- Full page wrapper for login -->
+<div class="login-page-wrapper">
+    <div class="login-form-container">
+      <h2>Patient Login</h2>
+      <form id="loginForm">
+        <label for="username">Email:</label>
+        <input type="email" id="username" placeholder="Enter your email" required>
+        
+        <label for="password">Password:</label>
+        <input type="password" id="password" placeholder="Password" required>
+        
+        <button type="submit" id="loginButton">Login</button>
+      </form>
+      <p id="message"></p>
+      <div class="links">
+        <p>Don't have an account? 
+          <a href="patient.html">Register</a>
+        </p>
+        <p>
+          <a href="forgot-password.html">Forgot Password?</a>
+        </p>
+      </div>
+    </div>
+</div>
+
+<script>
+  document.getElementById("loginForm").addEventListener("submit", async function(event) {
+    event.preventDefault();
+
+    const username = document.getElementById("username").value.trim();
+    const password = document.getElementById("password").value.trim();
+    const message = document.getElementById("message");
+    const loginButton = document.getElementById("loginButton");
+
+    // Disable form and show loading state
+    loginButton.disabled = true;
+    loginButton.textContent = "Logging In...";
+    message.textContent = "";
+
+    try {
+      const response = await fetch("https://www.24x7health.in/api/patientlogin", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include", // Important for session cookies
+        body: JSON.stringify({ username, password })
+      });
+
+      const result = await response.json();
+      console.log("🔍 Login API Response:", result);
+
+      if (response.ok) {
+        localStorage.setItem("userId", result.userId);
+        localStorage.setItem("firstName", result.firstName);
+        localStorage.setItem("fullName", result.fullName || (result.firstName + " " + result.lastName));
+
+        console.log("✅ Stored in localStorage:", {
+          userId: result.userId,
+          firstName: result.firstName,
+          fullName: result.fullName
+        });
+
+        message.style.color = "lightgreen";
+        message.textContent = "Login successful! Redirecting...";
+        window.location.href = "patientProfile.html";
+      } else {
+        // Display the specific error from the server (e.g., "Another user is logged in.")
+        message.style.color = "pink";
+        message.textContent = result.error || "Invalid username or password.";
+        loginButton.disabled = false;
+        loginButton.textContent = "Login";
+      }
+    } catch (error) {
+      console.error("Login error:", error);
+      message.style.color = "pink";
+      message.textContent = "Something went wrong. Please try again later.";
+      loginButton.disabled = false;
+      loginButton.textContent = "Login";
+    }
+  });
+</script>
+
+</body>
+</html>

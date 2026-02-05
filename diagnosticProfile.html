@@ -1,0 +1,1289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Diagnostic Center Dashboard | 24x7 Health Services</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body { background-color: #f8f9fa; }
+    .dashboard-container { 
+      display: flex; 
+      max-width: 90%; 
+      margin: 20px auto; 
+      background: white; 
+      border-radius: 10px; 
+      box-shadow: 0 0 15px rgba(0,0,0,0.1); 
+      min-height: 80vh;
+    }
+    .sidebar { 
+      width: 250px; 
+      padding: 20px; 
+      border-right: 1px solid #eee; 
+      background: #f8f9fa;
+    }
+    .main-content { 
+      flex: 1; 
+      padding: 30px; 
+    }
+    .nav-btn { 
+      width: 100%; 
+      text-align: left; 
+      margin-bottom: 10px; 
+      padding: 10px 15px;
+    }
+    .nav-btn.active { 
+      background-color: #0d6efd; 
+      color: white;
+    }
+    .profile-container { 
+      max-width: 900px; 
+      margin: 0 auto;
+    }
+    .form-label { font-weight: 500; }
+    .form-control, .form-select { margin-bottom: 15px; }
+    .services-tag { display: inline-block; background: #e9ecef; padding: 3px 8px; margin: 2px; border-radius: 3px; }
+    .section-title { margin-top: 25px; margin-bottom: 15px; padding-bottom: 8px; border-bottom: 1px solid #eee; color: #0d6efd; }
+    .appointments-table { width: 100%; overflow-x: auto; }
+    .test-image-preview { max-width: 100px; max-height: 100px; margin-top: 10px; display: none; }
+  </style>
+</head>
+<body>
+<nav class="main-nav">
+  <!-- Logo and Brand Name -->
+  <div class="nav-brand">
+    <img src="img/24x7health-logo.png" alt="24x7 Health Services Logo" class="nav-logo">
+    <span class="brand-name">24x7 Health Services</span>
+  </div>
+
+  <!-- Marquee Announcement -->
+  <div class="announcement-bar">
+    <div class="marquee-container">
+      <div class="marquee-content">
+        <span class="announcement-icon">📢</span>
+        <span class="announcement-text">Welcome to 24x7 Health Services – Your trusted partner for diagnostic services, medical checkups, and more! Book your appointment today at +91-99087 93602</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Navigation Controls -->
+  <div class="nav-controls">
+    <!-- Date and Time -->
+    <div class="datetime-container">
+      <span class="date" id="current-date"></span>
+      <span class="time" id="current-time"></span>
+    </div>
+    
+    <!-- Notification and Messages -->
+    <div class="nav-icons">
+      <button class="icon-btn notification-btn" aria-label="Notifications">
+        <span class="icon">🔔</span>
+        <span class="badge">3</span>
+      </button>
+      <button class="icon-btn message-btn" aria-label="Messages">
+        <span class="icon">✉️</span>
+        <span class="badge">1</span>
+      </button>
+    </div>
+  </div>
+</nav>
+
+<style>
+  /* Base Styles */
+  .main-nav {
+    width: 100%;
+    height: 70px;
+    background: linear-gradient(135deg, #007bff 0%, #0062cc 100%);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 25px;
+    font-family: 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    position: relative;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+  }
+
+  /* Brand Section */
+  .nav-brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 220px;
+  }
+
+  .nav-logo {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+  }
+
+  .brand-name {
+    font-size: 1.2rem;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+  }
+
+  /* Announcement Marquee */
+  .announcement-bar {
+    flex: 1;
+    margin: 0 30px;
+    overflow: hidden;
+    position: relative;
+    height: 100%;
+    display: flex;
+    align-items: center;
+  }
+
+  .marquee-container {
+    width: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+  }
+
+  .marquee-content {
+    display: inline-block;
+    padding-left: 100%;
+    animation: marquee 20s linear infinite;
+  }
+
+  .announcement-icon {
+    margin-right: 10px;
+    font-size: 1.1rem;
+  }
+
+  .announcement-text {
+    font-size: 0.9rem;
+    opacity: 0.9;
+  }
+
+  @keyframes marquee {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-100%); }
+  }
+
+  /* Navigation Controls */
+  .nav-controls {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    min-width: 300px;
+    justify-content: flex-end;
+  }
+
+  .datetime-container {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    font-size: 0.8rem;
+  }
+
+  .date {
+    opacity: 0.8;
+  }
+
+  .time {
+    font-weight: 600;
+    font-size: 0.9rem;
+  }
+
+  /* Icons */
+  .nav-icons {
+    display: flex;
+    gap: 15px;
+  }
+
+  .icon-btn {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 1.2rem;
+    position: relative;
+    cursor: pointer;
+    padding: 5px;
+    border-radius: 50%;
+    transition: all 0.2s ease;
+  }
+
+  .icon-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+    transform: scale(1.1);
+  }
+
+  .badge {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    background: #ff4757;
+    color: white;
+    border-radius: 50%;
+    width: 18px;
+    height: 18px;
+    font-size: 0.6rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+  }
+
+  /* User Profile */
+  .user-profile {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    padding: 5px 10px;
+    border-radius: 20px;
+    transition: all 0.2s ease;
+  }
+
+  .user-profile:hover {
+    background: rgba(255, 255, 255, 0.1);
+  }
+
+  .profile-img {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+  }
+
+  .username {
+    font-size: 0.9rem;
+    font-weight: 500;
+  }
+
+  /* Dropdown Menu */
+  .dropdown-menu {
+    position: absolute;
+    top: 70px;
+    right: 20px;
+    background: white;
+    border-radius: 5px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    width: 180px;
+    overflow: hidden;
+    display: none;
+    z-index: 1001;
+  }
+
+  .dropdown-menu a {
+    display: block;
+    padding: 10px 15px;
+    color: #333;
+    text-decoration: none;
+    transition: all 0.2s ease;
+  }
+
+  .dropdown-menu a:hover {
+    background: #f8f9fa;
+    color: #007bff;
+  }
+
+  /* Responsive Adjustments */
+  @media (max-width: 992px) {
+    .announcement-bar {
+      display: none;
+    }
+    
+    .nav-controls {
+      min-width: auto;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .main-nav {
+      padding: 0 15px;
+    }
+    
+    .brand-name {
+      display: none;
+    }
+    
+    .username {
+      display: none;
+    }
+  }
+</style>
+
+<script>
+  // Enhanced Time and Date Display
+  function updateDateTime() {
+    const now = new Date();
+    
+    // Format date
+    const options = { weekday: 'short', month: 'short', day: 'numeric' };
+    document.getElementById('current-date').textContent = now.toLocaleDateString(undefined, options);
+    
+    // Format time
+    document.getElementById('current-time').textContent = now.toLocaleTimeString(undefined, {
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: true
+    });
+  }
+  
+  // Update immediately and then every second
+  updateDateTime();
+  setInterval(updateDateTime, 1000);
+  
+  // Dropdown functionality
+  const userProfile = document.querySelector('.user-profile');
+  const dropdownMenu = document.querySelector('.dropdown-menu');
+  
+  if (userProfile && dropdownMenu) {
+      userProfile.addEventListener('click', () => {
+        dropdownMenu.style.display = dropdownMenu.style.display === 'block' ? 'none' : 'block';
+      });
+  }
+  
+  // Close dropdown when clicking outside
+  document.addEventListener('click', (e) => {
+    if (userProfile && dropdownMenu && !userProfile.contains(e.target) && !dropdownMenu.contains(e.target)) {
+      dropdownMenu.style.display = 'none';
+    }
+  });
+  
+  // Notification and message buttons could have click handlers here
+  document.querySelector('.notification-btn').addEventListener('click', () => {
+    alert('You have 3 new notifications');
+  });
+  
+  document.querySelector('.message-btn').addEventListener('click', () => {
+    alert('You have 1 new message');
+  });
+</script>
+
+  <div class="dashboard-container">
+    <!-- Left Sidebar -->
+    <div class="sidebar">
+      <h4 class="text-center mb-4">DashBoard</h4>
+      <div class="text-center mb-4">
+        <!-- FIXED: Default image path -->
+        <img id="profileImageSidebar" src="https://placehold.co/100x100/EFEFEF/AAAAAA&text=No+Image" class="rounded-circle mb-2" style="width:100px;height:100px;object-fit:cover;">
+        <h5 id="sidebarCenterName"></h5>
+      </div>
+
+      <button class="btn btn-outline-primary nav-btn active" id="homeBtn">
+        <i class="bi bi-house"></i> Home
+      </button>
+      <button class="btn btn-outline-primary nav-btn" id="appointmentsBtn">
+        <i class="bi bi-calendar-check"></i> Appointments
+      </button>
+      <button class="btn btn-outline-primary nav-btn" id="addTestsBtn">
+        <i class="bi bi-plus-circle"></i> Add Tests
+      </button>
+      <button class="btn btn-outline-primary nav-btn" id="sendReportsBtn">
+        <i class="bi bi-upload"></i> Send Reports
+      </button>
+      <button class="btn btn-outline-primary nav-btn" id="ourTestsBtn">
+        <i class="bi bi-list-check"></i> Our Tests
+      </button>
+      <button class="btn btn-outline-primary nav-btn" id="profileBtn">
+        <i class="bi bi-person"></i> Profile
+      </button>
+      <button class="btn btn-outline-danger nav-btn" id="logoutBtn">
+        <i class="bi bi-box-arrow-right"></i> Logout
+      </button>
+    </div>
+
+    <!-- Main Content Area -->
+    <div class="main-content">
+      <!-- Home Content (Default) -->
+      <div id="homeContent">
+        <h2>Welcome to 24x7 Health Services Diagnostic Services</h2>
+        <p class="text-muted">Select an option from the sidebar to manage your center.</p>
+        <div class="mt-4">
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">Quick Stats</h5>
+              <div class="row">
+                <div class="col-md-4">
+                  <div class="card text-white bg-primary mb-3">
+                    <div class="card-body">
+                      <h6 class="card-title">Today's Appointments</h6>
+                      <h2 class="card-text" id="todayAppointments">0</h2>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <div class="card text-white bg-success mb-3">
+                    <div class="card-body">
+                      <h6 class="card-title">Completed Tests</h6>
+                      <h2 class="card-text" id="completedTests">0</h2>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <div class="card text-white bg-warning mb-3">
+                    <div class="card-body">
+                      <h6 class="card-title">Pending Payments</h6>
+                      <h2 class="card-text" id="pendingPayments">0</h2>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Appointments Content -->
+      <div id="appointmentsContent" style="display: none;">
+        <h2>Appointments</h2>
+        <div class="mb-3">
+          <label for="appointmentDateFilter" class="form-label">Filter by Date:</label>
+          <input type="date" class="form-control" id="appointmentDateFilter" style="width: 200px;">
+        </div>
+        <div class="appointments-table">
+          <table class="table table-striped">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Patient</th>
+                <th>Patient ID</th>
+                <th>Collection Type</th>
+                <th>Email</th>
+                <th>Mobile</th>
+                <th>Test</th>
+                <th>Date</th>
+                <th>Amount</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody id="appointmentsTableBody">
+              <!-- Appointments will be loaded here -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Add Tests Content -->
+      <div id="addTestsContent" style="display: none;">
+        <h2 class="mb-4">Add New Diagnostic Test</h2>
+        <form id="addTestForm" enctype="multipart/form-data">
+          
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label class="form-label">Test Name</label>
+              <input type="text" class="form-control" name="test_name" required>
+            </div>
+            <div class="col-md-6 mb-3">
+              <label class="form-label">Test Code</label>
+              <input type="text" class="form-control" name="test_code">
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label class="form-label">Category</label>
+              <input type="text" class="form-control" name="category" required>
+            </div>
+            <div class="col-md-6 mb-3">
+              <label class="form-label">Sample Required</label>
+              <input type="text" class="form-control" name="sample_required" required placeholder="e.g., Blood, Urine">
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Description</label>
+            <textarea class="form-control" name="description" rows="3" required></textarea>
+          </div>
+
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label class="form-label">Pre-test Instructions</label>
+              <input type="text" class="form-control" name="pre_test_instructions" placeholder="e.g., Fasting for 12 hours">
+            </div>
+            <div class="col-md-3 mb-3">
+              <label class="form-label">Test Duration</label>
+              <input type="text" class="form-control" name="test_duration" placeholder="e.g., Same day, 24 hrs">
+            </div>
+            <div class="col-md-3 mb-3">
+              <label class="form-label">Report Time</label>
+              <input type="text" class="form-control" name="report_time" placeholder="e.g., Within 1 day">
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-3 mb-3">
+              <label class="form-label">Price (₹)</label>
+              <input type="number" class="form-control" name="price" required>
+            </div>
+            <div class="col-md-3 mb-3">
+              <label class="form-label">Discount (%)</label>
+              <input type="number" class="form-control" name="discount" value="0">
+            </div>
+            <div class="col-md-3 mb-3">
+              <label class="form-label">Final Price (₹)</label>
+              <input type="number" class="form-control" name="final_price" required>
+            </div>
+            <div class="col-md-3 mb-3">
+              <label class="form-label">Available From</label>
+              <input type="date" class="form-control" name="available_from" required>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label class="form-label">Center Name / ID</label>
+              <input type="text" class="form-control" name="center_id" required>
+            </div>
+            <div class="col-md-6 mb-3">
+              <label class="form-label">Status</label>
+              <select class="form-select" name="status">
+                <option value="Active">Active</option>
+                <option value="Inactive">Inactive</option>
+                <option value="Upcoming">Upcoming</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label class="form-label">Tags / Keywords</label>
+              <input type="text" class="form-control" name="tags" placeholder="e.g., diabetes, sugar, fasting">
+            </div>
+            <div class="col-md-6 mb-3">
+              <label class="form-label">Home Collection Available?</label>
+              <select class="form-select" name="home_collection">
+                <option value="Yes">Yes</option>
+                <option value="No">No</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Test Image</label>
+            <input type="file" class="form-control" name="test_image" id="testImage" accept="image/*">
+            <img id="testImagePreview" class="mt-2" style="max-width: 200px; display: none;">
+          </div>
+
+          <div class="text-center mt-4">
+            <button type="submit" class="btn btn-primary px-5">Add Test</button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Our Tests Content -->
+      <div id="ourTestsContent" style="display: none;">
+        <h2>Our Test List</h2>
+        <div class="mb-3">
+          <label for="testSearch" class="form-label">Search Tests:</label>
+          <input type="text" class="form-control" id="testSearch" placeholder="Search by test name, code or category" style="width: 300px;">
+        </div>
+        <div class="table-responsive">
+          <table class="table table-bordered table-hover">
+            <thead class="table-primary">
+              <tr>
+                <th>Test Code</th>
+                <th>Test Name</th>
+                <th>Category</th>
+                <th>Sample Type</th>
+                <th>Price (₹)</th>
+                <th>Discount (%)</th>
+                <th>Final Price (₹)</th>
+                <th>Status</th>
+                <th>Home Collection</th>
+              
+              </tr>
+            </thead>
+            <tbody id="ourTestsTableBody">
+              <!-- Tests will be populated here -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Send Reports Content -->
+      <div id="sendReportsContent" style="display: none;">
+        <h2>Send Report to Patient</h2>
+        <form id="sendReportForm" enctype="multipart/form-data">
+          <div class="mb-3">
+            <label for="patientEmail" class="form-label">Patient Email</label>
+            <input type="email" class="form-control" id="patientEmail" name="email" required>
+          </div>
+          <div class="mb-3">
+            <label for="reportMessage" class="form-label">Message</label>
+            <textarea class="form-control" id="reportMessage" name="message" rows="3" required></textarea>
+          </div>
+          <div class="mb-3">
+            <label for="reportFile" class="form-label">Select Report File (PDF)</label>
+            <input type="file" class="form-control" id="reportFile" name="file" accept=".pdf" required>
+          </div>
+          <button type="submit" class="btn btn-primary">Send Report</button>
+        </form>
+      </div>
+
+
+      <!-- Profile Content -->
+      <div id="profileContent" style="display: none;">
+        <div class="profile-container">
+          <div id="messageAlert" class="alert" style="display: none;"></div>
+          
+          <form id="profileForm" enctype="multipart/form-data">
+            <!-- Basic Information Section -->
+            <h5 class="section-title">Basic Information</h5>
+
+            <div class="text-center mb-4">
+              <!-- FIXED: Default image path -->
+              <img id="profileImagePreview" src="https://placehold.co/150x150/EFEFEF/AAAAAA&text=No+Image" class="rounded-circle mb-3" style="width:150px;height:150px;object-fit:cover;border: 3px solid #eee;">
+              <div class="mb-3">
+                  <label for="profileImageUpload" class="form-label">Update Profile Image</label>
+                  <input type="file" class="form-control" name="profile_image" id="profileImageUpload" accept="image/*" style="display: none;">
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-md-6">
+                <label class="form-label">Center Name</label>
+                <input type="text" class="form-control" name="center_name" id="centerName" readonly>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Owner Name</label>
+                <input type="text" class="form-control" name="owner_name" id="ownerName" readonly>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-6">
+                <label class="form-label">Center Type</label>
+                <input type="text" class="form-control" name="center_type" id="centerType" readonly>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Email</label>
+                <input type="email" class="form-control" name="email" id="email" readonly>
+              </div>
+            </div>
+            
+            <!-- Contact Information Section -->
+            <h5 class="section-title">Contact Information</h5>
+            <div class="row">
+              <div class="col-md-6">
+                <label class="form-label">Phone</label>
+                <input type="text" class="form-control" name="phone" id="phone" readonly>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Alternate Phone</label>
+                <input type="text" class="form-control" name="alt_phone" id="altPhone" readonly>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-6">
+                <label class="form-label">WhatsApp Number</label>
+                <input type="text" class="form-control" name="whatsapp" id="whatsapp" readonly>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Home Sample Collection</label>
+                <select class="form-select" name="home_sample" id="homeSample" disabled>
+                  <option value="Yes">Yes</option>
+                  <option value="No">No</option>
+                </select>
+              </div>
+            </div>
+            
+            <!-- Address Information Section -->
+            <h5 class="section-title">Address Information</h5>
+            <div class="row">
+              <div class="col-md-12">
+                <label class="form-label">Address</label>
+                <textarea class="form-control" name="address" id="address" rows="2" readonly></textarea>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-4">
+                <label class="form-label">City</label>
+                <input type="text" class="form-control" name="city" id="city" readonly>
+              </div>
+              <div class="col-md-4">
+                <label class="form-label">State</label>
+                <input type="text" class="form-control" name="state" id="state" readonly>
+              </div>
+              <div class="col-md-4">
+                <label class="form-label">Pincode</label>
+                <input type="text" class="form-control" name="pincode" id="pincode" readonly>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-12">
+                <label class="form-label">Map URL</label>
+                <input type="text" class="form-control" name="map_url" id="mapUrl" readonly>
+              </div>
+            </div>
+            
+            <!-- Operational Information Section -->
+            <h5 class="section-title">Operational Information</h5>
+            <div class="row">
+              <div class="col-md-6">
+                <label class="form-label">Opening Time</label>
+                <input type="time" class="form-control" name="fromTime" id="fromTime" readonly>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Closing Time</label>
+                <input type="time" class="form-control" name="toTime" id="toTime" readonly>
+              </div>
+            </div>
+            
+            <!-- Services Section -->
+            <h5 class="section-title">Services Offered</h5>
+            <div class="row">
+              <div class="col-md-12">
+                <div id="servicesDisplay"></div>
+                <textarea class="form-control" name="services" id="servicesInput" rows="3" style="display: none;" placeholder="Enter services separated by commas"></textarea>
+                <small class="text-muted" id="servicesHelp" style="display: none;">Separate services with commas</small>
+              </div>
+            </div>
+            
+            <!-- Registration Information Section -->
+            <h5 class="section-title">Registration Information</h5>
+            <div class="row">
+              <div class="col-md-6">
+                <label class="form-label">Registration Number</label>
+                <input type="text" class="form-control" name="registration_number" id="registrationNumber" readonly>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">GST Number</label>
+                <input type="text" class="form-control" name="gst_number" id="gstNumber" readonly>
+              </div>
+            </div>
+            
+            <!-- Bank Information Section -->
+            <h5 class="section-title">Bank Information</h5>
+            <div class="row">
+              <div class="col-md-6">
+                <label class="form-label">Account Holder Name</label>
+                <input type="text" class="form-control" name="account_holder_name" id="accountHolderName" readonly>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Bank Name</label>
+                <input type="text" class="form-control" name="bank_name" id="bankName" readonly>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-6">
+                <label class="form-label">Account Number</label>
+                <input type="text" class="form-control" name="account_number" id="accountNumber" readonly>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">IFSC Code</label>
+                <input type="text" class="form-control" name="ifsc_code" id="ifscCode" readonly>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-6">
+                <label class="form-label">UPI ID</label>
+                <input type="text" class="form-control" name="upi_id" id="upiId" readonly>
+              </div>
+            </div>
+            
+            <div class="text-center mt-4">
+              <button type="button" class="btn btn-primary" id="editBtn">Edit Profile</button>
+              <button type="submit" class="btn btn-success" id="saveBtn" style="display: none;">Save Changes</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    const API_BASE = "/api";
+    let originalData = {};
+    
+    // =================================================================
+    // ✅ FIXED: Use the correct ID for all operations.
+    // =================================================================
+    document.addEventListener('DOMContentLoaded', async function() {
+      try {
+        // Use the alphanumeric 'diagnosticCenterId' as requested.
+        const diagnosticCenterId = localStorage.getItem('diagnosticCenterId');
+        if (!diagnosticCenterId) {
+          console.error("Diagnostic Center ID not found in storage. Redirecting to login.");
+          logout();
+          return;
+        }
+
+        const res = await fetch(`${API_BASE}/session/status`);
+        if (!res.ok) {
+          logout();
+          return;
+        }
+        const sessionData = await res.json();
+
+        if (sessionData.isAuthenticated && sessionData.me?.type === 'diagnostic') {
+          // Pass the correct alphanumeric ID to initialize the page.
+          initializePage(diagnosticCenterId);
+        } else {
+          console.error("Session is not authenticated or not for a diagnostic user.");
+          logout();
+        }
+      } catch (error) {
+        console.error("Session check failed:", error);
+        logout();
+      }
+    });
+
+    function initializePage(centerId) {
+      document.getElementById('homeBtn').addEventListener('click', () => showContent('home'));
+      document.getElementById('appointmentsBtn').addEventListener('click', () => {
+        showContent('appointments');
+        loadAppointments();
+      });
+      document.getElementById('ourTestsBtn').addEventListener('click', () => {
+        showContent('ourTests');
+        loadOurTests();
+      });
+      document.getElementById('sendReportsBtn').addEventListener('click', () => {
+        showContent('sendReports');
+      });
+      document.getElementById('addTestsBtn').addEventListener('click', () => showContent('addTests'));
+      document.getElementById('profileBtn').addEventListener('click', () => {
+        showContent('profile');
+        // Pass the correct centerId to the profile fetch function.
+        fetchUserProfile(centerId);
+      });
+      document.getElementById('logoutBtn').addEventListener('click', logout);
+      
+      document.getElementById('editBtn').addEventListener('click', enableEditing);
+      document.getElementById('profileForm').addEventListener('submit', saveProfile);
+      
+      document.getElementById('profileImageUpload').addEventListener('change', previewImage);
+
+      document.getElementById('testImage').addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (file) {
+          const reader = new FileReader();
+          reader.onload = function(event) {
+            const preview = document.getElementById('testImagePreview');
+            preview.src = event.target.result;
+            preview.style.display = 'block';
+          };
+          reader.readAsDataURL(file);
+        }
+      });
+      
+      document.getElementById('addTestForm').addEventListener('submit', addNewTest);
+      
+      showContent('home');
+      loadDashboardStats();
+    }
+
+    function previewImage(event) {
+        if (event.target.files && event.target.files[0]) {
+            const reader = new FileReader();
+            const imageField = document.getElementById('profileImagePreview');
+            reader.onload = function(e){
+                imageField.src = e.target.result;
+            }
+            reader.readAsDataURL(event.target.files[0]);
+        }
+    }
+    
+    function showContent(contentName) {
+      const sections = ['home', 'appointments', 'addTests', 'profile', 'ourTests', 'sendReports'];
+      sections.forEach(name => {
+        document.getElementById(`${name}Content`).style.display = 'none';
+      });
+
+      document.getElementById(`${contentName}Content`).style.display = 'block';
+
+      document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
+      document.getElementById(`${contentName}Btn`).classList.add('active');
+    }
+
+    function loadDashboardStats() {
+      const centerId = localStorage.getItem('diagnosticCenterId');
+      if (!centerId) {
+        console.error("Center ID not found in localStorage for loading stats.");
+        return;
+      }
+
+      fetch(`${API_BASE}/diagnostics/${centerId}/stats`)
+        .then(response => response.json())
+        .then(data => {
+          if (data.success && data.stats) {
+            document.getElementById('todayAppointments').textContent = data.stats.todayAppointments || '0';
+            document.getElementById('completedTests').textContent = data.stats.completedTests || '0';
+            document.getElementById('pendingPayments').textContent = data.stats.pendingPayments || '0';
+          } else {
+            console.error("Failed to load dashboard stats:", data.error || 'Unknown error');
+            document.getElementById('todayAppointments').textContent = 'N/A';
+            document.getElementById('completedTests').textContent = 'N/A';
+            document.getElementById('pendingPayments').textContent = 'N/A';
+          }
+        })
+        .catch(err => {
+          console.error("Error fetching dashboard stats:", err);
+          document.getElementById('todayAppointments').textContent = 'N/A';
+          document.getElementById('completedTests').textContent = 'N/A';
+          document.getElementById('pendingPayments').textContent = 'N/A';
+        });
+    }
+    
+    function loadAppointments() {
+      const centerId = localStorage.getItem('diagnosticCenterId');
+      if (!centerId) {
+        console.error("Center ID not found in localStorage.");
+        return;
+      }
+
+      const dateFilter = document.getElementById('appointmentDateFilter').value;
+      let url = `${API_BASE}/diagnostics/${centerId}/appointments`;
+      if (dateFilter) url += `?date=${dateFilter}`;
+
+      fetch(url, { credentials: 'include' })
+        .then(response => response.json())
+        .then(data => {
+          const tableBody = document.getElementById('appointmentsTableBody');
+          tableBody.innerHTML = '';
+          if (data.success && data.appointments.length > 0) {
+            data.appointments.forEach(app => {
+              const row = document.createElement('tr');
+              row.innerHTML = `
+                <td>${app.id}</td>
+                <td>${app.patient_name}</td>
+                <td>${app.patient_email || 'N/A'}</td>
+                <td>${app.patient_mobile}</td>
+                <td>${app.patient_id || 'N/A'}</td>
+                <td>${app.collection_type || 'center'}</td>
+                <td>${app.test_name}</td>
+                <td>${new Date(app.test_date).toLocaleDateString()}</td>
+                <td>₹${app.amount}</td>
+                <td>Booked</td>
+              `;
+              tableBody.appendChild(row);
+            });
+          } else {
+            tableBody.innerHTML = `<tr><td colspan="8" class="text-center">No appointments found</td></tr>`;
+          }
+        })
+        .catch(err => {
+          console.error("Error loading appointments:", err);
+          document.getElementById('appointmentsTableBody').innerHTML = `<tr><td colspan="8" class="text-center">Failed to load appointments.</td></tr>`;
+        });
+    }
+
+    function addNewTest(e) {
+        e.preventDefault();
+        const form = e.target;
+        const formData = new FormData(form);
+        const diagnosticId = localStorage.getItem('diagnosticId'); // This might be needed for other purposes
+
+        document.querySelector("input[name='price']").addEventListener("input", calculateFinalPrice);
+        document.querySelector("input[name='discount']").addEventListener("input", calculateFinalPrice);
+
+        function calculateFinalPrice() {
+          const price = parseFloat(document.querySelector("input[name='price']").value) || 0;
+          const discount = parseFloat(document.querySelector("input[name='discount']").value) || 0;
+          const finalPrice = price - (price * discount / 100);
+          document.querySelector("input[name='final_price']").value = finalPrice.toFixed(2);
+        }
+
+        if (diagnosticId) {
+          formData.append('diagnostic_id', diagnosticId);
+        }
+
+        fetch(`${API_BASE}/test/register`, {
+          method: 'POST',
+          body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+          if (data.success) {
+            showMessage('✅ Test added successfully!', 'success');
+            form.reset();
+            document.getElementById('testImagePreview').style.display = 'none';
+          } else {
+            showMessage('❌ Failed to add test: ' + (data.error || 'Unknown error'), 'danger');
+          }
+        })
+        .catch(error => {
+          console.error('Error:', error);
+          showMessage('❌ Error adding test: ' + error.message, 'danger');
+        });
+      }
+
+    function loadOurTests() {
+          const diagnosticCenterId = localStorage.getItem('diagnosticCenterId'); 
+          if (!diagnosticCenterId) {
+            alert("Center ID not found. Please log in again.");
+            logout();
+            return;
+          }
+
+          fetch(`${API_BASE}/test/center/${diagnosticCenterId}`)
+            .then(response => response.json())
+            .then(data => {
+              const tbody = document.getElementById('ourTestsTableBody');
+              tbody.innerHTML = '';
+
+              if (data.success && data.tests && data.tests.length > 0) {
+                data.tests.forEach(test => {
+                  const row = document.createElement('tr');
+                  row.innerHTML = `
+                    <td>${test.test_code || 'N/A'}</td>
+                    <td>${test.test_name}</td>
+                    <td>${test.category}</td>
+                    <td>${test.sample_required}</td>
+                    <td>₹${test.price}</td>
+                    <td>${test.discount}%</td>
+                    <td>₹${test.final_price}</td>
+                    <td><span class="badge ${getStatusBadgeClass(test.status)}">${test.status || 'N/A'}</span></td>
+                    <td>${test.home_collection || 'No'}</td>
+                  `;
+                  tbody.appendChild(row);
+                });
+
+                document.getElementById('testSearch').addEventListener('input', function() {
+                  const searchTerm = this.value.toLowerCase();
+                  tbody.querySelectorAll('tr').forEach(row => {
+                    row.style.display = row.textContent.toLowerCase().includes(searchTerm) ? '' : 'none';
+                  });
+                });
+              } else {
+                tbody.innerHTML = '<tr><td colspan="9" class="text-center">No tests found for your center.</td></tr>';
+              }
+            })
+            .catch(err => {
+              console.error("Failed to load tests:", err);
+              alert("Error loading test list. Please try again.");
+            });
+        }   
+        
+    function getStatusBadgeClass(status) {
+      const safeStatus = (status || "").toLowerCase().trim();
+      switch(safeStatus) {
+        case 'active': return 'bg-success';
+        case 'inactive': return 'bg-secondary';
+        case 'upcoming': return 'bg-warning text-dark';
+        default: return 'bg-light text-dark';
+      }
+    }
+            
+    function submitReportForm(e) {
+          e.preventDefault();
+          const form = document.getElementById('sendReportForm');
+          const formData = new FormData(form);
+          const centerId = localStorage.getItem('diagnosticCenterId');
+          if (centerId) formData.append('center_id', centerId);
+
+          fetch(`${API_BASE}/diagnostics/send-report`, {
+            method: 'POST',
+            body: formData
+          })
+            .then(res => res.json())
+            .then(data => {
+              if (data.success) {
+                alert("✅ Report sent successfully!");
+                form.reset();
+              } else {
+                alert("❌ Failed to send report: " + (data.error || 'Unknown error'));
+              }
+            })
+            .catch(err => {
+              console.error(err);
+              alert("❌ An error occurred while sending the report.");
+            });
+        }
+
+    function fetchUserProfile(centerId) {
+      if (!centerId) {
+        showMessage('Could not verify center ID. Please log in again.', 'danger');
+        return;
+      }
+      
+      const url = `${API_BASE}/diagnostics/${centerId}`;
+
+      fetch(url, { credentials: 'include' })
+        .then(response => {
+          const contentType = response.headers.get("content-type");
+          if (response.ok && contentType && contentType.includes("application/json")) {
+            return response.json();
+          }
+          throw new Error(`Server returned a non-JSON response. Status: ${response.status}`);
+        })
+        .then(data => {
+          if (data.success && data.user) {
+            originalData = data.user;
+            populateProfileForm(data.user);
+          } else {
+            showMessage('Failed to load profile data: ' + (data.error || 'User not found'), 'danger');
+          }
+        })
+        .catch(error => {
+          console.error('Error fetching or parsing profile data:', error);
+          showMessage('Error loading profile: ' + error.message, 'danger');
+        });
+    }
+    
+    function populateProfileForm(userData) {
+      const placeholder = 'https://placehold.co/150x150/EFEFEF/AAAAAA&text=No+Image';
+      const profileImageUrl = userData.profile_image_url ? `https://24x7health.in${userData.profile_image_url}` : placeholder; 
+
+      
+      document.getElementById('profileImageSidebar').src = profileImageUrl;
+      document.getElementById('profileImagePreview').src = profileImageUrl;
+      document.getElementById('sidebarCenterName').textContent = userData.center_name || '';
+
+      document.getElementById('centerName').value = userData.center_name || '';
+      document.getElementById('ownerName').value = userData.owner_name || '';
+      document.getElementById('centerType').value = userData.center_type || '';
+      document.getElementById('email').value = userData.email || '';
+      document.getElementById('phone').value = userData.phone || '';
+      document.getElementById('altPhone').value = userData.alt_phone || '';
+      document.getElementById('whatsapp').value = userData.whatsapp || '';
+      document.getElementById('homeSample').value = userData.home_sample || 'No';
+      document.getElementById('address').value = userData.address || '';
+      document.getElementById('city').value = userData.city || '';
+      document.getElementById('state').value = userData.state || '';
+      document.getElementById('pincode').value = userData.pincode || '';
+      document.getElementById('mapUrl').value = userData.map_url || '';
+      
+      let operationalHours = { from: '09:00', to: '18:00' };
+      try {
+        if (userData.operational_hours) {
+            const parts = userData.operational_hours.split('-').map(part => part.trim());
+            if (parts.length === 2) {
+              operationalHours = { from: parts[0], to: parts[1] };
+            }
+        }
+      } catch (e) { console.error('Error parsing operational hours:', e); }
+      document.getElementById('fromTime').value = operationalHours.from || '09:00';
+      document.getElementById('toTime').value = operationalHours.to || '18:00';
+      
+      let services = [];
+      try {
+        if (userData.services) services = JSON.parse(userData.services);
+      } catch (e) {
+        services = userData.services ? userData.services.split(',') : [];
+      }
+      
+      const servicesDisplay = document.getElementById('servicesDisplay');
+      servicesDisplay.innerHTML = '';
+      services.forEach(service => {
+        if (service.trim()) {
+          const tag = document.createElement('span');
+          tag.className = 'services-tag';
+          tag.textContent = service.trim();
+          servicesDisplay.appendChild(tag);
+        }
+      });
+      document.getElementById('servicesInput').value = services.join(', ');
+      
+      document.getElementById('registrationNumber').value = userData.registration_number || '';
+      document.getElementById('gstNumber').value = userData.gst_number || '';
+      document.getElementById('accountHolderName').value = userData.account_holder_name || '';
+      document.getElementById('bankName').value = userData.bank_name || '';
+      document.getElementById('accountNumber').value = userData.account_number || '';
+      document.getElementById('ifscCode').value = userData.ifsc_code || '';
+      document.getElementById('upiId').value = userData.upi_id || '';
+    }
+    
+    function enableEditing() {
+      const editableFields = [
+        'center_name', 'owner_name', 'center_type', 'phone', 'alt_phone', 'whatsapp',
+        'address', 'city', 'state', 'pincode', 'map_url', 'registration_number',
+        'gst_number', 'account_holder_name', 'bank_name', 'account_number',
+        'ifsc_code', 'upi_id', 'fromTime', 'toTime'
+      ];
+      editableFields.forEach(field => {
+        const element = document.getElementById(field);
+        if (element) {
+          element.readOnly = false;
+          element.classList.add('bg-light');
+        }
+      });
+      
+      document.getElementById('homeSample').disabled = false;
+      document.getElementById('homeSample').classList.add('bg-light');
+      
+      document.getElementById('servicesDisplay').style.display = 'none';
+      document.getElementById('servicesInput').style.display = 'block';
+      document.getElementById('servicesHelp').style.display = 'block';
+
+      document.getElementById('profileImageUpload').style.display = 'block';
+      
+      document.getElementById('editBtn').style.display = 'none';
+      document.getElementById('saveBtn').style.display = 'inline-block';
+    }
+    
+    function saveProfile(e) {
+      e.preventDefault();
+      const centerId = localStorage.getItem('diagnosticCenterId');
+      const form = document.getElementById('profileForm');
+      
+      const formData = new FormData(form);
+
+      const services = document.getElementById('servicesInput').value.split(',').map(s => s.trim()).filter(Boolean);
+      formData.set('services', JSON.stringify(services));
+
+      const operational_hours = `${document.getElementById('fromTime').value} - ${document.getElementById('toTime').value}`;
+      formData.append('operational_hours', operational_hours);
+      
+      fetch(`${API_BASE}/diagnostics/${centerId}`, {
+        method: 'PUT',
+        body: formData
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          showMessage('Profile updated successfully!', 'success');
+          fetchUserProfile(centerId);
+          disableEditing();
+        } else {
+          showMessage('Failed to update profile: ' + (data.error || 'Unknown error'), 'danger');
+        }
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        showMessage('Error updating profile: ' + error.message, 'danger');
+      });
+    }
+    
+    function disableEditing() {
+      const inputs = document.querySelectorAll('#profileForm input, #profileForm select, #profileForm textarea');
+      inputs.forEach(input => {
+          if (input.type === 'text' || input.type === 'email' || input.type === 'time' || input.tagName.toLowerCase() === 'textarea') {
+              input.readOnly = true;
+          }
+          if (input.tagName.toLowerCase() === 'select' || input.type === 'file') {
+              input.disabled = true;
+          }
+          input.classList.remove('bg-light');
+      });
+      
+      document.getElementById('profileImageUpload').style.display = 'none';
+      
+      document.getElementById('servicesDisplay').style.display = 'block';
+      document.getElementById('servicesInput').style.display = 'none';
+      document.getElementById('servicesHelp').style.display = 'none';
+      
+      document.getElementById('editBtn').style.display = 'inline-block';
+      document.getElementById('saveBtn').style.display = 'none';
+    }
+    
+    function showMessage(message, type) {
+      const alertDiv = document.getElementById('messageAlert');
+      alertDiv.textContent = message;
+      alertDiv.className = `alert alert-${type}`;
+      alertDiv.style.display = 'block';
+      setTimeout(() => { alertDiv.style.display = 'none'; }, 5000);
+    }
+    
+    async function logout() {
+      try {
+        await fetch(`${API_BASE}/logout`, { method: 'POST' });
+      } catch (error) {
+        console.error("Server logout failed, but proceeding with client-side cleanup:", error);
+      } finally {
+        localStorage.clear();
+        window.location.href = 'login.html';
+      }
+    }  
+  </script>
+</body>
+</html>

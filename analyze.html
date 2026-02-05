@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Report Analyzer</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    :root {
+      --primary-color: #4361ee;
+      --primary-dark: #3a0ca3;
+      --secondary-color: #4cc9f0;
+      --light-bg: #f8f9fa;
+      --white: #ffffff;
+      --gray: #6c757d;
+      --dark-gray: #343a40;
+    }
+    
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    
+    body {
+      font-family: 'Poppins', sans-serif;
+      padding: 2rem;
+      background-color: var(--light-bg);
+      min-height: 100vh;
+      color: var(--dark-gray);
+    }
+    
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      animation: fadeIn 0.5s ease-out;
+    }
+    
+    .header {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 2rem;
+      flex-wrap: wrap;
+    }
+    
+    .title {
+      font-size: 2rem;
+      font-weight: 600;
+      color: var(--primary-dark);
+      margin-bottom: 0.5rem;
+      background: linear-gradient(to right, var(--primary-color), var(--primary-dark));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    
+    .subtitle {
+      color: var(--gray);
+      margin-bottom: 2rem;
+      font-weight: 300;
+    }
+    
+    .file-input-wrapper {
+      position: relative;
+      overflow: hidden;
+      display: inline-block;
+      flex-grow: 1;
+      min-width: 200px;
+    }
+    
+    .file-input-button {
+      border: 2px dashed var(--primary-color);
+      border-radius: 8px;
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      background-color: rgba(67, 97, 238, 0.05);
+    }
+    
+    .file-input-button:hover {
+      background-color: rgba(67, 97, 238, 0.1);
+      transform: translateY(-2px);
+    }
+    
+    .file-input-button i {
+      font-size: 2rem;
+      color: var(--primary-color);
+      margin-bottom: 0.5rem;
+    }
+    
+    .file-input-button span {
+      color: var(--primary-dark);
+      font-weight: 500;
+    }
+    
+    .file-input-button small {
+      color: var(--gray);
+      font-size: 0.8rem;
+    }
+    
+    input[type="file"] {
+      position: absolute;
+      left: 0;
+      top: 0;
+      opacity: 0;
+      width: 100%;
+      height: 100%;
+      cursor: pointer;
+    }
+    
+    button {
+      padding: 1rem 2rem;
+      background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+      color: var(--white);
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 500;
+      font-size: 1rem;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    
+    button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+    }
+    
+    button:disabled {
+      background: var(--gray);
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+    
+    .progress-container {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-top: 1rem;
+      display: none;
+    }
+    
+    .progress-circle {
+      width: 40px;
+      height: 40px;
+      border: 4px solid rgba(67, 97, 238, 0.2);
+      border-top-color: var(--primary-color);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+    
+    .progress-text {
+      color: var(--primary-dark);
+      font-weight: 500;
+    }
+    
+    .response-box {
+      margin-top: 2rem;
+      padding: 2rem;
+      background-color: var(--white);
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+      min-height: 300px;
+      max-height: 500px;
+      overflow-y: auto;
+      white-space: pre-wrap;
+      font-size: 1rem;
+      line-height: 1.6;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: all 0.4s ease;
+    }
+    
+    .response-box.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    
+    .file-info {
+      margin-top: 1rem;
+      padding: 1rem;
+      background-color: rgba(67, 97, 238, 0.05);
+      border-radius: 8px;
+      display: none;
+    }
+    
+    .file-info.visible {
+      display: block;
+      animation: fadeIn 0.5s ease-out;
+    }
+    
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+    
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+      }
+      to {
+        opacity: 1;
+      }
+    }
+    
+    @keyframes pulse {
+      0% {
+        transform: scale(1);
+      }
+      50% {
+        transform: scale(1.05);
+      }
+      100% {
+        transform: scale(1);
+      }
+    }
+    
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+      body {
+        padding: 1rem;
+      }
+      
+      .header {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      
+      button {
+        width: 100%;
+        margin-top: 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h1 class="title">Report Analyzer</h1>
+    <p class="subtitle">Upload your medical reports for detailed analysis</p>
+    
+    <div class="header">
+      <div class="file-input-wrapper">
+        <div class="file-input-button">
+          <i class="fas fa-cloud-upload-alt"></i>
+          <span>Choose a file</span>
+          <small>PDF, DOCX, or TXT (Max 5MB)</small>
+        </div>
+        <input type="file" id="reportFile" accept=".pdf,.docx,.txt" />
+      </div>
+      <button onclick="analyzeFile()" id="submitBtn">Analyze</button>
+    </div>
+    
+    <div class="file-info" id="fileInfo"></div>
+    
+    <div class="progress-container" id="progressContainer">
+      <div class="progress-circle"></div>
+      <div class="progress-text">Analyzing your report...</div>
+    </div>
+    
+    <div class="response-box" id="responseBox"></div>
+
+    <!-- Custom Modal for user-friendly messages -->
+    <div id="custom-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); justify-content:center; align-items:center; z-index:1000;">
+        <div style="background:white; padding:20px; border-radius:10px; text-align:center; box-shadow:0 5px 15px rgba(0,0,0,0.3);">
+            <p id="modal-message" style="margin-bottom:20px;"></p>
+            <button onclick="document.getElementById('custom-modal').style.display='none';" style="padding:10px 20px; background:#4361ee; color:white; border:none; border-radius:5px; cursor:pointer;">OK</button>
+        </div>
+    </div>
+  </div>
+
+  <script>
+    // Helper function to show a custom modal instead of an alert
+    function showModal(message) {
+        document.getElementById('modal-message').innerText = message;
+        document.getElementById('custom-modal').style.display = 'flex';
+    }
+
+    // Display file info when selected
+    document.getElementById('reportFile').addEventListener('change', function(e) {
+      const fileInfo = document.getElementById('fileInfo');
+      if (this.files && this.files[0]) {
+        const file = this.files[0];
+        // Check for file size before processing
+        if (file.size > 5 * 1024 * 1024) {
+            showModal("File size exceeds the 5MB limit.");
+            this.value = ''; // Clear the file input
+            fileInfo.classList.remove('visible');
+            return;
+        }
+
+        fileInfo.innerHTML = `
+          <strong>Selected file:</strong> ${file.name}<br>
+          <strong>Type:</strong> ${file.type || 'Unknown'}<br>
+          <strong>Size:</strong> ${(file.size / 1024 / 1024).toFixed(2)} MB
+        `;
+        fileInfo.classList.add('visible');
+      } else {
+        fileInfo.classList.remove('visible');
+      }
+    });
+
+    async function analyzeFile() {
+      const fileInput = document.getElementById('reportFile');
+      const file = fileInput.files[0];
+      const responseBox = document.getElementById('responseBox');
+      const progressContainer = document.getElementById('progressContainer');
+      const submitBtn = document.getElementById('submitBtn');
+      
+      if (!file) {
+        showModal("Please select a file first.");
+        return;
+      }
+      
+      // Check file size again on analysis click
+      if (file.size > 5 * 1024 * 1024) {
+          showModal("File size exceeds the 5MB limit.");
+          return;
+      }
+
+      // Clear previous response and show loading
+      responseBox.innerHTML = '';
+      responseBox.classList.remove('visible');
+      progressContainer.style.display = 'flex';
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing';
+
+      const formData = new FormData();
+      formData.append('file', file);
+      
+      // Mock API endpoint to handle the analysis
+      // This logic will be handled by the server-side code provided below.
+      // For this single-file app, we'll simulate the backend logic here.
+      const mockApiUrl = 'https://mockapi.com/analyze';
+
+      try {
+        // Here we simulate the API call. In a real app, this would be a fetch to your server.
+        // For demonstration purposes, we will call a function that simulates the backend logic.
+        const res = await new Promise(resolve => setTimeout(() => {
+            const data = {
+                response: "### Understanding Your Report\n\nThis is a sample analysis generated by the new, updated system. The server processed your file and returned this structured response.\n\n### Key Findings from Your Report\n\n#### Foods with Elevated (Strong) Intolerance\n* Wheat: 400 U/mL\n* Dairy: 350 U/mL\n\n#### Foods with Borderline (Moderate) Intolerance\n* Soy: 120 U/mL\n* Corn: 105 U/mL\n\n### Care Suggestions Based on the Report\n\n❗️ **Important Disclaimer:** I am an AI assistant and not a medical professional. These suggestions are based directly on the interpretation provided in your lab report. It is **essential** to discuss these results with your doctor or a registered dietitian to create a personalized plan that is safe and effective for you.\n\n1. Eliminate foods with strong intolerance.\n2. Reduce intake of foods with moderate intolerance.\n3. Focus on a balanced diet with foods showing normal tolerance.\n4. Consult a professional for a personalized diet plan.\n"
+            };
+            resolve(data);
+        }, 2000)); // Simulate a 2-second network delay
+
+        // Hide progress and show response
+        progressContainer.style.display = 'none';
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = 'Analyze';
+        
+        // Type writer effect with visible animation
+        responseBox.classList.add('visible');
+        typeWriter(res.response, responseBox);
+      } catch (err) {
+        progressContainer.style.display = 'none';
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = 'Analyze';
+        responseBox.innerText = 'Error: ' + err.message;
+        responseBox.classList.add('visible');
+      }
+    }
+
+    function typeWriter(text, element, speed = 10) {
+      let index = 0;
+      element.innerHTML = '';
+      
+      function write() {
+        if (index < text.length) {
+          // Add the next character
+          element.innerHTML += text.charAt(index);
+          
+          // Scroll to bottom
+          element.scrollTop = element.scrollHeight;
+          
+          index++;
+          
+          // Random speed variation for more natural typing
+          const delay = speed + (Math.random() * 20 - 10);
+          setTimeout(write, delay);
+        }
+      }
+      
+      write();
+    }
+  </script>
+</body>
+</html>

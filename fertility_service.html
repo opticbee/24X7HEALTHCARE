@@ -1,0 +1,1900 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>24x7 Health Services - Fertility Services</title>
+    <script defer src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" href="images/favicon.ico" type="image/x-icon">
+</head>
+<body style="margin:0; padding:0; font-family:'Arial', sans-serif; background-color:#f4f4f4; overflow-x:hidden;">
+
+    
+
+    <!-- Navbar Code -->
+        <style>
+            /* General navbar styling */
+            .navbar-container {
+                font-family: Arial, sans-serif;
+                width: 100%;
+            }
+
+            #hamburger-icon {
+                display: none;
+                font-size: 26px;
+                color: white;
+                cursor: pointer;
+                padding: 10px;
+            }
+
+            .nav-link {
+                color: white;
+                text-decoration: none;
+                padding: 0.5rem 1rem;
+                font-weight: bold;
+                display: block;
+                border-radius: 5px;
+                transition: background-color 0.3s;
+                white-space: nowrap;
+            }
+
+            .nav-link:hover, .nav-link.active {
+                background-color: #1a6ab5;
+            }
+            
+            .dropdown {
+                position: relative;
+            }
+
+            .dropdown-menu {
+                display: none;
+                position: absolute;
+                background-color: white;
+                min-width: 200px;
+                border-radius: 5px;
+                overflow: hidden;
+                box-shadow: 0px 4px 20px rgba(0,0,0,0.2);
+                z-index: 1001;
+                margin-top: 1px;
+            }
+
+            .dropdown:hover .dropdown-menu {
+                display: block;
+            }
+            
+            .dropdown-menu a {
+                padding: 12px 16px;
+                text-decoration: none;
+                display: block;
+                color: #333;
+                font-weight: normal;
+            }
+
+            .dropdown-menu a:hover, .dropdown-menu a.active {
+                background-color: #f0f0f0;
+            }
+
+            .mega-menu {
+                width: 660px;
+                padding: 20px;
+                left: 0;
+            }
+            
+            .mega-menu-grid {
+                display: grid;
+                grid-template-columns: repeat(3, 1fr);
+                gap: 10px;
+            }
+
+            .menu-item {
+                padding: 12px;
+                text-decoration: none;
+                background: #fff;
+                border-radius: 6px;
+                color: #333;
+                font-weight: 500;
+                transition: background 0.2s, color 0.2s;
+                box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+            }
+
+            .menu-item:hover, .menu-item.active {
+                background: #f0f0f0;
+                color: #000;
+            }
+
+            /* Top Navigation Bar */
+            .top-nav {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 15px;
+                align-items: center;
+                justify-content: space-between;
+                background: #007bff;
+                padding: 10px 30px;
+            }
+
+            .logo-section {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                flex: 1;
+                min-width: 250px;
+            }
+
+            .logo-text {
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                line-height: 1;
+                min-width: 120px;
+            }
+
+            .logo-title {
+                color: #fff;
+                font-size: 18px;
+                font-weight: bold;
+            }
+
+            .logo-subtitle {
+                color: #fff;
+                font-size: 18px;
+            }
+
+            .search-container {
+                position: relative;
+                flex-grow: 1;
+                max-width: 400px;
+                min-width: 200px;
+            }
+
+            #searchInput {
+                padding: 10px 40px 10px 15px;
+                width: 100%;
+                font-size: 16px;
+                border-radius: 15px;
+                border: 1px solid #ccc;
+                box-sizing: border-box;
+            }
+
+            .search-icon {
+                position: absolute;
+                right: 15px;
+                top: 50%;
+                transform: translateY(-50%);
+                color: #888;
+                cursor: pointer;
+            }
+
+            #suggestionsBox {
+                display: none;
+                position: absolute;
+                top: 110%;
+                left: 0;
+                right: 0;
+                background: white;
+                border: 1px solid #ccc;
+                max-height: 300px;
+                overflow-y: auto;
+                z-index: 1100;
+                box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+                border-radius: 8px;
+            }
+
+            .top-nav-contact {
+                display: flex;
+                align-items: center;
+                gap: 10px; /* Reduced gap for smaller screens */
+                color: white;
+                font-size: 14px;
+                flex: 1;
+                justify-content: center;
+                flex-wrap: wrap; /* Allow wrapping */
+            }
+
+            .contact-link {
+                color: white;
+                text-decoration: none;
+                display: flex;
+                align-items: center;
+                gap: 5px;
+            }
+            
+            .contact-separator {
+                display: block;
+            }
+
+            .top-nav-right {
+                display: flex;
+                align-items: center;
+                gap: 20px;
+                flex-wrap: wrap;
+                flex: 1;
+                justify-content: flex-end;
+            }
+
+            .top-nav-social {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+            }
+
+            .social-link {
+                color: white;
+                font-size: 18px;
+            }
+
+            .language-container {
+                position: relative;
+                display: inline-block;
+            }
+
+            #languageTab {
+                cursor: pointer;
+                padding: 6px 12px;
+                background: #fff;
+                border-radius: 6px;
+                color: #000;
+                font-size: 14px;
+                display: flex;
+                align-items: center;
+                gap: 5px;
+            }
+
+            #languageMenu {
+                display: none;
+                position: absolute;
+                top: 40px;
+                right: 0;
+                background: #fff;
+                border-radius: 6px;
+                box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+                min-width: 160px;
+                z-index: 2000;
+                max-height: 300px;
+                overflow-y: auto;
+            }
+
+            .language-option {
+                padding: 8px 12px;
+                cursor: pointer;
+            }
+
+            .language-option:hover {
+                background: #f0f0f0;
+            }
+
+            /* Second Navigation Bar */
+            .second-nav {
+                background-color: #135597;
+                position: sticky;
+                top: 0;
+                box-shadow: 0px 4px 10px rgba(0,0,0,0.1);
+                z-index: 1000;
+                padding: 0 10px !important;
+            }
+
+            .nav-inner {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                min-height: 60px;
+                position: relative;
+            }
+
+            #navLinks2 {
+                display: flex;
+                flex-grow: 1;
+                align-items: center;
+                justify-content: center;
+                gap: 8px;
+                flex-wrap: wrap;
+            }
+
+            /* Mobile Responsive Design */
+            @media (max-width: 1200px) {
+                .top-nav-social {
+                    display: none;
+                }
+                
+                .mega-menu {
+                    width: 500px;
+                }
+                
+                .mega-menu-grid {
+                    grid-template-columns: repeat(2, 1fr);
+                }
+            }
+
+            @media screen and (max-width: 992px) {
+                .top-nav {
+                    padding: 10px 15px !important;
+                    justify-content: center;
+                }
+                
+                .logo-section {
+                    flex-basis: 100%;
+                    justify-content: center;
+                }
+                
+                .search-container {
+                    order: 3;
+                    max-width: 100% !important;
+                    margin-top: 10px;
+                    flex-basis: 100%;
+                }
+
+                .top-nav-contact {
+                    order: 2;
+                    flex-direction: column;
+                    gap: 8px;
+                    margin-top: 10px;
+                    text-align: center;
+                    flex-basis: 100%;
+                }
+
+                .contact-separator {
+                display: none; /* Hide separators on mobile */
+                }
+                
+                #navLinks2 {
+                    display: none;
+                    flex-direction: column;
+                    align-items: flex-start;
+                    width: 100%;
+                    background-color: #135597;
+                    position: absolute;
+                    top: 100%;
+                    left: 0;
+                    padding: 10px 0;
+                    z-index: 1000;
+                    box-shadow: 0 5px 10px rgba(0,0,0,0.2);
+                }
+
+                #hamburger-icon {
+                    display: block;
+                }
+
+                .dropdown {
+                    width: 100%;
+                }
+
+                #navLinks2 .nav-link {
+                    padding: 0.8rem 1.5rem;
+                    width: 100%;
+                    box-sizing: border-box;
+                    text-align: left;
+                }
+
+                .dropdown-menu {
+                    position: static;
+                    display: none;
+                    width: 100%;
+                    box-shadow: none;
+                    background-color: #1a6ab5;
+                    border-radius: 0;
+                }
+
+                .dropdown-menu a, .mega-menu .menu-item {
+                    color: white;
+                    background-color: transparent;
+                    box-shadow: none;
+                    border-bottom: 1px solid #3385d1;
+                    padding-left: 2.5rem;
+                }
+
+                .dropdown-menu a.active, .mega-menu .menu-item.active {
+                    background-color: #135597;
+                }
+
+                .mega-menu-grid {
+                    grid-template-columns: 1fr;
+                }
+                
+                .mega-menu {
+                    width: 100%;
+                    padding: 10px;
+                }
+            }
+            
+            @media screen and (max-width: 768px) {
+                .top-nav {
+                    gap: 10px;
+                }
+                
+                .logo-section {
+                    min-width: auto;
+                    flex-direction: column;
+                    gap: 5px;
+                }
+                .logo-text {
+                    align-items: center;
+                }
+                
+                .logo-title {
+                    font-size: 18px !important;
+                }
+                
+                .logo-subtitle {
+                    font-size: 18px !important;
+                }
+                
+                .logo-section img {
+                    height: 35px !important;
+                }
+                
+                #searchInput {
+                    font-size: 14px !important;
+                    padding: 8px 35px 8px 12px !important;
+                }
+                
+                .top-nav-right {
+                    gap: 10px;
+                    justify-content: center;
+                    flex-basis: 100%;
+                }
+            }
+            
+            @media screen and (max-width: 480px) {
+                .logo-section > div span:first-child {
+                    font-size: 18px !important;
+                }
+                
+                .logo-section > div span:last-child {
+                    font-size: 14px !important;
+                }
+                
+                .top-nav {
+                    padding: 8px 10px !important;
+                }
+                
+                .nav-link {
+                    padding: 0.4rem 0.8rem;
+                    font-size: 14px;
+                }
+            }
+        </style>
+
+        <!-- Top Navigation Bar -->
+        <div class="top-nav">
+            <!-- Left: Logo, Title & Search Bar -->
+            <div class="logo-section">
+                <img src="img/24x7health-logo.png" alt="Logo" style="height: 40px; border-radius: 10%;">
+                <div class="logo-text">
+                    <span class="logo-title">HEALTHCARE</span>
+                    <span class="logo-subtitle">SERVICES</span>
+                </div>
+                
+                <!-- Search Bar -->
+                <div class="search-container">
+                    <input type="text" id="searchInput" placeholder="Search Doctors, Diagnostics, Tests" autocomplete="off"/>
+                    <i class="fas fa-search search-icon"></i>
+                    <div id="suggestionsBox"></div>
+                </div>
+            </div>
+
+            <!-- Center: Contact Info -->
+            <div class="top-nav-contact">
+                <a href="mailto:support@24x7health.in" class="contact-link">
+                    <i class="fas fa-envelope"></i> support@24x7health.in
+                </a> <span class="contact-separator" style="margin: 0 5px;">|</span>
+                <a href="tel:+919908793602" class="contact-link">
+                    <i class="fas fa-phone"></i>  +91-9908793602,  +91-8790170525
+                </a>
+            </div>
+
+            <!-- Right: Social Icons, Language & Profile -->
+            <div class="top-nav-right">
+                <!-- Social Media -->
+                <div class="top-nav-social">
+                    <a href="https://www.facebook.com/share/1CC3vxsppD/" target="_blank" class="social-link"><i class="fab fa-facebook"></i></a>
+                    <a href="https://x.com/BeeOptic?t=LB5TDI4096CJEldX9Ccswg&s=09" target="_blank" class="social-link"><i class="fab fa-twitter"></i></a>
+                    <a href="https://www.instagram.com/optic.bee/" target="_blank" class="social-link"><i class="fab fa-instagram"></i></a>
+                    <a href="https://linkedin.com" target="_blank" class="social-link"><i class="fab fa-linkedin"></i></a>
+                    <a href="https://youtube.com/@opticbee-i7j?si=w9ynFoGer27Kb82g" target="_blank" class="social-link"><i class="fab fa-youtube"></i></a>
+                </div>
+                
+                <!-- Language Dropdown -->
+                <div class="language-container">
+                    <div id="languageTab">
+                        <span id="currentLang">English</span> ▼
+                    </div>
+
+                    <!-- Dropdown -->
+                    <div id="languageMenu">
+                        <div class="language-option" onclick="setLanguage('en','English',event)">English</div>
+                        <div class="language-option" onclick="setLanguage('hi','हिंदी',event)">हिंदी</div>
+                        <div class="language-option" onclick="setLanguage('te','తెలుగు',event)">తెలుగు</div>
+                        <div class="language-option" onclick="setLanguage('ta','தமிழ்',event)">தமிழ்</div>
+                        <div class="language-option" onclick="setLanguage('kn','ಕನ್ನಡ',event)">ಕನ್ನಡ</div>
+                        <div class="language-option" onclick="setLanguage('ml','മലയാളം',event)">മലയാളം</div>
+                        <div class="language-option" onclick="setLanguage('mr','मराठी',event)">मराठी</div>
+                        <div class="language-option" onclick="setLanguage('gu','ગુજરાતી',event)">ગુજરાતી</div>
+                        <div class="language-option" onclick="setLanguage('bn','বাংলা',event)">বাংলা</div>
+                        <div class="language-option" onclick="setLanguage('ur','اردو',event)">اردو</div>
+                        <div class="language-option" onclick="setLanguage('fr','Français',event)">Français</div>
+                        <div class="language-option" onclick="setLanguage('de','Deutsch',event)">Deutsch</div>
+                    </div>
+                </div>
+                
+                <!-- Profile Icon -->
+                <a href="login.html" id="loginNav1" title="Login/Profile" class="social-link" style="margin-left: 10px;">
+                    <i class="fas fa-user-circle"></i>
+                    <span id="userName1"></span>
+                </a>
+            </div>
+        </div>
+
+        <!-- Second Navigation Bar -->
+        <div class="second-nav">
+            <div class="nav-inner">
+                <!-- Hamburger Icon -->
+                <div id="hamburger-icon">&#9776;</div>
+                
+                <div id="navLinks2">
+                    <a href="index.html" class="nav-link">Home</a>
+                    
+                    <div class="dropdown">
+                        <a href="healthRecords.html" class="nav-link">Health Records <i class="fas fa-caret-down fa-xs"></i></a>
+                        <div class="dropdown-menu">
+                            <a href="bloodtest.html">Blood Tests</a>
+                            <a href="donations.html">Donations</a>
+                            <a href="inventory.html">Inventory</a>
+                        </div>
+                    </div>
+
+                    <div class="dropdown">
+                        <a href="#" class="nav-link">Appointments <i class="fas fa-caret-down fa-xs"></i></a>
+                        <div class="dropdown-menu">
+                            <a href="doctors.html">Doctors</a>
+                            <a href="DiagnosticsAppointments.html">Diagnostics</a>
+                        </div>
+                    </div>
+                    
+                    <div class="dropdown">
+                        <a href="Diagnostics.html" class="nav-link">Diagnostics <i class="fas fa-caret-down fa-xs"></i></a>
+                        <div class="dropdown-menu mega-menu">
+                        <div class="mega-menu-grid">
+                                <a href="xray.html" class="menu-item">X-Ray</a>
+                                <a href="ultrasound.html" class="menu-item">Ultrasound</a>
+                                <a href="mri.html" class="menu-item">MRI</a>
+                                <a href="diagnostic-services.html?category=cbc" class="menu-item">Complete Blood Count</a>
+                                <a href="diagnostic-services.html?category=pathology" class="menu-item">Pathology Tests</a>
+                                <a href="diagnostic-services.html?category=microbiology" class="menu-item">Microbiology Tests</a>
+                                <a href="diagnostic-services.html?category=radiology" class="menu-item">Radiology & Imaging</a>
+                                <a href="diagnostic-services.html?category=cardiology" class="menu-item">Cardiology</a>
+                                <a href="diagnostic-services.html?category=neurology" class="menu-item">Neurology</a>
+                                <a href="diagnostic-services.html?category=ophthalmology" class="menu-item">Ophthalmology</a>
+                                <a href="diagnostic-services.html?category=ent" class="menu-item">ENT</a>
+                                <a href="diagnostic-services.html?category=dental" class="menu-item">Dental</a>
+                                <a href="diagnostic-services.html?category=fertility" class="menu-item">Prenatal & Fertility</a>
+                                <a href="diagnostic-services.html?category=genetic" class="menu-item">Genetic Testing</a>
+                                <a href="diagnostic-services.html?category=packages" class="menu-item">Health Packages</a>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <a href="clinic.html" class="nav-link">Clinic</a>
+                    
+                    <div class="dropdown">
+                        <a href="Physician.html" class="nav-link">Physicians <i class="fas fa-caret-down fa-xs"></i></a>
+                        <div class="dropdown-menu mega-menu">
+                            <div class="mega-menu-grid">
+                                <a href="cardiologist.html" class="menu-item">Cardiologist</a>
+                                <a href="neurologist.html" class="menu-item">Neurologist</a>
+                                <a href="dermatologist.html" class="menu-item">Dermatologist</a>
+                                <a href="orthopedic.html" class="menu-item">Orthopedic</a>
+                                <a href="pediatrician.html" class="menu-item">Pediatrician</a>
+                                <a href="gynecologist.html" class="menu-item">Gynecologist</a>
+                                <a href="urologist.html" class="menu-item">Urologist</a>
+                                <a href="oncologist.html" class="menu-item">Oncologist</a>
+                                <a href="endocrinologist.html" class="menu-item">Endocrinologist</a>
+                                <a href="gastroenterologist.html" class="menu-item">Gastroenterologist</a>
+                                <a href="pulmonologist.html" class="menu-item">Pulmonologist</a>
+                                <a href="rheumatologist.html" class="menu-item">Rheumatologist</a>
+                                <a href="psychiatrist.html" class="menu-item">Psychiatrist</a>
+                                <a href="ophthalmologist.html" class="menu-item">Ophthalmologist</a>
+                                <a href="general-physician.html" class="menu-item">General Physician</a>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="dropdown">
+                        <a href="fertility.html" class="nav-link">Fertility <i class="fas fa-caret-down fa-xs"></i></a>
+                        <div class="dropdown-menu mega-menu">
+                            <div class="mega-menu-grid">
+                                <a href="IVF.html" class="menu-item">IVF</a>
+                                <a href="iui.html" class="menu-item">IUI</a>
+                                <a href="sarogasi.html" class="menu-item">Surrogacy</a>
+                                <a href="fertility.html#egg-donation" class="menu-item">Egg Donation</a>
+                                <a href="fertility.html#sperm-donation" class="menu-item">Sperm Donation</a>
+                                <a href="fertility.html#embryo-transfer" class="menu-item">Embryo Transfer</a>
+                                <a href="fertility.html#fertility-preservation" class="menu-item">Fertility Preservation</a>
+                                <a href="fertility.html#pcos-treatment" class="menu-item">PCOS Treatment</a>
+                                <a href="fertility.html#male-infertility" class="menu-item">Male Infertility</a>
+                                <a href="fertility.html#female-infertility" class="menu-item">Female Infertility</a>
+                                <a href="fertility.html#prenatal-care" class="menu-item">Prenatal Care</a>
+                                <a href="fertility.html#genetic-testing" class="menu-item">Genetic Testing</a>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <a href="blood.html" class="nav-link">Blood</a>
+                    <a href="Eyecare.html" class="nav-link">Eye Care</a>
+                    <a href="Dental.html" class="nav-link">Dental</a>
+                    <a href="ENT.html" class="nav-link">ENT</a>
+                    
+                    <div class="dropdown">
+                        <a href="Cancer.html" class="nav-link">Cancer <i class="fas fa-caret-down fa-xs"></i></a>
+                        <div class="dropdown-menu mega-menu" style="right: 0; left: auto;">
+                        <div class="mega-menu-grid">
+                                <a href="Cancer.html#breast-cancer" class="menu-item">Breast Cancer</a>
+                                <a href="Cancer.html#lung-cancer" class="menu-item">Lung Cancer</a>
+                                <a href="Cancer.html#prostate-cancer" class="menu-item">Prostate Cancer</a>
+                                <a href="Cancer.html#colorectal-cancer" class="menu-item">Colorectal Cancer</a>
+                                <a href="Cancer.html#skin-cancer" class="menu-item">Skin Cancer</a>
+                                <a href="Cancer.html#leukemia" class="menu-item">Leukemia</a>
+                                <a href="Cancer.html#lymphoma" class="menu-item">Lymphoma</a>
+                                <a href="Cancer.html#pancreatic-cancer" class="menu-item">Pancreatic Cancer</a>
+                                <a href="Cancer.html#ovarian-cancer" class="menu-item">Ovarian Cancer</a>
+                                <a href="Cancer.html#bladder-cancer" class="menu-item">Bladder Cancer</a>
+                                <a href="Cancer.html#kidney-cancer" class="menu-item">Kidney Cancer</a>
+                                <a href="Cancer.html#thyroid-cancer" class="menu-item">Thyroid Cancer</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ambulance -->
+                    <a href="Ambulance.html" class="nav-link">Ambulance</a>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            document.addEventListener('DOMContentLoaded', () => {
+                // --- ADVANCED LOCATION SERVICES SCRIPT ---
+
+                /**
+                 * Appends the encoded location to a given URL.
+                 * @param {string} url The URL to modify.
+                 * @returns {string} The new URL with the location parameter.
+                 */
+                function appendLocationToUrl(url) {
+                    const encodedLocation = localStorage.getItem('userEncodedLocation');
+                    if (!encodedLocation) return url;
+                    if (url.includes('location=')) return url;
+                    const separator = url.includes('?') ? '&' : '?';
+                    return `${url}${separator}location=${encodedLocation}`;
+                }
+
+                // --- Mobile Menu Functionality ---
+                const hamburger = document.getElementById('hamburger-icon');
+                const navLinks = document.getElementById('navLinks2');
+                const dropdownLinks = navLinks.querySelectorAll('.dropdown > a');
+                
+                if (window.innerWidth <= 992) {
+                    navLinks.style.display = 'none';
+                }
+
+                hamburger.addEventListener('click', () => {
+                    const isVisible = navLinks.style.display === 'flex';
+                    navLinks.style.display = isVisible ? 'none' : 'flex';
+                });
+
+                dropdownLinks.forEach(link => {
+                    link.addEventListener('click', (e) => {
+                        if (window.innerWidth <= 992) {
+                            e.preventDefault();
+                            const menu = link.nextElementSibling;
+                            const isMenuVisible = menu.style.display === 'block';
+                            
+                            navLinks.querySelectorAll('.dropdown-menu').forEach(m => {
+                                if (m !== menu) {
+                                    m.style.display = 'none';
+                                }
+                            });
+
+                            menu.style.display = isMenuVisible ? 'none' : 'block';
+                        }
+                    });
+                });
+
+                window.addEventListener('resize', () => {
+                    if (window.innerWidth > 992) {
+                        navLinks.style.display = 'flex';
+                        navLinks.querySelectorAll('.dropdown-menu').forEach(m => {
+                            m.style.display = ''; 
+                        });
+                    } else {
+                        navLinks.style.display = 'none';
+                        navLinks.querySelectorAll('.dropdown-menu').forEach(m => {
+                            m.style.display = 'none';
+                        });
+                    }
+                });
+
+                // --- Search Suggestions Functionality ---
+                const searchInput = document.getElementById('searchInput');
+                const suggestionsBox = document.getElementById('suggestionsBox');
+                let debounceTimer;
+
+                searchInput.addEventListener('input', () => {
+                    clearTimeout(debounceTimer);
+                    const query = searchInput.value.trim();
+                    if (query.length < 2) {
+                        suggestionsBox.style.display = 'none';
+                        return;
+                    }
+                    debounceTimer = setTimeout(() => fetchSuggestions(query), 300);
+                });
+
+                async function fetchSuggestions(query) {
+                    try {
+                        const response = await fetch(`https://24x7health.in/api/specializations?q=${encodeURIComponent(query)}`);
+                        if (!response.ok) throw new Error('Network response was not ok');
+                        const suggestions = await response.json();
+                        displaySuggestions(suggestions);
+                    } catch (error) {
+                        console.error('Error fetching suggestions:', error);
+                        suggestionsBox.style.display = 'none';
+                    }
+                }
+
+                function displaySuggestions(suggestions) {
+                    if (suggestions.length === 0) {
+                        suggestionsBox.style.display = 'none';
+                        return;
+                    }
+                    suggestionsBox.innerHTML = '';
+                    suggestions.forEach(spec => {
+                        const item = document.createElement('div');
+                        item.textContent = spec;
+                        item.style.padding = '12px 15px';
+                        item.style.cursor = 'pointer';
+                        item.onmouseenter = () => item.style.backgroundColor = '#f0f0f0';
+                        item.onmouseleave = () => item.style.backgroundColor = 'white';
+                        item.onclick = () => {
+                            const baseUrl = `doctors.html?specialization=${encodeURIComponent(spec)}`;
+                            // Use the helper function to ensure location is appended
+                            window.location.href = appendLocationToUrl(baseUrl);
+                        };
+                        suggestionsBox.appendChild(item);
+                    });
+                    suggestionsBox.style.display = 'block';
+                }
+
+                document.addEventListener('click', (event) => {
+                    if (!searchInput.contains(event.target) && !suggestionsBox.contains(event.target)) {
+                        suggestionsBox.style.display = 'none';
+                    }
+                });
+
+                // --- Active Nav Link Highlighting ---
+                const currentPath = window.location.pathname;
+                const currentSearch = window.location.search;
+                const currentFullPath = currentPath + currentSearch;
+                let bestMatchLink = null;
+                let longestMatch = -1;
+                document.querySelectorAll('#navLinks2 a[href]').forEach(link => {
+                    const linkHref = link.getAttribute('href');
+                    if (linkHref === '#') return;
+                    const linkUrl = new URL(linkHref, window.location.href);
+                    const linkFullPath = linkUrl.pathname + linkUrl.search;
+                    if (currentFullPath.startsWith(linkFullPath)) {
+                        if (linkFullPath.length > longestMatch) {
+                            longestMatch = linkFullPath.length;
+                            bestMatchLink = link;
+                        }
+                    }
+                });
+                if (bestMatchLink) {
+                    bestMatchLink.classList.add('active');
+                    const parentDropdown = bestMatchLink.closest('.dropdown');
+                    if (parentDropdown) {
+                        const mainDropdownLink = parentDropdown.querySelector('a.nav-link');
+                        if (mainDropdownLink) mainDropdownLink.classList.add('active');
+                    }
+                } else if (currentPath === '/' || currentPath.endsWith('index.html')) {
+                    const homeLink = document.querySelector('#navLinks2 a[href="index.html"]');
+                    if (homeLink) homeLink.classList.add('active');
+                }
+
+                // --- User Authentication ---
+                const userName1 = document.getElementById("userName1");
+                const loginLink1 = document.getElementById("loginNav1");
+                const doctorName = localStorage.getItem("doctorName");
+                const patientName = localStorage.getItem("fullName");
+                const diagnosticName = localStorage.getItem("diagnosticName");
+                let currentUser = patientName || doctorName || diagnosticName;
+                if (currentUser) {
+                    userName1.textContent = currentUser;
+                    loginLink1.innerHTML = `<i class="fas fa-user-circle"></i><span id="userName1" style="margin-right: 5px; font-size: 14px;">${currentUser}</span>`;
+                    loginLink1.addEventListener("click", (e) => {
+                        e.preventDefault();
+                        localStorage.clear();
+                        sessionStorage.clear();
+                        window.location.href = "index.html";
+                    });
+                }
+                
+                // --- Language Menu Toggle ---
+                const languageTab = document.getElementById("languageTab");
+                const languageMenu = document.getElementById("languageMenu");
+                if (languageTab && languageMenu) {
+                    languageTab.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        languageMenu.style.display = languageMenu.style.display === "block" ? "none" : "block";
+                    });
+                    document.addEventListener('click', () => { languageMenu.style.display = "none"; });
+                    languageMenu.addEventListener('click', (e) => { e.stopPropagation(); });
+                }
+
+                // --- Location Services Logic ---
+
+                /**
+                 * Updates all navigation links on the page with the stored location.
+                 */
+                function updateNavLinksWithLocation() {
+                    document.querySelectorAll('nav a[href]').forEach(link => {
+                        const originalHref = link.getAttribute('href');
+                        if (!originalHref || originalHref.startsWith('#') || originalHref.startsWith('javascript:')) return;
+                        link.setAttribute('href', appendLocationToUrl(originalHref));
+                    });
+                }
+
+                /**
+                 * Stores an encoded string (lat,lng) in localStorage.
+                 */
+                function storeEncodedLocation(latitude, longitude) {
+                    const locationString = `${latitude},${longitude}`;
+                    const encodedString = btoa(locationString);
+                    localStorage.setItem('userEncodedLocation', encodedString);
+                    console.log('Stored Encoded Location:', encodedString);
+                    updateNavLinksWithLocation();
+                }
+
+                /**
+                 * Fetches location using IP address as a fallback.
+                 */
+                async function fetchLocationByIp() {
+                    console.log("User denied geolocation. Falling back to IP-based location.");
+                    try {
+                        const response = await fetch('https://ipapi.co/json/');
+                        if (!response.ok) throw new Error('IP API request failed');
+                        const data = await response.json();
+                        if (data.latitude && data.longitude) {
+                            storeEncodedLocation(data.latitude, data.longitude);
+                        } else {
+                        console.error("Could not determine location from IP.");
+                        }
+                    } catch (error) {
+                        console.error("Error fetching location by IP:", error);
+                    }
+                }
+                
+                /**
+                 * Asks for browser's geolocation and handles success or failure.
+                 */
+                function requestBrowserLocation() {
+                    if (navigator.geolocation) {
+                        navigator.geolocation.getCurrentPosition(
+                            (position) => {
+                                console.log("Geolocation permission granted.");
+                                storeEncodedLocation(position.coords.latitude, position.coords.longitude);
+                            },
+                            fetchLocationByIp 
+                        );
+                    } else {
+                        console.error("Geolocation is not supported by this browser.");
+                        fetchLocationByIp(); 
+                    }
+                }
+
+                // --- Main Location Execution ---
+                const isIndexPage = window.location.pathname.endsWith('/') || window.location.pathname.endsWith('index.html');
+                const locationExists = localStorage.getItem('userEncodedLocation');
+
+                if (isIndexPage && !locationExists) {
+                    requestBrowserLocation();
+                }
+                
+                if(locationExists){
+                    updateNavLinksWithLocation();
+                }
+                // --- END OF LOCATION SERVICES SCRIPT ---
+
+            });
+
+            // --- Language Functionality ---
+            async function setLanguage(lang, label, event) {
+                if (event) event.stopPropagation();
+                localStorage.setItem("language", lang);
+                document.getElementById("currentLang").innerText = label;
+                document.getElementById("languageMenu").style.display = "none";
+
+                const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, null, false);
+                const nodes = [];
+                while (walker.nextNode()) {
+                    const node = walker.currentNode;
+                    if (node.parentNode.nodeName === "SCRIPT" || node.parentNode.nodeName === "STYLE" || !node.nodeValue.trim()) continue;
+                    if (!node.originalText) node.originalText = node.nodeValue;
+                    nodes.push(node);
+                }
+
+                if (lang === 'en') {
+                    nodes.forEach(node => { if (node.originalText) node.nodeValue = node.originalText; });
+                    return;
+                }
+
+                const originals = nodes.map(n => n.originalText);
+                const apiKey = "AIzaSyB3ebJaiaYFyB30sGAx1PmfmgnDPFCajKk";
+                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
+                const textToTranslate = originals.join("|||");
+                const prompt = `Translate the following text parts into ${label}. The parts are separated by "|||". Maintain the "|||" separator in your output. Do not translate "24x7 Health" or "24x7 Health Service". If a part is a number or symbol, return it as is. \n\nTEXT: ${textToTranslate}`;
+                
+                document.body.style.opacity = '0.5';
+                document.body.style.pointerEvents = 'none';
+
+                try {
+                    const payload = {
+                        contents: [{ parts: [{ text: prompt }] }],
+                        safetySettings: [
+                            { category: "HARM_CATEGORY_HARASSMENT", threshold: "BLOCK_NONE" },
+                            { category: "HARM_CATEGORY_HATE_SPEECH", threshold: "BLOCK_NONE" },
+                            { category: "HARM_CATEGORY_SEXUALLY_EXPLICIT", threshold: "BLOCK_NONE" },
+                            { category: "HARM_CATEGORY_DANGEROUS_CONTENT", threshold: "BLOCK_NONE" },
+                        ]
+                    };
+                    const response = await fetch(apiUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+                    if (!response.ok) throw new Error(`API request failed: ${response.status}`);
+                    const result = await response.json();
+                    const translatedText = result?.candidates?.[0]?.content?.parts?.[0]?.text;
+
+                    if (translatedText) {
+                        const parts = translatedText.split("|||");
+                        nodes.forEach((node, i) => { node.nodeValue = (parts[i] || originals[i]).trim(); });
+                    } else {
+                    throw new Error("Invalid API response format");
+                    }
+                } catch (err) {
+                    console.error("Translation failed", err);
+                    nodes.forEach(node => { if (node.originalText) node.nodeValue = node.originalText; });
+                } finally {
+                    document.body.style.opacity = '1';
+                    document.body.style.pointerEvents = 'auto';
+                }
+            }
+
+            document.addEventListener("click", function(e) {
+                const menu = document.getElementById("languageMenu");
+                const tab = document.getElementById("languageTab");
+                if (menu && tab && !menu.contains(e.target) && !tab.contains(e.target)) {
+                    menu.style.display = "none";
+                }
+            });
+        </script>
+    <!-- Navbar Code Ends -->
+
+<!-- Hero Section -->
+<section id="hero" style="height:100vh; min-height:500px; max-height:800px; background:linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('https://images.unsplash.com/photo-1579684385127-1ef15d508118?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80') center/cover no-repeat; display:flex; align-items:center; justify-content:center; text-align:center; color:#fff; margin-top:0; position:relative; overflow:hidden;">
+    <div style="position:relative; z-index:2; padding:20px; width:90%; max-width:1200px;">
+        <h1 style="font-size:2rem; margin-bottom:20px; text-shadow:2px 2px 5px rgba(0,0,0,0.5);">Your Fertility Journey Starts Here</h1>
+        <div id="rotating-text" style="font-size:1.2rem; margin-bottom:30px; height:60px; overflow:hidden; position:relative;">
+            <div style="position:absolute; width:100%;">Personalized Infertility Assessments</div>
+        </div>
+        <a href="#contact" class="btn" style="font-size:1rem; padding:12px 25px; background:#e74c3c; color:white; text-decoration:none; border-radius:5px; box-shadow:0 0 20px rgba(231,76,60,0.6); display:inline-block; transition:all 0.3s ease;">Book a Consultation</a>
+    </div>
+</section>
+
+<!-- Main Content Container -->
+<div style="width:100%; max-width:1200px; margin:0 auto; padding:20px; box-sizing:border-box;">
+
+<!-- Assessment Section -->
+<section id="assessment" style="background:#f9f9f9; position:relative; overflow:hidden; padding:40px 20px; border-radius:10px; margin:40px 0;">
+    <div style="position:relative; z-index:2;">
+        <h2 style="text-align:center; color:#2c3e50; margin-bottom:10px;">Comprehensive Infertility Assessment</h2>
+        <p style="text-align:center; max-width:800px; margin:0 auto 30px; font-size:1.1rem; color:#666;">Our diagnostic approach identifies root causes with precision.</p>
+        <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(300px, 1fr)); gap:20px;">
+            <div style="background:#fff; border-radius:10px; padding:25px; box-shadow:0 5px 15px rgba(0,0,0,0.1); transition:all 0.3s ease; border-top:5px solid #e74c3c;">
+                <div style="display:flex; align-items:center; margin-bottom:15px;">
+                    <div style="width:50px; height:50px; background:#e74c3c; border-radius:50%; display:flex; align-items:center; justify-content:center; margin-right:15px; color:#fff; font-weight:bold; font-size:1.3rem; flex-shrink:0;">1</div>
+                    <h3 style="color:#e74c3c; margin:0; font-size:1.2rem;">Hormonal Testing</h3>
+                </div>
+                <p style="color:#666; margin-bottom:15px;">Comprehensive Day 3 FSH, AMH, and thyroid panels to evaluate ovarian reserve.</p>
+                <ul style="margin:0; padding-left:20px; color:#666;">
+                    <li style="margin-bottom:8px;">Anti-Müllerian Hormone (AMH) testing</li>
+                    <li style="margin-bottom:8px;">Follicle Stimulating Hormone (FSH)</li>
+                    <li style="margin-bottom:8px;">Thyroid and prolactin evaluation</li>
+                </ul>
+            </div>
+            
+            <div style="background:#fff; border-radius:10px; padding:25px; box-shadow:0 5px 15px rgba(0,0,0,0.1); transition:all 0.3s ease; border-top:5px solid #3498db;">
+                <div style="display:flex; align-items:center; margin-bottom:15px;">
+                    <div style="width:50px; height:50px; background:#3498db; border-radius:50%; display:flex; align-items:center; justify-content:center; margin-right:15px; color:#fff; font-weight:bold; font-size:1.3rem; flex-shrink:0;">2</div>
+                    <h3 style="color:#3498db; margin:0; font-size:1.2rem;">Semen Analysis</h3>
+                </div>
+                <p style="color:#666; margin-bottom:15px;">Advanced computer-assisted assessment of count, motility, and morphology.</p>
+                <ul style="margin:0; padding-left:20px; color:#666;">
+                    <li style="margin-bottom:8px;">Sperm concentration and count</li>
+                    <li style="margin-bottom:8px;">Motility analysis (progressive/non-progressive)</li>
+                    <li style="margin-bottom:8px;">Morphology assessment (strict criteria)</li>
+                </ul>
+            </div>
+            
+            <div style="background:#fff; border-radius:10px; padding:25px; box-shadow:0 5px 15px rgba(0,0,0,0.1); transition:all 0.3s ease; border-top:5px solid #2ecc71;">
+                <div style="display:flex; align-items:center; margin-bottom:15px;">
+                    <div style="width:50px; height:50px; background:#2ecc71; border-radius:50%; display:flex; align-items:center; justify-content:center; margin-right:15px; color:#fff; font-weight:bold; font-size:1.3rem; flex-shrink:0;">3</div>
+                    <h3 style="color:#2ecc71; margin:0; font-size:1.2rem;">Tubal Evaluation</h3>
+                </div>
+                <p style="color:#666; margin-bottom:15px;">Advanced hysterosalpingography (HSG) and sonohysterography to check fallopian tubes.</p>
+                <ul style="margin:0; padding-left:20px; color:#666;">
+                    <li style="margin-bottom:8px;">Hysterosalpingography (HSG)</li>
+                    <li style="margin-bottom:8px;">Saline infusion sonohysterography</li>
+                    <li style="margin-bottom:8px;">3D ultrasound evaluation</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- IUI Section -->
+<section id="iui" style="background:linear-gradient(135deg, #f5f7fa 0%, #e4e8eb 100%); padding:40px 20px; border-radius:10px; margin:40px 0;">
+    <h2 style="text-align:center; color:#2c3e50; margin-bottom:10px;">Intrauterine Insemination (IUI)</h2>
+    <p style="text-align:center; max-width:800px; margin:0 auto 30px; font-size:1.1rem; color:#666;">A less invasive fertility treatment option with <span style="color:#e74c3c; font-weight:bold;">high success rates</span> for eligible couples.</p>
+    
+    <div style="display:flex; flex-wrap:wrap; gap:30px; align-items:center;">
+        <div style="flex:1; min-width:300px; position:relative;">
+            <div style="width:100%; height:300px; background:url('https://images.unsplash.com/photo-1581595219315-a187dd40c322?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80') center/cover; border-radius:15px; box-shadow:0 10px 20px rgba(0,0,0,0.1); position:relative; overflow:hidden;">
+                <div style="position:absolute; top:0; left:0; width:100%; height:100%; background:linear-gradient(to bottom, rgba(231,76,60,0.2), rgba(52,152,219,0.4));"></div>
+                <div style="position:absolute; bottom:0; left:0; width:100%; padding:20px; color:#fff;">
+                    <h3 style="color:#fff; margin-bottom:10px; font-size:1.2rem;">IUI Success Factors</h3>
+                    <ul style="margin:0; padding-left:20px;">
+                        <li style="margin-bottom:5px;">Woman's age under 35</li>
+                        <li style="margin-bottom:5px;">Normal fallopian tubes</li>
+                        <li style="margin-bottom:5px;">Good sperm parameters</li>
+                        <li style="margin-bottom:5px;">Timed with ovulation</li>
+                    </ul>
+                </div>
+            </div>
+            <div style="position:absolute; top:-15px; right:-15px; width:80px; height:80px; background:#e74c3c; border-radius:50%; display:flex; align-items:center; justify-content:center; color:#fff; font-weight:bold; font-size:0.9rem; box-shadow:0 5px 15px rgba(231,76,60,0.4); z-index:2;">15-20% Success</div>
+        </div>
+        
+        <div style="flex:1; min-width:300px;">
+            <div style="background:#fff; border-radius:15px; padding:20px; box-shadow:0 5px 15px rgba(0,0,0,0.1); margin-bottom:20px; position:relative; border-left:5px solid #e74c3c;">
+                <h3 style="color:#e74c3c; margin-top:0; font-size:1.1rem;">Step 1: Ovarian Stimulation</h3>
+                <p style="color:#666; margin-bottom:15px;">Mild fertility medications (Clomid or Letrozole) to stimulate 1-2 mature follicles.</p>
+                <div style="display:flex; flex-wrap:wrap; gap:10px;">
+                    <span style="background:#f5f5f5; padding:5px 10px; border-radius:20px; font-size:0.8rem; color:#e74c3c;"><i class="fas fa-pills" style="margin-right:5px;"></i> Oral Medications</span>
+                    <span style="background:#f5f5f5; padding:5px 10px; border-radius:20px; font-size:0.8rem; color:#3498db;"><i class="fas fa-calendar-alt" style="margin-right:5px;"></i> 5-10 Days</span>
+                </div>
+            </div>
+            
+            <div style="background:#fff; border-radius:15px; padding:20px; box-shadow:0 5px 15px rgba(0,0,0,0.1); margin-bottom:20px; position:relative; border-left:5px solid #3498db;">
+                <h3 style="color:#3498db; margin-top:0; font-size:1.1rem;">Step 2: Trigger & Timing</h3>
+                <p style="color:#666; margin-bottom:15px;">hCG trigger shot when follicles are mature, followed by insemination 24-36 hours later.</p>
+                <div style="display:flex; flex-wrap:wrap; gap:10px;">
+                    <span style="background:#f5f5f5; padding:5px 10px; border-radius:20px; font-size:0.8rem; color:#e74c3c;"><i class="fas fa-clock" style="margin-right:5px;"></i> Precise Timing</span>
+                    <span style="background:#f5f5f5; padding:5px 10px; border-radius:20px; font-size:0.8rem; color:#3498db;"><i class="fas fa-vial" style="margin-right:5px;"></i> Sperm Prep</span>
+                </div>
+            </div>
+            
+            <div style="background:#fff; border-radius:15px; padding:20px; box-shadow:0 5px 15px rgba(0,0,0,0.1); position:relative; border-left:5px solid #2ecc71;">
+                <h3 style="color:#2ecc71; margin-top:0; font-size:1.1rem;">Step 3: Insemination Procedure</h3>
+                <p style="color:#666; margin-bottom:15px;">Processed sperm is placed directly into the uterus using a thin catheter (painless 5-min procedure).</p>
+                <div style="display:flex; flex-wrap:wrap; gap:10px;">
+                    <span style="background:#f5f5f5; padding:5px 10px; border-radius:20px; font-size:0.8rem; color:#2ecc71;"><i class="fas fa-user-md" style="margin-right:5px;"></i> No Anesthesia</span>
+                    <span style="background:#f5f5f5; padding:5px 10px; border-radius:20px; font-size:0.8rem; color:#e74c3c;"><i class="fas fa-history" style="margin-right:5px;"></i> Quick Recovery</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- IVF Section -->
+<section id="ivf" style="background:#fff; padding:40px 20px; border-radius:10px; margin:40px 0; box-shadow:0 5px 15px rgba(0,0,0,0.05);">
+    <h2 style="text-align:center; color:#2c3e50; margin-bottom:10px;">In-Vitro Fertilization (IVF)</h2>
+    <p style="text-align:center; max-width:800px; margin:0 auto 30px; font-size:1.1rem; color:#666;">Evidence-based protocols for optimal success rates.</p>
+    
+    <div style="position:relative; margin-bottom:40px;">
+        <div style="position:absolute; top:0; left:25px; bottom:0; width:4px; background:linear-gradient(to bottom, #e74c3c, #3498db, #2ecc71); border-radius:2px; z-index:1;"></div>
+        
+        <div style="display:flex; margin-bottom:30px; position:relative; z-index:2;">
+            <div style="width:50px; height:50px; background:#e74c3c; border-radius:50%; display:flex; align-items:center; justify-content:center; color:#fff; font-weight:bold; font-size:1.2rem; flex-shrink:0; margin-right:20px; box-shadow:0 5px 15px rgba(231,76,60,0.4);">1</div>
+            <div style="background:#fff; border-radius:15px; padding:20px; box-shadow:0 5px 15px rgba(0,0,0,0.1); flex-grow:1; border-left:5px solid #e74c3c;">
+                <h3 style="color:#e74c3c; margin-top:0; font-size:1.1rem;">Ovarian Stimulation (8-14 days)</h3>
+                <p style="color:#666;">Customized medication protocols (injectable gonadotropins) to develop multiple follicles with daily monitoring via ultrasound and bloodwork.</p>
+            </div>
+        </div>
+        
+        <div style="display:flex; margin-bottom:30px; position:relative; z-index:2;">
+            <div style="width:50px; height:50px; background:#3498db; border-radius:50%; display:flex; align-items:center; justify-content:center; color:#fff; font-weight:bold; font-size:1.2rem; flex-shrink:0; margin-right:20px; box-shadow:0 5px 15px rgba(52,152,219,0.4);">2</div>
+            <div style="background:#fff; border-radius:15px; padding:20px; box-shadow:0 5px 15px rgba(0,0,0,0.1); flex-grow:1; border-left:5px solid #3498db;">
+                <h3 style="color:#3498db; margin-top:0; font-size:1.1rem;">Egg Retrieval (15-20 mins)</h3>
+                <p style="color:#666;">Transvaginal ultrasound-guided procedure under mild sedation to collect eggs from ovarian follicles. Typically yields 8-15 eggs per cycle.</p>
+            </div>
+        </div>
+        
+        <div style="display:flex; margin-bottom:30px; position:relative; z-index:2;">
+            <div style="width:50px; height:50px; background:#2ecc71; border-radius:50%; display:flex; align-items:center; justify-content:center; color:#fff; font-weight:bold; font-size:1.2rem; flex-shrink:0; margin-right:20px; box-shadow:0 5px 15px rgba(46,204,113,0.4);">3</div>
+            <div style="background:#fff; border-radius:15px; padding:20px; box-shadow:0 5px 15px rgba(0,0,0,0.1); flex-grow:1; border-left:5px solid #2ecc71;">
+                <h3 style="color:#2ecc71; margin-top:0; font-size:1.1rem;">Embryo Culture (3-5 days)</h3>
+                <p style="color:#666;">Fertilized eggs develop into embryos in our state-of-the-art time-lapse incubators with continuous monitoring by embryologists.</p>
+            </div>
+        </div>
+        
+        <div style="display:flex; position:relative; z-index:2;">
+            <div style="width:50px; height:50px; background:#9b59b6; border-radius:50%; display:flex; align-items:center; justify-content:center; color:#fff; font-weight:bold; font-size:1.2rem; flex-shrink:0; margin-right:20px; box-shadow:0 5px 15px rgba(155,89,182,0.4);">4</div>
+            <div style="background:#fff; border-radius:15px; padding:20px; box-shadow:0 5px 15px rgba(0,0,0,0.1); flex-grow:1; border-left:5px solid #9b59b6;">
+                <h3 style="color:#9b59b6; margin-top:0; font-size:1.1rem;">Embryo Transfer (5 mins)</h3>
+                <p style="color:#666;">Selected embryo(s) transferred to the uterus using a thin catheter. No anesthesia required. Pregnancy test scheduled 10-14 days later.</p>
+            </div>
+        </div>
+    </div>
+    
+    <div style="background:linear-gradient(135deg, #e74c3c, #c0392b); border-radius:15px; padding:25px; color:#fff; box-shadow:0 10px 20px rgba(231,76,60,0.3);">
+        <h3 style="color:#fff; margin-top:0; text-align:center; font-size:1.3rem;">Our IVF Success Rates</h3>
+        <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(150px, 1fr)); gap:15px; margin-top:20px;">
+            <div style="text-align:center;">
+                <div style="font-size:1.8rem; font-weight:bold; margin-bottom:5px;">65-75%</div>
+                <div style="font-size:0.8rem;">Pregnancy Rate (Women under 35)</div>
+            </div>
+            <div style="text-align:center;">
+                <div style="font-size:1.8rem; font-weight:bold; margin-bottom:5px;">50-60%</div>
+                <div style="font-size:0.8rem;">Pregnancy Rate (Women 35-37)</div>
+            </div>
+            <div style="text-align:center;">
+                <div style="font-size:1.8rem; font-weight:bold; margin-bottom:5px;">40-50%</div>
+                <div style="font-size:0.8rem;">Pregnancy Rate (Women 38-40)</div>
+            </div>
+            <div style="text-align:center;">
+                <div style="font-size:1.8rem; font-weight:bold; margin-bottom:5px;">85-90%</div>
+                <div style="font-size:0.8rem;">Cumulative Success (3 Cycles)</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ICSI Section -->
+<section id="icsi" style="background:#f9f9f9; padding:40px 20px; border-radius:10px; margin:40px 0;">
+    <h2 style="text-align:center; color:#2c3e50; margin-bottom:10px;">Intracytoplasmic Sperm Injection (ICSI)</h2>
+    <p style="text-align:center; max-width:800px; margin:0 auto 30px; font-size:1.1rem; color:#666;">Advanced technique for severe male factor infertility.</p>
+    
+    <div style="display:flex; flex-wrap:wrap-reverse; gap:30px; align-items:center;">
+        <div style="flex:1; min-width:300px;">
+            <div style="background:#fff; border-radius:15px; padding:20px; box-shadow:0 5px 15px rgba(0,0,0,0.1); margin-bottom:20px; border-top:5px solid #e74c3c;">
+                <h3 style="color:#e74c3c; margin-top:0; font-size:1.1rem;"><i class="fas fa-sperm" style="margin-right:10px;"></i> Sperm Selection</h3>
+                <p style="color:#666;">Using high-magnification microscopy (IMSI at 6000x) and hyaluronan binding to identify the healthiest sperm with optimal DNA integrity.</p>
+            </div>
+            
+            <div style="background:#fff; border-radius:15px; padding:20px; box-shadow:0 5px 15px rgba(0,0,0,0.1); margin-bottom:20px; border-top:5px solid #3498db;">
+                <h3 style="color:#3498db; margin-top:0; font-size:1.1rem;"><i class="fas fa-microscope" style="margin-right:10px;"></i> Microinjection</h3>
+                <p style="color:#666;">A single selected sperm is immobilized and injected directly into the egg cytoplasm using precision micromanipulation equipment.</p>
+            </div>
+            
+            <div style="background:#fff; border-radius:15px; padding:20px; box-shadow:0 5px 15px rgba(0,0,0,0.1); border-top:5px solid #2ecc71;">
+                <h3 style="color:#2ecc71; margin-top:0; font-size:1.1rem;"><i class="fas fa-check-circle" style="margin-right:10px;"></i> Fertilization Check</h3>
+                <p style="color:#666;">Embryologists confirm successful fertilization within 18 hours and monitor embryo development in time-lapse incubators.</p>
+            </div>
+        </div>
+        
+        <div style="flex:1; min-width:300px; position:relative;">
+            <div style="width:100%; height:400px; background:url('https://images.unsplash.com/photo-1581093450021-4a7360e9a7f3?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80') center/cover; border-radius:15px; box-shadow:0 10px 20px rgba(0,0,0,0.2); position:relative; overflow:hidden;">
+                <div style="position:absolute; top:0; left:0; width:100%; height:100%; background:linear-gradient(to bottom, rgba(231,76,60,0.2), rgba(52,152,219,0.4));"></div>
+                <div style="position:absolute; bottom:0; left:0; width:100%; padding:20px; color:#fff; text-align:center;">
+                    <h3 style="color:#fff; margin-bottom:15px; font-size:1.3rem;">ICSI Indications</h3>
+                    <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(120px, 1fr)); gap:10px; margin-top:15px;">
+                        <div style="background:rgba(255,255,255,0.2); backdrop-filter:blur(5px); padding:10px; border-radius:8px;">
+                            <i class="fas fa-tint" style="font-size:1.2rem; margin-bottom:5px;"></i>
+                            <p style="margin:0; font-size:0.8rem;">Low Sperm Count</p>
+                        </div>
+                        <div style="background:rgba(255,255,255,0.2); backdrop-filter:blur(5px); padding:10px; border-radius:8px;">
+                            <i class="fas fa-running" style="font-size:1.2rem; margin-bottom:5px;"></i>
+                            <p style="margin:0; font-size:0.8rem;">Poor Motility</p>
+                        </div>
+                        <div style="background:rgba(255,255,255,0.2); backdrop-filter:blur(5px); padding:10px; border-radius:8px;">
+                            <i class="fas fa-dna" style="font-size:1.2rem; margin-bottom:5px;"></i>
+                            <p style="margin:0; font-size:0.8rem;">Abnormal Morphology</p>
+                        </div>
+                        <div style="background:rgba(255,255,255,0.2); backdrop-filter:blur(5px); padding:10px; border-radius:8px;">
+                            <i class="fas fa-syringe" style="font-size:1.2rem; margin-bottom:5px;"></i>
+                            <p style="margin:0; font-size:0.8rem;">TESA/TESE Cases</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div style="position:absolute; top:-15px; left:-15px; width:80px; height:80px; background:#e74c3c; border-radius:50%; display:flex; align-items:center; justify-content:center; color:#fff; font-weight:bold; font-size:0.9rem; box-shadow:0 5px 15px rgba(231,76,60,0.4); z-index:2;">ICSI</div>
+        </div>
+    </div>
+</section>
+
+<!-- Surgeries Section -->
+<section id="surgeries" style="background:#fff; padding:40px 20px; border-radius:10px; margin:40px 0; box-shadow:0 5px 15px rgba(0,0,0,0.05);">
+    <h2 style="text-align:center; color:#2c3e50; margin-bottom:10px;">Fertility-Enhancing Surgeries</h2>
+    <p style="text-align:center; max-width:800px; margin:0 auto 30px; font-size:1.1rem; color:#666;">Minimally invasive techniques for optimal reproductive outcomes.</p>
+    
+    <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:20px;">
+        <div style="background:#fff; border-radius:15px; overflow:hidden; box-shadow:0 10px 20px rgba(0,0,0,0.1); transition:all 0.3s ease;">
+            <div style="position:relative; overflow:hidden; height:200px;">
+                <img src="https://images.unsplash.com/photo-1551076805-e1869033e561?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" alt="Laparoscopy" style="width:100%; height:100%; object-fit:cover; transition:all 0.3s ease;">
+                <div style="position:absolute; top:0; left:0; width:100%; height:100%; background:linear-gradient(to bottom, transparent, rgba(231,76,60,0.7)));"></div>
+                <div style="position:absolute; bottom:0; left:0; padding:15px; color:#fff;">
+                    <h3 style="color:#fff; margin:0; font-size:1.1rem;">Laparoscopic Surgery</h3>
+                    <div style="display:flex; align-items:center; margin-top:8px;">
+                        <div style="width:25px; height:25px; background:rgba(255,255,255,0.3); border-radius:50%; display:flex; align-items:center; justify-content:center; margin-right:8px;">
+                            <i class="fas fa-clock" style="font-size:0.7rem;"></i>
+                        </div>
+                        <span style="font-size:0.8rem;">1-2 Hour Procedure</span>
+                    </div>
+                </div>
+            </div>
+            <div style="padding:20px;">
+                <p style="margin-bottom:15px; color:#666;">Treats endometriosis, fibroids, and tubal blockages through 5mm incisions with minimal scarring and faster recovery.</p>
+                <a href="#contact" style="width:100%; text-align:center; padding:10px; background:#e74c3c; color:white; text-decoration:none; border-radius:5px; display:block;">Learn More</a>
+            </div>
+            <div style="position:absolute; top:15px; right:15px; background:#e74c3c; color:#fff; padding:3px 12px; border-radius:20px; font-size:0.7rem; font-weight:bold;">Endometriosis</div>
+        </div>
+        
+        <div style="background:#fff; border-radius:15px; overflow:hidden; box-shadow:0 10px 20px rgba(0,0,0,0.1); transition:all 0.3s ease;">
+            <div style="position:relative; overflow:hidden; height:200px;">
+                <img src="https://images.unsplash.com/photo-1585435557343-3b348031e799?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" alt="Hysteroscopy" style="width:100%; height:100%; object-fit:cover; transition:all 0.3s ease;">
+                <div style="position:absolute; top:0; left:0; width:100%; height:100%; background:linear-gradient(to bottom, transparent, rgba(52,152,219,0.7)));"></div>
+                <div style="position:absolute; bottom:0; left:0; padding:15px; color:#fff;">
+                    <h3 style="color:#fff; margin:0; font-size:1.1rem;">Hysteroscopic Surgery</h3>
+                    <div style="display:flex; align-items:center; margin-top:8px;">
+                        <div style="width:25px; height:25px; background:rgba(255,255,255,0.3); border-radius:50%; display:flex; align-items:center; justify-content:center; margin-right:8px;">
+                            <i class="fas fa-clock" style="font-size:0.7rem;"></i>
+                        </div>
+                        <span style="font-size:0.8rem;">30-60 Minute Procedure</span>
+                    </div>
+                </div>
+            </div>
+            <div style="padding:20px;">
+                <p style="margin-bottom:15px; color:#666;">Corrects uterine polyps, septums, and adhesions without any incisions through natural openings for faster healing.</p>
+                <a href="#contact" style="width:100%; text-align:center; padding:10px; background:#3498db; color:white; text-decoration:none; border-radius:5px; display:block;">Learn More</a>
+            </div>
+            <div style="position:absolute; top:15px; right:15px; background:#3498db; color:#fff; padding:3px 12px; border-radius:20px; font-size:0.7rem; font-weight:bold;">Uterine Polyps</div>
+        </div>
+        
+        <div style="background:#fff; border-radius:15px; overflow:hidden; box-shadow:0 10px 20px rgba(0,0,0,0.1); transition:all 0.3s ease;">
+            <div style="position:relative; overflow:hidden; height:200px;">
+                <img src="https://images.unsplash.com/photo-1581595219315-a187dd40c322?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" alt="Varicocele Repair" style="width:100%; height:100%; object-fit:cover; transition:all 0.3s ease;">
+                <div style="position:absolute; top:0; left:0; width:100%; height:100%; background:linear-gradient(to bottom, transparent, rgba(46,204,113,0.7)));"></div>
+                <div style="position:absolute; bottom:0; left:0; padding:15px; color:#fff;">
+                    <h3 style="color:#fff; margin:0; font-size:1.1rem;">Varicocele Repair</h3>
+                    <div style="display:flex; align-items:center; margin-top:8px;">
+                        <div style="width:25px; height:25px; background:rgba(255,255,255,0.3); border-radius:50%; display:flex; align-items:center; justify-content:center; margin-right:8px;">
+                            <i class="fas fa-clock" style="font-size:0.7rem;"></i>
+                        </div>
+                        <span style="font-size:0.8rem;">45-90 Minute Procedure</span>
+                    </div>
+                </div>
+            </div>
+            <div style="padding:20px;">
+                <p style="margin-bottom:15px; color:#666;">Microsurgical approach to improve sperm parameters in men with varicoceles, enhancing natural conception potential.</p>
+                <a href="#contact" style="width:100%; text-align:center; padding:10px; background:#2ecc71; color:white; text-decoration:none; border-radius:5px; display:block;">Learn More</a>
+            </div>
+            <div style="position:absolute; top:15px; right:15px; background:#2ecc71; color:#fff; padding:3px 12px; border-radius:20px; font-size:0.7rem; font-weight:bold;">Male Infertility</div>
+        </div>
+    </div>
+</section>
+
+<!-- PGT Section -->
+<section id="pgt" style="background:#f9f9f9; padding:40px 20px; border-radius:10px; margin:40px 0;">
+    <h2 style="text-align:center; color:#2c3e50; margin-bottom:10px;">Preimplantation Genetic Testing (PGT)</h2>
+    <p style="text-align:center; max-width:800px; margin:0 auto 30px; font-size:1.1rem; color:#666;">Cutting-edge NGS technology for embryo screening.</p>
+    
+    <div style="display:flex; flex-wrap:wrap; gap:30px; align-items:center;">
+        <div style="flex:1; min-width:300px;">
+            <div style="background:#fff; border-radius:15px; padding:20px; box-shadow:0 5px 15px rgba(0,0,0,0.1); margin-bottom:20px; border-top:5px solid #e74c3c;">
+                <h3 style="color:#e74c3c; margin-top:0; font-size:1.1rem;">PGT-A (Aneuploidy Screening)</h3>
+                <p style="color:#666;">Comprehensive chromosome screening identifies embryos with correct chromosome numbers (euploid) to reduce miscarriage risk and increase implantation rates.</p>
+            </div>
+            
+            <div style="background:#fff; border-radius:15px; padding:20px; box-shadow:0 5px 15px rgba(0,0,0,0.1); margin-bottom:20px; border-top:5px solid #3498db;">
+                <h3 style="color:#3498db; margin-top:0; font-size:1.1rem;">PGT-M (Monogenic Disorders)</h3>
+                <p style="color:#666;">Screens for specific genetic diseases like cystic fibrosis, sickle cell anemia, or Huntington's disease in families with known genetic risks.</p>
+            </div>
+            
+            <div style="background:#fff; border-radius:15px; padding:20px; box-shadow:0 5px 15px rgba(0,0,0,0.1); border-top:5px solid #2ecc71;">
+                <h3 style="color:#2ecc71; margin-top:0; font-size:1.1rem;">PGT-SR (Structural Rearrangements)</h3>
+                <p style="color:#666;">For patients with balanced translocations or chromosomal rearrangements to identify embryos with normal or balanced chromosomal content.</p>
+            </div>
+        </div>
+        
+        <div style="flex:1; min-width:300px; position:relative;">
+            <div style="width:100%; height:400px; background:#2c3e50; border-radius:15px; padding:25px; color:#fff; box-shadow:0 10px 20px rgba(0,0,0,0.2); position:relative; overflow:hidden;">
+                <h3 style="color:#fff; margin-top:0; text-align:center; font-size:1.3rem;">PGT Benefits</h3>
+                <div style="margin-top:30px;">
+                    <div style="display:flex; align-items:flex-start; margin-bottom:20px;">
+                        <div style="width:40px; height:40px; background:#e74c3c; border-radius:50%; display:flex; align-items:center; justify-content:center; margin-right:15px; flex-shrink:0; font-size:1rem;">1</div>
+                        <div>
+                            <h4 style="color:#fff; margin:0 0 5px 0; font-size:1rem;">Higher Pregnancy Rates</h4>
+                            <p style="margin:0; opacity:0.8; font-size:0.9rem;">Euploid embryos have 60-70% implantation rate vs 30% untested</p>
+                        </div>
+                    </div>
+                    
+                    <div style="display:flex; align-items:flex-start; margin-bottom:20px;">
+                        <div style="width:40px; height:40px; background:#3498db; border-radius:50%; display:flex; align-items:center; justify-content:center; margin-right:15px; flex-shrink:0; font-size:1rem;">2</div>
+                        <div>
+                            <h4 style="color:#fff; margin:0 0 5px 0; font-size:1rem;">Lower Miscarriage Risk</h4>
+                            <p style="margin:0; opacity:0.8; font-size:0.9rem;">Reduces miscarriage risk from 25% to <5% by avoiding aneuploid embryos</p>
+                        </div>
+                    </div>
+                    
+                    <div style="display:flex; align-items:flex-start; margin-bottom:20px;">
+                        <div style="width:40px; height:40px; background:#2ecc71; border-radius:50%; display:flex; align-items:center; justify-content:center; margin-right:15px; flex-shrink:0; font-size:1rem;">3</div>
+                        <div>
+                            <h4 style="color:#fff; margin:0 0 5px 0; font-size:1rem;">Single Embryo Transfer</h4>
+                            <p style="margin:0; opacity:0.8; font-size:0.9rem;">Enables safe single embryo transfer while maintaining high success rates</p>
+                        </div>
+                    </div>
+                    
+                    <div style="display:flex; align-items:flex-start;">
+                        <div style="width:40px; height:40px; background:#9b59b6; border-radius:50%; display:flex; align-items:center; justify-content:center; margin-right:15px; flex-shrink:0; font-size:1rem;">4</div>
+                        <div>
+                            <h4 style="color:#fff; margin:0 0 5px 0; font-size:1rem;">Genetic Disease Prevention</h4>
+                            <p style="margin:0; opacity:0.8; font-size:0.9rem;">Eliminates risk of passing on known genetic conditions to offspring</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div style="position:absolute; bottom:-15px; right:-15px; width:80px; height:80px; background:#e74c3c; border-radius:50%; display:flex; align-items:center; justify-content:center; color:#fff; font-weight:bold; font-size:0.9rem; box-shadow:0 5px 15px rgba(231,76,60,0.4); z-index:2;">NGS Technology</div>
+        </div>
+    </div>
+</section>
+
+<!-- Freezing Section -->
+<section id="freezing" style="background:#fff; padding:40px 20px; border-radius:10px; margin:40px 0; box-shadow:0 5px 15px rgba(0,0,0,0.05);">
+    <h2 style="text-align:center; color:#2c3e50; margin-bottom:10px;">Fertility Preservation Options</h2>
+    <p style="text-align:center; max-width:800px; margin:0 auto 30px; font-size:1.1rem; color:#666;">Vitrification protocols for optimal freeze-thaw survival.</p>
+    
+    <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:20px;">
+        <div style="background:#fff; border-radius:15px; padding:25px; box-shadow:0 5px 15px rgba(0,0,0,0.1); text-align:center; position:relative; overflow:hidden;">
+            <div style="width:80px; height:80px; background:rgba(231,76,60,0.1); border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 20px;">
+                <i class="fas fa-egg" style="font-size:2rem; color:#e74c3c;"></i>
+            </div>
+            <h3 style="color:#e74c3c; margin-top:0; font-size:1.1rem;">Egg Freezing</h3>
+            <p style="margin-bottom:15px; color:#666;">Vitrification preserves eggs at -196°C with >90% survival rates and equivalent success to fresh eggs when thawed.</p>
+            <div style="background:#f9f9f9; border-radius:8px; padding:15px; text-align:left; margin-bottom:15px;">
+                <p style="margin:5px 0; font-weight:bold; color:#e74c3c; font-size:0.9rem;"><i class="fas fa-check-circle" style="margin-right:5px;"></i> Ideal For:</p>
+                <p style="margin:8px 0 5px 0; position:relative; padding-left:20px; color:#666; font-size:0.9rem;"><i class="fas fa-arrow-right" style="position:absolute; left:5px; top:3px; color:#e74c3c; font-size:0.7rem;"></i>Women delaying childbearing</p>
+                <p style="margin:5px 0 5px 0; position:relative; padding-left:20px; color:#666; font-size:0.9rem;"><i class="fas fa-arrow-right" style="position:absolute; left:5px; top:3px; color:#e74c3c; font-size:0.7rem;"></i>Medical treatments affecting fertility</p>
+            </div>
+        </div>
+        
+        <div style="background:#fff; border-radius:15px; padding:25px; box-shadow:0 5px 15px rgba(0,0,0,0.1); text-align:center; position:relative; overflow:hidden;">
+            <div style="width:80px; height:80px; background:rgba(52,152,219,0.1); border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 20px;">
+                <i class="fas fa-sperm" style="font-size:2rem; color:#3498db;"></i>
+            </div>
+            <h3 style="color:#3498db; margin-top:0; font-size:1.1rem;">Sperm Banking</h3>
+            <p style="margin-bottom:15px; color:#666;">Cryopreserved samples remain viable indefinitely with specialized freezing media to protect sperm during freeze-thaw.</p>
+            <div style="background:#f9f9f9; border-radius:8px; padding:15px; text-align:left; margin-bottom:15px;">
+                <p style="margin:5px 0; font-weight:bold; color:#3498db; font-size:0.9rem;"><i class="fas fa-check-circle" style="margin-right:5px;"></i> Ideal For:</p>
+                <p style="margin:8px 0 5px 0; position:relative; padding-left:20px; color:#666; font-size:0.9rem;"><i class="fas fa-arrow-right" style="position:absolute; left:5px; top:3px; color:#3498db; font-size:0.7rem;"></i>Men with low sperm counts</p>
+                <p style="margin:5px 0 5px 0; position:relative; padding-left:20px; color:#666; font-size:0.9rem;"><i class="fas fa-arrow-right" style="position:absolute; left:5px; top:3px; color:#3498db; font-size:0.7rem;"></i>Prior to vasectomy</p>
+            </div>
+        </div>
+        
+        <div style="background:#fff; border-radius:15px; padding:25px; box-shadow:0 5px 15px rgba(0,0,0,0.1); text-align:center; position:relative; overflow:hidden;">
+            <div style="width:80px; height:80px; background:rgba(46,204,113,0.1); border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 20px;">
+                <i class="fas fa-embryo" style="font-size:2rem; color:#2ecc71;"></i>
+            </div>
+            <h3 style="color:#2ecc71; margin-top:0; font-size:1.1rem;">Embryo Cryopreservation</h3>
+            <p style="margin-bottom:15px; color:#666;">Frozen embryos maintain pregnancy potential for 10+ years with our advanced vitrification techniques and storage.</p>
+            <div style="background:#f9f9f9; border-radius:8px; padding:15px; text-align:left; margin-bottom:15px;">
+                <p style="margin:5px 0; font-weight:bold; color:#2ecc71; font-size:0.9rem;"><i class="fas fa-check-circle" style="margin-right:5px;"></i> Ideal For:</p>
+                <p style="margin:8px 0 5px 0; position:relative; padding-left:20px; color:#666; font-size:0.9rem;"><i class="fas fa-arrow-right" style="position:absolute; left:5px; top:3px; color:#2ecc71; font-size:0.7rem;"></i>Couples completing IVF cycles</p>
+                <p style="margin:5px 0 5px 0; position:relative; padding-left:20px; color:#666; font-size:0.9rem;"><i class="fas fa-arrow-right" style="position:absolute; left:5px; top:3px; color:#2ecc71; font-size:0.7rem;"></i>Future sibling conception</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Surrogacy Section -->
+<section id="surrogacy" style="background:linear-gradient(135deg, #3498db, #2c3e50); color:#fff; padding:40px 20px; margin:40px 0; border-radius:10px;">
+    <h2 style="text-align:center; color:#fff; margin-bottom:10px;">Gestational Surrogacy Program</h2>
+    <p style="text-align:center; max-width:800px; margin:0 auto 30px; font-size:1.1rem; color:rgba(255,255,255,0.9);">Comprehensive surrogacy services with <span style="color:#fff; font-weight:bold;">thorough screening</span> and <span style="color:#fff; font-weight:bold;">legal support</span>.</p>
+    
+    <div style="display:flex; flex-wrap:wrap; gap:30px; align-items:center;">
+        <div style="flex:1; min-width:300px;">
+            <div style="background:rgba(255,255,255,0.1); backdrop-filter:blur(5px); border-radius:15px; padding:20px; box-shadow:0 5px 15px rgba(0,0,0,0.2); margin-bottom:20px; border-left:5px solid #e74c3c;">
+                <h3 style="color:#fff; margin-top:0; font-size:1.1rem;"><i class="fas fa-user-shield" style="margin-right:10px; color:#e74c3c;"></i> Surrogate Screening</h3>
+                <p style="opacity:0.9; font-size:0.9rem;">Rigorous medical, psychological, and background screening of all potential surrogates to ensure optimal outcomes.</p>
+            </div>
+            
+            <div style="background:rgba(255,255,255,0.1); backdrop-filter:blur(5px); border-radius:15px; padding:20px; box-shadow:0 5px 15px rgba(0,0,0,0.2); margin-bottom:20px; border-left:5px solid #2ecc71;">
+                <h3 style="color:#fff; margin-top:0; font-size:1.1rem;"><i class="fas fa-handshake" style="margin-right:10px; color:#2ecc71;"></i> Matching Process</h3>
+                <p style="opacity:0.9; font-size:0.9rem;">Personalized matching based on preferences (location, relationship type, values) with facilitated meetings.</p>
+            </div>
+            
+            <div style="background:rgba(255,255,255,0.1); backdrop-filter:blur(5px); border-radius:15px; padding:20px; box-shadow:0 5px 15px rgba(0,0,0,0.2); border-left:5px solid #9b59b6;">
+                <h3 style="color:#fff; margin-top:0; font-size:1.1rem;"><i class="fas fa-baby-carriage" style="margin-right:10px; color:#9b59b6;"></i> Embryo Transfer</h3>
+                <p style="opacity:0.9; font-size:0.9rem;">Synchronized cycle with surrogate and carefully monitored embryo transfer procedure for optimal implantation.</p>
+            </div>
+        </div>
+        
+        <div style="flex:1; min-width:300px; position:relative;">
+            <div style="background:rgba(255,255,255,0.15); backdrop-filter:blur(10px); border-radius:15px; padding:30px; box-shadow:0 10px 20px rgba(0,0,0,0.3); position:relative; overflow:hidden;">
+                <h3 style="color:#fff; margin-top:0; text-align:center; font-size:1.3rem;">Surrogacy Journey</h3>
+                <div style="margin-top:30px;">
+                    <div style="display:flex; align-items:flex-start; margin-bottom:20px;">
+                        <div style="width:40px; height:40px; background:#e74c3c; border-radius:50%; display:flex; align-items:center; justify-content:center; margin-right:15px; flex-shrink:0; font-size:1rem;">1</div>
+                        <div>
+                            <h4 style="color:#fff; margin:0 0 8px 0; font-size:1rem;">Initial Consultation</h4>
+                            <p style="margin:0; opacity:0.8; font-size:0.9rem;">Review process, requirements, and create personalized plan (1-2 weeks)</p>
+                        </div>
+                    </div>
+                    
+                    <div style="display:flex; align-items:flex-start; margin-bottom:20px;">
+                        <div style="width:40px; height:40px; background:#3498db; border-radius:50%; display:flex; align-items:center; justify-content:center; margin-right:15px; flex-shrink:0; font-size:1rem;">2</div>
+                        <div>
+                            <h4 style="color:#fff; margin:0 0 8px 0; font-size:1rem;">Surrogate Matching</h4>
+                            <p style="margin:0; opacity:0.8; font-size:0.9rem;">Review profiles, meet candidates, and match (1-3 months)</p>
+                        </div>
+                    </div>
+                    
+                    <div style="display:flex; align-items:flex-start; margin-bottom:20px;">
+                        <div style="width:40px; height:40px; background:#2ecc71; border-radius:50%; display:flex; align-items:center; justify-content:center; margin-right:15px; flex-shrink:0; font-size:1rem;">3</div>
+                        <div>
+                            <h4 style="color:#fff; margin:0 0 8px 0; font-size:1rem;">Legal Contracts</h4>
+                            <p style="margin:0; opacity:0.8; font-size:0.9rem;">Draft and finalize surrogacy agreement with attorneys (4-8 weeks)</p>
+                        </div>
+                    </div>
+                    
+                    <div style="display:flex; align-items:flex-start; margin-bottom:20px;">
+                        <div style="width:40px; height:40px; background:#9b59b6; border-radius:50%; display:flex; align-items:center; justify-content:center; margin-right:15px; flex-shrink:0; font-size:1rem;">4</div>
+                        <div>
+                            <h4 style="color:#fff; margin:0 0 8px 0; font-size:1rem;">Medical Process</h4>
+                            <p style="margin:0; opacity:0.8; font-size:0.9rem;">Cycle synchronization, embryo transfer, and pregnancy (4-6 months)</p>
+                        </div>
+                    </div>
+                    
+                    <div style="display:flex; align-items:flex-start;">
+                        <div style="width:40px; height:40px; background:#f1c40f; border-radius:50%; display:flex; align-items:center; justify-content:center; margin-right:15px; flex-shrink:0; font-size:1rem;">5</div>
+                        <div>
+                            <h4 style="color:#fff; margin:0 0 8px 0; font-size:1rem;">Delivery & Parentage</h4>
+                            <p style="margin:0; opacity:0.8; font-size:0.9rem;">Birth plan execution and legal parentage establishment (9 months+)</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div style="position:absolute; top:-15px; right:-15px; width:80px; height:80px; background:#e74c3c; border-radius:50%; display:flex; align-items:center; justify-content:center; color:#fff; font-weight:bold; font-size:0.9rem; box-shadow:0 5px 15px rgba(231,76,60,0.4); z-index:2;">75% Success</div>
+        </div>
+    </div>
+</section>
+
+<!-- Cancer Fertility Section -->
+<section id="cancer" style="background:#f9f9f9; padding:40px 20px; border-radius:10px; margin:40px 0;">
+    <h2 style="text-align:center; color:#2c3e50; margin-bottom:10px;">Fertility Preservation for Cancer Patients</h2>
+    <p style="text-align:center; max-width:800px; margin:0 auto 30px; font-size:1.1rem; color:#666;">Urgent fertility options before treatment begins.</p>
+    
+    <div style="background:#fff; border-radius:15px; padding:30px; box-shadow:0 10px 20px rgba(0,0,0,0.1); text-align:center; position:relative; overflow:hidden;">
+        <img src="https://images.unsplash.com/photo-1576091160550-2173dba999ef?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" alt="Cancer Fertility" style="height:80px; width:80px; border-radius:50%; object-fit:cover; margin-bottom:20px;">
+        <h3 style="color:#e74c3c; font-size:1.3rem; margin-bottom:15px;">Time-Sensitive Preservation</h3>
+        <p style="max-width:700px; margin:0 auto 20px; font-size:1rem; color:#666;">We prioritize cancer patients with expedited egg/sperm freezing within 72 hours of referral, coordinating directly with your oncology team.</p>
+        
+        <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(180px, 1fr)); gap:15px; margin-bottom:30px;">
+            <div style="background:#f9f9f9; padding:15px; border-radius:8px; position:relative; overflow:hidden;">
+                <div style="position:absolute; top:0; left:0; width:4px; height:100%; background:#e74c3c;"></div>
+                <p style="font-weight:bold; color:#e74c3c; margin:5px 0 10px 0; font-size:1rem;"><i class="fas fa-female" style="margin-right:8px;"></i> For Women</p>
+                <ul style="margin:0; padding-left:15px; text-align:left; color:#666; font-size:0.9rem;">
+                    <li style="margin-bottom:5px;">Egg freezing (2-week cycle)</li>
+                    <li style="margin-bottom:5px;">Ovarian tissue freezing</li>
+                </ul>
+            </div>
+            
+            <div style="background:#f9f9f9; padding:15px; border-radius:8px; position:relative; overflow:hidden;">
+                <div style="position:absolute; top:0; left:0; width:4px; height:100%; background:#3498db;"></div>
+                <p style="font-weight:bold; color:#3498db; margin:5px 0 10px 0; font-size:1rem;"><i class="fas fa-male" style="margin-right:8px;"></i> For Men</p>
+                <ul style="margin:0; padding-left:15px; text-align:left; color:#666; font-size:0.9rem;">
+                    <li style="margin-bottom:5px;">Sperm banking (same-day)</li>
+                    <li style="margin-bottom:5px;">Testicular tissue freezing</li>
+                </ul>
+            </div>
+            
+            <div style="background:#f9f9f5; padding:15px; border-radius:8px; position:relative; overflow:hidden;">
+                <div style="position:absolute; top:0; left:0; width:4px; height:100%; background:#2ecc71;"></div>
+                <p style="font-weight:bold; color:#2ecc71; margin:5px 0 10px 0; font-size:1rem;"><i class="fas fa-dollar-sign" style="margin-right:8px;"></i> Financial Assistance</p>
+                <ul style="margin:0; padding-left:15px; text-align:left; color:#666; font-size:0.9rem;">
+                    <li style="margin-bottom:5px;">Discounted rates (40-60% off)</li>
+                    <li style="margin-bottom:5px;">Medication assistance</li>
+                </ul>
+            </div>
+        </div>
+        
+        <div style="display:flex; justify-content:center; gap:15px; flex-wrap:wrap;">
+            <a href="tel:+18002262366" style="font-size:1rem; padding:12px 20px; background:#e74c3c; color:white; text-decoration:none; border-radius:5px; display:inline-block; box-shadow:0 5px 15px rgba(231,76,60,0.4);"><i class="fas fa-phone" style="margin-right:8px;"></i> 24/7 Oncofertility Hotline</a>
+            <a href="#contact" style="font-size:1rem; padding:12px 20px; background:#2c3e50; color:white; text-decoration:none; border-radius:5px; display:inline-block; box-shadow:0 5px 15px rgba(44,62,80,0.4);"><i class="fas fa-calendar-alt" style="margin-right:8px;"></i> Emergency Appointment</a>
+        </div>
+    </div>
+</section>
+
+<!-- Contact Section -->
+<section id="contact" style="background:#2c3e50; color:#fff; padding:40px 20px; margin:40px 0; border-radius:10px;">
+    <h2 style="text-align:center; color:#fff; margin-bottom:30px;">Schedule a Consultation</h2>
+    
+    <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(300px, 1fr)); gap:30px;">
+        <div>
+            <h3 style="color:#e74c3c; margin-top:0; font-size:1.2rem;">Our Locations</h3>
+            
+            <div style="background:rgba(255,255,255,0.1); padding:20px; border-radius:10px; margin-bottom:15px; backdrop-filter:blur(5px); border-left:5px solid #e74c3c;">
+                <p style="font-weight:bold; margin-bottom:8px; font-size:1.1rem; color:#fff;"><i class="fas fa-map-marker-alt" style="margin-right:8px; color:#e74c3c;"></i> Manhattan Center</p>
+                <p style="margin:5px 0; opacity:0.9; font-size:0.9rem;">123 Fertility Lane, New York, NY 10001</p>
+                <p style="margin:5px 0; opacity:0.9; font-size:0.9rem;"><i class="fas fa-subway" style="margin-right:8px; color:#e74c3c;"></i> Near Grand Central Station</p>
+            </div>
+            
+            <div style="background:rgba(255,255,255,0.1); padding:20px; border-radius:10px; margin-bottom:25px; backdrop-filter:blur(5px); border-left:5px solid #3498db;">
+                <p style="font-weight:bold; margin-bottom:8px; font-size:1.1rem; color:#fff;"><i class="fas fa-map-marker-alt" style="margin-right:8px; color:#3498db;"></i> Brooklyn Center</p>
+                <p style="margin:5px 0; opacity:0.9; font-size:0.9rem;">456 Hope Street, Brooklyn, NY 11201</p>
+                <p style="margin:5px 0; opacity:0.9; font-size:0.9rem;"><i class="fas fa-subway" style="margin-right:8px; color:#3498db;"></i> Near Barclays Center</p>
+            </div>
+            
+            <div>
+                <p style="margin:12px 0; font-size:1rem;"><strong><i class="fas fa-phone" style="margin-right:8px; color:#e74c3c;"></i> Phone:</strong> <a href="tel:+12125551234" style="color:#fff; text-decoration:underline;">(212) 555-1234</a></p>
+                <p style="margin:12px 0; font-size:1rem;"><strong><i class="fas fa-envelope" style="margin-right:8px; color:#3498db;"></i> Email:</strong> <a href="mailto:info@fertilitycare.com" style="color:#fff; text-decoration:underline;">info@fertilitycare.com</a></p>
+                
+                <div style="display:flex; gap:12px; margin-top:25px;">
+                    <a href="#" style="width:35px; height:35px; background:#e74c3c; border-radius:50%; display:flex; align-items:center; justify-content:center; color:#fff; font-size:1rem;"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" style="width:35px; height:35px; background:#3498db; border-radius:50%; display:flex; align-items:center; justify-content:center; color:#fff; font-size:1rem;"><i class="fab fa-twitter"></i></a>
+                    <a href="#" style="width:35px; height:35px; background:#e4405f; border-radius:50%; display:flex; align-items:center; justify-content:center; color:#fff; font-size:1rem;"><i class="fab fa-instagram"></i></a>
+                </div>
+            </div>
+        </div>
+        
+        <div>
+            <form style="background:#fff; padding:25px; border-radius:15px; color:#333; box-shadow:0 10px 20px rgba(0,0,0,0.2);">
+                <h3 style="color:#2c3e50; margin-top:0; margin-bottom:20px; text-align:center; font-size:1.2rem;">Contact Our Team</h3>
+                
+                <div style="display:grid; grid-template-columns:1fr; gap:15px; margin-bottom:15px;">
+                    <div>
+                        <label style="display:block; margin-bottom:5px; font-weight:bold; color:#2c3e50; font-size:0.9rem;">First Name</label>
+                        <input type="text" placeholder="First Name" style="width:100%; padding:10px 12px; border:1px solid #ddd; border-radius:5px; font-family:inherit; font-size:0.9rem; box-sizing:border-box;">
+                    </div>
+                    <div>
+                        <label style="display:block; margin-bottom:5px; font-weight:bold; color:#2c3e50; font-size:0.9rem;">Last Name</label>
+                        <input type="text" placeholder="Last Name" style="width:100%; padding:10px 12px; border:1px solid #ddd; border-radius:5px; font-family:inherit; font-size:0.9rem; box-sizing:border-box;">
+                    </div>
+                </div>
+                
+                <div style="margin-bottom:15px;">
+                    <label style="display:block; margin-bottom:5px; font-weight:bold; color:#2c3e50; font-size:0.9rem;">Email</label>
+                    <input type="email" placeholder="Email" style="width:100%; padding:10px 12px; border:1px solid #ddd; border-radius:5px; font-family:inherit; font-size:0.9rem; box-sizing:border-box;">
+                </div>
+                
+                <div style="margin-bottom:15px;">
+                    <label style="display:block; margin-bottom:5px; font-weight:bold; color:#2c3e50; font-size:0.9rem;">Service Interested In</label>
+                    <select style="width:100%; padding:10px 12px; border:1px solid #ddd; border-radius:5px; font-family:inherit; font-size:0.9rem; box-sizing:border-box;">
+                        <option>Select Service</option>
+                        <option>Infertility Assessment</option>
+                        <option>IUI Consultation</option>
+                        <option>IVF Consultation</option>
+                        <option>Egg Freezing</option>
+                        <option>Surrogacy Program</option>
+                        <option>Cancer Fertility Preservation</option>
+                    </select>
+                </div>
+                
+                <div style="margin-bottom:20px;">
+                    <label style="display:block; margin-bottom:5px; font-weight:bold; color:#2c3e50; font-size:0.9rem;">Message</label>
+                    <textarea placeholder="Your message..." style="width:100%; padding:10px 12px; border:1px solid #ddd; border-radius:5px; font-family:inherit; font-size:0.9rem; min-height:100px; box-sizing:border-box;"></textarea>
+                </div>
+                
+                <button type="submit" style="width:100%; padding:12px; background:#e74c3c; color:white; font-size:1rem; border:none; border-radius:5px; cursor:pointer; transition:all 0.3s ease;"><i class="fas fa-paper-plane" style="margin-right:8px;"></i> Request Appointment</button>
+            </form>
+        </div>
+    </div>
+</section>
+
+</div> <!-- End of Main Content Container -->
+
+    <!-- footer -->
+    <footer style="background-color: black; color: white; padding: 30px 10%; font-family: Arial, sans-serif; ">
+        <div style="display: flex; flex-wrap: wrap; justify-content: space-between;">
+            <div style="flex: 1; min-width: 200px; margin-bottom: 20px;">
+                <h3 style="margin-bottom: 15px; font-size: 18px;">Quick Links</h3>
+                <a href="Diagnostics.html" style="color: white; text-decoration: none; display: block; margin-bottom: 8px; font-size: 14px;">Diagnostics</a>
+                <a href="diagnostic-services.html" style="color: white; text-decoration: none; display: block; margin-bottom: 8px; font-size: 14px;">Find Test's</a>
+                <a href="doctor.html" style="color: white; text-decoration: none; display: block; margin-bottom: 8px; font-size: 14px;">Find Doctor</a>
+                <a href="Dental.html" style="color: white; text-decoration: none; display: block; margin-bottom: 8px; font-size: 14px;">Find A Tooth Expert</a>
+                <a href="Eyecare.html" style="color: white; text-decoration: none; display: block; margin-bottom: 8px; font-size: 14px;">Eye Care</a>
+                <a href="donations.html" style="color: white; text-decoration: none; display: block; margin-bottom: 8px; font-size: 14px;">Organ Donors</a>
+            </div>
+            <div style="flex: 1; min-width: 200px; margin-bottom: 20px;">
+                <h3 style="margin-bottom: 15px; font-size: 18px;">Services</h3>
+                <a href="diagnostic-services.html" style="color: white; text-decoration: none; display: block; margin-bottom: 8px; font-size: 14px;">Health Checkups</a>
+                <a href="blood.html" style="color: white; text-decoration: none; display: block; margin-bottom: 8px; font-size: 14px;">Blood Donations</a>
+                <a href="healthRecords.html" style="color: white; text-decoration: none; display: block; margin-bottom: 8px; font-size: 14px;">health Reports</a>
+                <a href="fertility.html" style="color: white; text-decoration: none; display: block; margin-bottom: 8px; font-size: 14px;">Fertility</a>
+                <a href="Cancer.html" style="color: white; text-decoration: none; display: block; margin-bottom: 8px; font-size: 14px;">Cancer Care</a>
+            </div>
+            <div style="flex: 1; min-width: 200px; margin-bottom: 20px;">
+                <h3 style="margin-bottom: 15px; font-size: 18px;">Subscribe to News Letter</h3>
+                <input type="email" placeholder="Enter your email" style="padding: 10px; margin-bottom: 10px; width: 80%; border: none; border-radius: 5px;">
+                <button style="padding: 10px; width: 50%; border: none; border-radius: 5px; background-color: teal; color: white; cursor: pointer;">Subscribe</button>
+            </div>
+            <div style="flex: 1; min-width: 200px; margin-bottom: 20px;">
+                <h3 style="margin-bottom: 15px; font-size: 18px;">Scan & Connect</h3>
+                <img src="images/hitaishihealthcare-qr.png" alt="qr code for visit our website" style="height: 200px; width: 180px;">
+            </div>
+            
+            <div style="flex: 1; min-width: 200px;">
+                <h3 style="margin-bottom: 15px; font-size: 18px;">Contact</h3>
+                <div style="display: flex; align-items: center; gap: 10px; margin: 10px 0;">
+                    <i class="fas fa-envelope"></i>
+                    <span>support@24x7health.in</span>
+                </div>
+                <div style="display: flex; align-items: center; gap: 10px; margin: 10px 0;">
+                    <i class="fas fa-phone"></i>
+                    <span>8790170525</span>
+                </div>
+                <h3 style="margin-bottom: 15px; font-size: 18px;">Social Media</h3>
+                <div>
+                    <a href="https://www.instagram.com/optic.bee/" target="_blank" style="color: white; font-size: 20px; margin-right: 15px;"><i class="fab fa-instagram"></i></a>
+                    <a href="https://www.facebook.com/share/1CC3vxsppD/" target="_blank" style="color: white; font-size: 20px; margin-right: 15px;"> <i class="fab fa-facebook"></i></a>
+                    <a href="https://x.com/BeeOptic?t=LB5TDI4096CJEldX9Ccswg&s=09" target="_blank" style="color: white; font-size: 20px; margin-right: 15px;"><i class="fab fa-twitter"></i> </a>
+                    <a href="https://linkedin.com" target="_blank" style="color: white; font-size: 20px; margin-right: 15px;"> <i class="fab fa-linkedin"></i> </a>
+                    <a href="https://youtube.com/@opticbee-i7j?si=w9ynFoGer27Kb82g" target="_blank" style="color: white; font-size: 20px; margin-right: 15px;"> <i class="fab fa-youtube"></i> </a>
+
+                </div>
+            </div>
+        </div>
+        <div style="text-align: center; padding-top: 20px; border-top: 1px solid gray; margin-top: 20px;">
+            <p>&copy; Copyright 2025 By 24x7 Health Service. All Rights Reserved</p>
+            <a href="#" style="color: white; text-decoration: none;">Sitemap</a> |
+            <a href="#" style="color: white; text-decoration: none;">Privacy Policy</a> |
+            <a href="#" style="color: white; text-decoration: none;">Terms of Use</a>
+        </div>
+    </footer>
+
+<script>
+    // Mobile Menu Toggle for Navbar 1
+    function toggleMenu1() {
+        const navItems = document.getElementById('navItems1');
+        const hamburger = document.getElementById('hamburger1');
+        const closeIcon = document.getElementById('closeIcon1');
+        const socialIcons = document.getElementById('socialIcons');
+        const searchContainer = document.getElementById('searchContainer');
+        
+        const isHidden = navItems.style.display === 'none' || navItems.style.display === '';
+        
+        if (isHidden) {
+            navItems.style.display = 'flex';
+            navItems.style.flexDirection = 'column';
+            navItems.style.width = '100%';
+            navItems.style.margin = '20px 0';
+            navItems.style.gap = '15px';
+            hamburger.style.display = 'none';
+            closeIcon.style.display = 'block';
+            socialIcons.style.display = 'none';
+            searchContainer.style.display = 'block';
+        } else {
+            navItems.style.display = 'none';
+            hamburger.style.display = 'block';
+            closeIcon.style.display = 'none';
+            socialIcons.style.display = 'flex';
+            searchContainer.style.display = 'none';
+        }
+    }
+    
+    function checkScreenWidth1() {
+        const navItems = document.getElementById('navItems1');
+        const hamburger = document.getElementById('hamburger1');
+        const closeIcon = document.getElementById('closeIcon1');
+        const socialIcons = document.getElementById('socialIcons');
+        const searchContainer = document.getElementById('searchContainer');
+        
+        if (window.innerWidth <= 768) {
+            navItems.style.display = 'none';
+            hamburger.style.display = 'block';
+            closeIcon.style.display = 'none';
+            socialIcons.style.display = 'flex';
+            searchContainer.style.display = 'none';
+        } else {
+            navItems.style.display = 'flex';
+            navItems.style.flexDirection = 'row';
+            hamburger.style.display = 'none';
+            closeIcon.style.display = 'none';
+            socialIcons.style.display = 'flex';
+            searchContainer.style.display = 'none';
+        }
+    }
+    
+    // Mobile Menu Toggle for Navbar 2
+    function toggleMenu2() {
+        const navLinks = document.getElementById('navLinks2');
+        const hamburger = document.getElementById('hamburger2');
+        const closeIcon = document.getElementById('closeIcon2');
+        
+        const isHidden = navLinks.style.display === 'none' || navLinks.style.display === '';
+        
+        if (isHidden) {
+            navLinks.style.display = 'flex';
+            navLinks.style.flexDirection = 'column';
+            navLinks.style.width = '100%';
+            navLinks.style.marginTop = '20px';
+            navLinks.style.gap = '15px';
+            hamburger.style.display = 'none';
+            closeIcon.style.display = 'block';
+        } else {
+            navLinks.style.display = 'none';
+            hamburger.style.display = 'block';
+            closeIcon.style.display = 'none';
+        }
+    }
+    
+    function checkScreenWidth2() {
+        const navLinks = document.getElementById('navLinks2');
+        const hamburger = document.getElementById('hamburger2');
+        const closeIcon = document.getElementById('closeIcon2');
+        
+        if (window.innerWidth <= 768) {
+            navLinks.style.display = 'none';
+            hamburger.style.display = 'block';
+            closeIcon.style.display = 'none';
+        } else {
+            navLinks.style.display = 'flex';
+            navLinks.style.flexDirection = 'row';
+            hamburger.style.display = 'none';
+            closeIcon.style.display = 'none';
+        }
+    }
+    
+    // Dropdown functionality for Navbar 2
+    function setupDropdowns() {
+        document.querySelectorAll('#navLinks2 > div').forEach(item => {
+            const dropdown = item.querySelector('div');
+            
+            if (dropdown) {
+                if (window.innerWidth > 768) {
+                    // Desktop - hover
+                    item.onmouseenter = () => dropdown.style.display = 'block';
+                    item.onmouseleave = () => dropdown.style.display = 'none';
+                } else {
+                    // Mobile - click
+                    const link = item.querySelector('a');
+                    link.onclick = (e) => {
+                        e.preventDefault();
+                        dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+                    };
+                }
+            }
+        });
+    }
+    
+    // Rotating Text in Hero Section
+    const texts = [
+        "Personalized Infertility Assessments",
+        "Advanced IUI & IVF Treatments",
+        "Precision ICSI Technology",
+        "Comprehensive Surrogacy Programs",
+        "Genetic Testing (PGT)",
+        "Egg & Embryo Freezing"
+    ];
+    let index = 0;
+    
+    function updateRotatingText() {
+        const rotatingText = document.getElementById('rotating-text');
+        rotatingText.innerHTML = `<div style="position:absolute; width:100%; animation:fadeInOut 3s ease;">${texts[index]}</div>`;
+        index = (index + 1) % texts.length;
+        setTimeout(updateRotatingText, 3000);
+    }
+    
+    // Initialize
+    window.addEventListener('DOMContentLoaded', () => {
+        checkScreenWidth1();
+        checkScreenWidth2();
+        setupDropdowns();
+        updateRotatingText();
+        
+        // Set up event listeners for window resize
+        window.addEventListener('resize', () => {
+            checkScreenWidth1();
+            checkScreenWidth2();
+            setupDropdowns();
+        });
+        
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href');
+                const targetElement = document.querySelector(targetId);
+                
+                if (targetElement) {
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 100,
+                        behavior: 'smooth'
+                    });
+                    
+                    // Close mobile menus if open
+                    if (window.innerWidth <= 768) {
+                        document.getElementById('navItems1').style.display = 'none';
+                        document.getElementById('hamburger1').style.display = 'block';
+                        document.getElementById('closeIcon1').style.display = 'none';
+                        document.getElementById('socialIcons').style.display = 'flex';
+                        
+                        document.getElementById('navLinks2').style.display = 'none';
+                        document.getElementById('hamburger2').style.display = 'block';
+                        document.getElementById('closeIcon2').style.display = 'none';
+                    }
+                }
+            });
+        });
+        
+        // Card hover effects
+        document.querySelectorAll('.rotate-card').forEach(card => {
+            card.addEventListener('mouseenter', () => {
+                card.style.transform = 'translateY(-5px)';
+                card.style.boxShadow = '0 10px 20px rgba(0,0,0,0.15)';
+            });
+            card.addEventListener('mouseleave', () => {
+                card.style.transform = 'translateY(0)';
+                card.style.boxShadow = '0 5px 15px rgba(0,0,0,0.1)';
+            });
+        });
+        
+        // Surgery card hover effects
+        document.querySelectorAll('.surgery-card').forEach(card => {
+            const img = card.querySelector('img');
+            card.addEventListener('mouseenter', () => {
+                card.style.transform = 'translateY(-5px)';
+                img.style.transform = 'scale(1.05)';
+            });
+            card.addEventListener('mouseleave', () => {
+                card.style.transform = 'translateY(0)';
+                img.style.transform = 'scale(1)';
+            });
+        });
+    });
+</script>
+
+<style>
+    @keyframes fadeInOut {
+        0% { opacity:0; transform:translateY(10px); }
+        20% { opacity:1; transform:translateY(0); }
+        80% { opacity:1; transform:translateY(0); }
+        100% { opacity:0; transform:translateY(-10px); }
+    }
+    
+    @keyframes float {
+        0%, 100% { transform:translateY(0); }
+        50% { transform:translateY(-10px); }
+    }
+    
+    @keyframes pulse {
+        0% { transform:scale(1); }
+        50% { transform:scale(1.05); }
+        100% { transform:scale(1); }
+    }
+</style>
+
+
+<!-- Placeholder where chatbot will be inserted -->
+<div id="chatbot-placeholder"></div>
+
+<!-- JS to load the chatbot -->
+<script>
+    fetch('chatbot.html')
+      .then(res => res.text())
+      .then(html => {
+        const container = document.getElementById('chatbot-placeholder');
+        container.innerHTML = html;
+
+        // ⛔ At this point, any <script> tags inside chatbot.html are just inserted as text.
+        // ✅ So, we must find and re-run those <script> blocks manually:
+        const scripts = container.querySelectorAll("script");
+        scripts.forEach(script => {
+          const newScript = document.createElement("script");
+          if (script.src) {
+            newScript.src = script.src;
+          } else {
+            newScript.textContent = script.textContent;
+          }
+          document.body.appendChild(newScript);
+        });
+      });
+</script>
+
+
+</body>
+</html>

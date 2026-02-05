@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Confirm Booking</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- jsPDF for PDF generation -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <link rel="icon" href="images/favicon.ico" type="image/x-icon">
+    <style>
+        #login-alert-overlay, #success-receipt-overlay {
+            transition: opacity 0.3s ease;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 font-sans">
+
+    <!-- Main Booking Form Container -->
+    <div id="booking-form-container" class="container mx-auto max-w-4xl my-8 md:my-12 p-4">
+        <div class="bg-white rounded-xl shadow-2xl overflow-hidden md:grid md:grid-cols-2">
+
+            <!-- Left side: Test and User Details -->
+            <div class="p-6 md:p-8 bg-blue-50">
+                <h2 class="text-2xl font-bold text-blue-900 mb-6">Booking Summary</h2>
+                
+                <div class="mb-6">
+                    <h3 class="font-semibold text-lg text-gray-700 mb-2">Selected Test</h3>
+                    <div class="bg-white p-4 rounded-lg border border-gray-200">
+                        <p class="font-bold text-lg" id="test-name">Loading...</p>
+                        <p class="text-gray-600 text-sm">Center: <span id="center-name">Loading...</span></p>
+                        <p class="text-gray-500 text-xs mt-1">Test ID: <span id="test-id">Loading...</span></p>
+                    </div>
+                </div>
+
+                <div class="mb-6">
+                    <h3 class="font-semibold text-lg text-gray-700 mb-2">Patient Details</h3>
+                    <div class="space-y-4">
+                        <div>
+                            <label for="patient-name" class="block text-sm font-medium text-gray-600 mb-1">Full Name</label>
+                            <input type="text" id="patient-name" placeholder="Please log in to auto-fill" required class="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-50 read-only:bg-gray-200">
+                        </div>
+                        <div>
+                            <label for="patient-email" class="block text-sm font-medium text-gray-600 mb-1">Email</label>
+                            <input type="email" id="patient-email" placeholder="Please log in to auto-fill" required class="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-50 read-only:bg-gray-200">
+                        </div>
+                        <div>
+                            <label for="patient-mobile" class="block text-sm font-medium text-gray-600 mb-1">Mobile Number</label>
+                            <input type="tel" id="patient-mobile" placeholder="Please log in to auto-fill" required class="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-50 read-only:bg-gray-200">
+                        </div>
+                    </div>
+                </div>
+
+                 <div class="mb-6">
+                    <h3 class="font-semibold text-lg text-gray-700 mb-2">Schedule Test</h3>
+                    <div>
+                        <label for="test-date" class="block text-sm font-medium text-gray-600 mb-1">Preferred Date</label>
+                        <input type="date" id="test-date" required class="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                        <p class="text-xs text-gray-500 mt-1">Note: Date must be within the next 30 days.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right side: Payment -->
+            <div class="p-6 md:p-8">
+                <div class="text-center mb-6 border-b pb-6">
+                    <p class="text-gray-600">Total Amount</p>
+                    <p class="text-4xl font-extrabold text-blue-600">₹<span id="test-price">0</span></p>
+                </div>
+                
+                <div class="mb-6">
+                    <h3 class="font-semibold text-lg text-gray-700 mb-3">Sample Collection</h3>
+                    <div class="space-y-3">
+                         <label class="flex items-center p-3 border rounded-lg cursor-pointer has-[:checked]:bg-blue-50 has-[:checked]:border-blue-500 transition-all">
+                            <input type="radio" name="collection-type" value="Center" checked class="h-5 w-5 text-blue-600 focus:ring-blue-500">
+                            <span class="ml-3 font-semibold">Visit Center</span>
+                        </label>
+                        <label class="flex items-center p-3 border rounded-lg cursor-pointer has-[:checked]:bg-blue-50 has-[:checked]:border-blue-500 transition-all">
+                            <input type="radio" name="collection-type" value="Home" class="h-5 w-5 text-blue-600 focus:ring-blue-500">
+                            <span class="ml-3 font-semibold">Home Collection</span>
+                        </label>
+                    </div>
+                </div>
+                
+                <div>
+                    <h3 class="font-semibold text-lg text-gray-700 mb-3">Payment Method</h3>
+                    <div class="space-y-3">
+                        <label class="flex items-center p-3 border rounded-lg cursor-pointer has-[:checked]:bg-blue-50 has-[:checked]:border-blue-500 transition-all">
+                            <input type="radio" name="payment-method" value="Cash" checked class="h-5 w-5 text-blue-600 focus:ring-blue-500">
+                            <span class="ml-3 font-semibold">Pay with Cash</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="mt-8">
+                    <button class="w-full bg-blue-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-blue-700 transition-colors text-lg" onclick="processPayment()">
+                        Confirm Booking
+                    </button>
+                    <button class="w-full mt-4 bg-gray-200 text-gray-700 font-bold py-3 px-4 rounded-lg hover:bg-gray-300 transition-colors" onclick="goBack()">
+                        Cancel
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Login Required Modal -->
+    <div id="login-alert-overlay" class="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center hidden z-50 p-4 opacity-0">
+        <div class="bg-white p-8 rounded-xl shadow-2xl text-center max-w-sm w-full">
+            <h3 class="text-2xl font-bold text-gray-800 mb-4">Login Required</h3>
+            <p class="text-gray-600 mb-6">Please log in to proceed with your booking.</p>
+            <button onclick="closeLoginAlert()" class="w-full bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors font-semibold">OK</button>
+        </div>
+    </div>
+
+    <!-- Success Receipt Modal -->
+    <div id="success-receipt-overlay" class="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center hidden z-50 p-4 opacity-0">
+        <div class="bg-white p-6 md:p-8 rounded-xl shadow-2xl max-w-md w-full">
+            <div id="receipt-content" class="bg-white p-4">
+                <h2 class="text-2xl font-bold text-green-600 mb-2 text-center">Booking Confirmed!</h2>
+                <p class="text-center text-gray-600 mb-6">A confirmation has been sent to your email.</p>
+                <div class="border-t border-b border-gray-200 py-4 my-4 space-y-3 text-sm">
+                    <div class="flex justify-between"><span class="font-semibold text-gray-700">Payment ID:</span> <span id="receipt-payment-id" class="font-mono"></span></div>
+                    <div class="flex justify-between"><span class="font-semibold text-gray-700">Test Name:</span> <span id="receipt-test-name" class="text-right"></span></div>
+                    <div class="flex justify-between"><span class="font-semibold text-gray-700">Center:</span> <span id="receipt-center-name" class="text-right"></span></div>
+                    <div class="flex justify-between"><span class="font-semibold text-gray-700">Patient Name:</span> <span id="receipt-patient-name" class="text-right"></span></div>
+                    <div class="flex justify-between"><span class="font-semibold text-gray-700">Test Date:</span> <span id="receipt-test-date"></span></div>
+                    <div class="flex justify-between"><span class="font-semibold text-gray-700">Amount Paid:</span> <span id="receipt-amount" class="font-bold"></span></div>
+                    <div class="flex justify-between"><span class="font-semibold text-gray-700">Payment Method:</span> <span id="receipt-payment-method"></span></div>
+                </div>
+            </div>
+            <div class="mt-6 flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-4">
+                <button onclick="downloadReceiptAsPDF()" class="w-full bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors font-semibold flex items-center justify-center">
+                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                    Download PDF
+                </button>
+                <button onclick="closeReceiptAndRedirect()" class="w-full bg-gray-200 text-gray-700 px-6 py-3 rounded-lg hover:bg-gray-300 transition-colors font-semibold">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function getLoggedInUser() {
+            try {
+                const patientUserString = sessionStorage.getItem('patientUser');
+                if (!patientUserString) return null;
+                const patientUserData = JSON.parse(patientUserString);
+                const uniqueId = patientUserData.uniqueId || patientUserData.uniqueid || patientUserData.uniqueID;
+                if (!uniqueId) return null;
+                patientUserData.patientId = uniqueId;
+                return patientUserData;
+            } catch (e) {
+                console.error("Error processing sessionStorage data.", e);
+                return null;
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            document.getElementById("test-name").textContent = urlParams.get("test") || "Selected Test";
+            document.getElementById("test-price").textContent = urlParams.get("price") || "0";
+            document.getElementById("test-id").textContent = urlParams.get("id") || "N/A";
+            document.getElementById("center-name").textContent = decodeURIComponent(urlParams.get("center") || "Selected Center");
+            
+            const loggedInUser = getLoggedInUser();
+            if (loggedInUser) {
+                document.getElementById('patient-name').value = `${loggedInUser.firstName || ''} ${loggedInUser.lastName || ''}`.trim();
+                document.getElementById('patient-email').value = loggedInUser.email || '';
+                document.getElementById('patient-mobile').value = loggedInUser.mobile || '';
+                ['patient-name', 'patient-email', 'patient-mobile'].forEach(id => document.getElementById(id).readOnly = true);
+            }
+            setupDatePicker();
+        });
+
+        function setupDatePicker() {
+            const dateInput = document.getElementById('test-date');
+            const today = new Date();
+            const maxDate = new Date();
+            maxDate.setDate(today.getDate() + 30);
+            dateInput.min = today.toISOString().split('T')[0];
+            dateInput.max = maxDate.toISOString().split('T')[0];
+            dateInput.value = today.toISOString().split('T')[0];
+        }
+
+        function processPayment() {
+            const loggedInUser = getLoggedInUser();
+            if (!loggedInUser || !loggedInUser.patientId) {
+                showLoginAlert();
+                return;
+            }
+
+            const urlParams = new URLSearchParams(window.location.search);
+            const patientName = document.getElementById('patient-name').value.trim();
+            const patientEmail = document.getElementById('patient-email').value.trim();
+            const patientMobile = document.getElementById('patient-mobile').value.trim();
+            const testDate = document.getElementById('test-date').value;
+            
+            if (!patientName || !patientEmail || !patientMobile || !testDate) {
+                alert('Please ensure all patient details are filled correctly.');
+                return;
+            }
+            
+            const paymentData = {
+                testName: urlParams.get("test"),
+                testId: urlParams.get("id"),
+                centerName: decodeURIComponent(urlParams.get("center")),
+                centerId: urlParams.get("centerId"),
+                amount: parseInt(urlParams.get("price")),
+                paymentMethod: document.querySelector('input[name="payment-method"]:checked').value,
+                collectionType: document.querySelector('input[name="collection-type"]:checked').value,
+                patientName,
+                patientEmail,
+                patientMobile,
+                patientId: loggedInUser.patientId,
+                testDate,
+            };
+            sendToBackend(paymentData);
+        }
+
+        function sendToBackend(data) {
+            fetch('https://24x7healthcare.in/api/newpayment/register', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            })
+            .then(response => {
+                if (!response.ok) return response.json().then(err => { throw new Error(err.error || 'Network response was not ok') });
+                return response.json();
+            })
+            .then(apiResponse => {
+                if (apiResponse.success) {
+                    showSuccessReceipt(apiResponse, data);
+                } else {
+                    throw new Error(apiResponse.error || 'An unknown error occurred.');
+                }
+            })
+            .catch((error) => {
+                console.error('Error during booking:', error);
+                alert('Booking confirmation failed. Reason: ' + error.message);
+            });
+        }
+
+        function showSuccessReceipt(apiResponse, originalData) {
+            document.getElementById('receipt-payment-id').textContent = apiResponse.paymentID;
+            document.getElementById('receipt-test-name').textContent = originalData.testName;
+            document.getElementById('receipt-center-name').textContent = originalData.centerName;
+            document.getElementById('receipt-patient-name').textContent = originalData.patientName;
+            const date = new Date(originalData.testDate);
+            const formattedDate = date.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
+            document.getElementById('receipt-test-date').textContent = formattedDate;
+            document.getElementById('receipt-amount').textContent = `₹${originalData.amount}`;
+            document.getElementById('receipt-payment-method').textContent = originalData.paymentMethod;
+
+            document.getElementById('booking-form-container').classList.add('hidden');
+            const overlay = document.getElementById('success-receipt-overlay');
+            overlay.classList.remove('hidden');
+            setTimeout(() => overlay.classList.remove('opacity-0'), 10);
+        }
+
+        function downloadReceiptAsPDF() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            const paymentId = document.getElementById('receipt-payment-id').textContent;
+            
+            // Use html2canvas to render the element, then add it to the PDF
+            const receiptElement = document.getElementById('receipt-content');
+            html2canvas(receiptElement).then(canvas => {
+                const imgData = canvas.toDataURL('image/png');
+                const pdfWidth = doc.internal.pageSize.getWidth();
+                const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+                doc.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+                doc.save(`Booking-Receipt-${paymentId}.pdf`);
+            });
+        }
+        
+        function closeReceiptAndRedirect() {
+            const overlay = document.getElementById('success-receipt-overlay');
+            overlay.classList.add('opacity-0');
+            setTimeout(() => {
+                overlay.classList.add('hidden');
+                window.location.href = "index.html";
+            }, 300);
+        }
+
+        function showLoginAlert() {
+            const overlay = document.getElementById('login-alert-overlay');
+            overlay.classList.remove('hidden');
+            setTimeout(() => overlay.classList.remove('opacity-0'), 10);
+        }
+
+        function closeLoginAlert() {
+            const overlay = document.getElementById('login-alert-overlay');
+            overlay.classList.add('opacity-0');
+            setTimeout(() => overlay.classList.add('hidden'), 300);
+        }
+
+        function goBack() {
+            window.history.back();
+        }
+    </script>
+
+</body>
+</html>
+

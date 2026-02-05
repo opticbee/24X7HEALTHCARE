@@ -1,0 +1,1912 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Diagnostic Center Registration</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    :root {
+      --primary: #4361ee;
+      --secondary: #3f37c9;
+      --success: #4cc9f0;
+      --danger: #f72585;
+      --light: #f8f9fa;
+      --dark: #212529;
+      --gray: #6c757d;
+      --light-gray: #e9ecef;
+    }
+    
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    
+    body {
+      font-family: 'Poppins', sans-serif;
+      background-color: #f5f7fa;
+      color: var(--dark);
+      line-height: 1.6;
+    }
+    
+    .container {
+      max-width: 1000px;
+      margin: 30px auto;
+      padding: 20px;
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+      animation: fadeIn 0.5s ease-in-out;
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    h2 {
+      text-align: center;
+      margin-bottom: 30px;
+      color: var(--primary);
+      position: relative;
+      padding-bottom: 10px;
+    }
+    
+    h2::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100px;
+      height: 3px;
+      background: linear-gradient(to right, var(--primary), var(--success));
+      border-radius: 3px;
+    }
+    
+    .form-header {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    
+    .progress-bar {
+      display: flex;
+      justify-content: space-between;
+      position: relative;
+      margin-bottom: 30px;
+      counter-reset: step;
+    }
+    
+    .progress-bar::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 0;
+      width: 100%;
+      height: 2px;
+      background: var(--light-gray);
+      z-index: 1;
+    }
+    
+    .progress-step {
+      width: 30px;
+      height: 30px;
+      background: var(--light-gray);
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+      z-index: 2;
+      color: var(--gray);
+      font-weight: 600;
+    }
+    
+    .progress-step::before {
+      counter-increment: step;
+      content: counter(step);
+    }
+    
+    .progress-step.active {
+      background: var(--primary);
+      color: white;
+      transform: scale(1.1);
+      transition: all 0.3s ease;
+    }
+    
+    .progress-step.completed {
+      background: var(--success);
+      color: white;
+    }
+    
+    .form-step {
+      display: none;
+      animation: slideIn 0.5s ease-in-out;
+    }
+    
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateX(20px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+    
+    .form-step.active {
+      display: block;
+    }
+    
+    .form-group {
+      margin-bottom: 20px;
+    }
+    
+    .form-row {
+      display: flex;
+      gap: 20px;
+    }
+    
+    .form-row .form-group {
+      flex: 1;
+    }
+    
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 500;
+      color: var(--dark);
+    }
+    
+    .required::after {
+      content: ' *';
+      color: var(--danger);
+    }
+    
+    input, select, textarea {
+      width: 100%;
+      padding: 12px 15px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      font-family: inherit;
+      font-size: 16px;
+      transition: all 0.3s;
+    }
+    
+    input:focus, select:focus, textarea:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.2);
+    }
+    
+    input[type="file"] {
+      padding: 10px;
+      border: 1px dashed #ccc;
+      background: var(--light);
+    }
+    
+    .file-upload-wrapper {
+      position: relative;
+      margin-bottom: 20px;
+    }
+    
+    .file-upload-label {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 30px;
+      border: 2px dashed #ccc;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    
+    .file-upload-label:hover {
+      border-color: var(--primary);
+      background: rgba(67, 97, 238, 0.05);
+    }
+    
+    .file-upload-label i {
+      font-size: 40px;
+      color: var(--primary);
+      margin-bottom: 10px;
+    }
+    
+    .file-upload-input {
+      position: absolute;
+      left: 0;
+      top: 0;
+      opacity: 0;
+      width: 100%;
+      height: 100%;
+      cursor: pointer;
+    }
+    
+    .file-preview {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 10px;
+    }
+    
+    .file-preview-item {
+      position: relative;
+      width: 80px;
+      height: 80px;
+      border-radius: 5px;
+      overflow: hidden;
+      border: 1px solid #ddd;
+    }
+    
+    .file-preview-item img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    
+    .file-preview-item .remove-file {
+      position: absolute;
+      top: 5px;
+      right: 5px;
+      background: var(--danger);
+      color: white;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 12px;
+    }
+    
+    .btn {
+      padding: 12px 25px;
+      border: none;
+      border-radius: 5px;
+      font-family: inherit;
+      font-size: 16px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .btn i {
+      margin-right: 8px;
+    }
+    
+    .btn-primary {
+      background: var(--primary);
+      color: white;
+    }
+    
+    .btn-primary:hover {
+      background: var(--secondary);
+      transform: translateY(-2px);
+      box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+    }
+    
+    .btn-secondary {
+      background: var(--gray);
+      color: white;
+    }
+    
+    .btn-secondary:hover {
+      background: #5a6268;
+    }
+    
+    .btn-success {
+      background: var(--success);
+      color: white;
+    }
+    
+    .btn-success:hover {
+      background: #3aa8d1;
+    }
+    
+    .btn-block {
+      display: block;
+      width: 100%;
+    }
+    
+    .btn-otp {
+      padding: 8px 15px;
+      font-size: 14px;
+      margin-left: 10px;
+    }
+    
+    .button-group {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 30px;
+    }
+    
+    .otp-group {
+      display: flex;
+      align-items: center;
+    }
+    
+    .otp-group input {
+      flex: 1;
+    }
+    
+    .otp-group button {
+      width: auto;
+      margin-left: 10px;
+    }
+    
+    .alert {
+      padding: 12px 15px;
+      border-radius: 5px;
+      margin-bottom: 20px;
+      font-size: 14px;
+      display: none;
+    }
+    
+    .alert-success {
+      background: #d4edda;
+      color: #155724;
+      border: 1px solid #c3e6cb;
+    }
+    
+    .alert-danger {
+      background: #f8d7da;
+      color: #721c24;
+      border: 1px solid #f5c6cb;
+    }
+    
+    .services-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 10px;
+    }
+    
+    .tag {
+      background: var(--light);
+      padding: 5px 10px;
+      border-radius: 20px;
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+    }
+    
+    .tag-remove {
+      margin-left: 5px;
+      cursor: pointer;
+      color: var(--danger);
+    }
+    
+    @media (max-width: 768px) {
+      .form-row {
+        flex-direction: column;
+        gap: 0;
+      }
+      
+      .container {
+        padding: 15px;
+        margin: 15px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+
+    <!-- Navbar Code -->
+        <style>
+            /* General navbar styling */
+            .navbar-container {
+                font-family: Arial, sans-serif;
+                width: 100%;
+            }
+
+            #hamburger-icon {
+                display: none;
+                font-size: 26px;
+                color: white;
+                cursor: pointer;
+                padding: 10px;
+            }
+
+            .nav-link {
+                color: white;
+                text-decoration: none;
+                padding: 0.5rem 1rem;
+                font-weight: bold;
+                display: block;
+                border-radius: 5px;
+                transition: background-color 0.3s;
+                white-space: nowrap;
+            }
+
+            .nav-link:hover, .nav-link.active {
+                background-color: #1a6ab5;
+            }
+            
+            .dropdown {
+                position: relative;
+            }
+
+            .dropdown-menu {
+                display: none;
+                position: absolute;
+                background-color: white;
+                min-width: 200px;
+                border-radius: 5px;
+                overflow: hidden;
+                box-shadow: 0px 4px 20px rgba(0,0,0,0.2);
+                z-index: 1001;
+                margin-top: 1px;
+            }
+
+            .dropdown:hover .dropdown-menu {
+                display: block;
+            }
+            
+            .dropdown-menu a {
+                padding: 12px 16px;
+                text-decoration: none;
+                display: block;
+                color: #333;
+                font-weight: normal;
+            }
+
+            .dropdown-menu a:hover, .dropdown-menu a.active {
+                background-color: #f0f0f0;
+            }
+
+            .mega-menu {
+                width: 660px;
+                padding: 20px;
+                left: 0;
+            }
+            
+            .mega-menu-grid {
+                display: grid;
+                grid-template-columns: repeat(3, 1fr);
+                gap: 10px;
+            }
+
+            .menu-item {
+                padding: 12px;
+                text-decoration: none;
+                background: #fff;
+                border-radius: 6px;
+                color: #333;
+                font-weight: 500;
+                transition: background 0.2s, color 0.2s;
+                box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+            }
+
+            .menu-item:hover, .menu-item.active {
+                background: #f0f0f0;
+                color: #000;
+            }
+
+            /* Top Navigation Bar */
+            .top-nav {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 15px;
+                align-items: center;
+                justify-content: space-between;
+                background: #007bff;
+                padding: 10px 30px;
+            }
+
+            .logo-section {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                flex: 1;
+                min-width: 250px;
+            }
+
+            .logo-text {
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                line-height: 1;
+                min-width: 120px;
+            }
+
+            .logo-title {
+                color: #fff;
+                font-size: 18px;
+                font-weight: bold;
+            }
+
+            .logo-subtitle {
+                color: #fff;
+                font-size: 18px;
+            }
+
+            .search-container {
+                position: relative;
+                flex-grow: 1;
+                max-width: 400px;
+                min-width: 200px;
+            }
+
+            #searchInput {
+                padding: 10px 40px 10px 15px;
+                width: 100%;
+                font-size: 16px;
+                border-radius: 15px;
+                border: 1px solid #ccc;
+                box-sizing: border-box;
+            }
+
+            .search-icon {
+                position: absolute;
+                right: 15px;
+                top: 50%;
+                transform: translateY(-50%);
+                color: #888;
+                cursor: pointer;
+            }
+
+            #suggestionsBox {
+                display: none;
+                position: absolute;
+                top: 110%;
+                left: 0;
+                right: 0;
+                background: white;
+                border: 1px solid #ccc;
+                max-height: 300px;
+                overflow-y: auto;
+                z-index: 1100;
+                box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+                border-radius: 8px;
+            }
+
+            .top-nav-contact {
+                display: flex;
+                align-items: center;
+                gap: 10px; /* Reduced gap for smaller screens */
+                color: white;
+                font-size: 14px;
+                flex: 1;
+                justify-content: center;
+                flex-wrap: wrap; /* Allow wrapping */
+            }
+
+            .contact-link {
+                color: white;
+                text-decoration: none;
+                display: flex;
+                align-items: center;
+                gap: 5px;
+            }
+            
+            .contact-separator {
+                display: block;
+            }
+
+            .top-nav-right {
+                display: flex;
+                align-items: center;
+                gap: 20px;
+                flex-wrap: wrap;
+                flex: 1;
+                justify-content: flex-end;
+            }
+
+            .top-nav-social {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+            }
+
+            .social-link {
+                color: white;
+                font-size: 18px;
+            }
+
+            .language-container {
+                position: relative;
+                display: inline-block;
+            }
+
+            #languageTab {
+                cursor: pointer;
+                padding: 6px 12px;
+                background: #fff;
+                border-radius: 6px;
+                color: #000;
+                font-size: 14px;
+                display: flex;
+                align-items: center;
+                gap: 5px;
+            }
+
+            #languageMenu {
+                display: none;
+                position: absolute;
+                top: 40px;
+                right: 0;
+                background: #fff;
+                border-radius: 6px;
+                box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+                min-width: 160px;
+                z-index: 2000;
+                max-height: 300px;
+                overflow-y: auto;
+            }
+
+            .language-option {
+                padding: 8px 12px;
+                cursor: pointer;
+            }
+
+            .language-option:hover {
+                background: #f0f0f0;
+            }
+
+            /* Second Navigation Bar */
+            .second-nav {
+                background-color: #135597;
+                position: sticky;
+                top: 0;
+                box-shadow: 0px 4px 10px rgba(0,0,0,0.1);
+                z-index: 1000;
+                padding: 0 10px !important;
+            }
+
+            .nav-inner {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                min-height: 60px;
+                position: relative;
+            }
+
+            #navLinks2 {
+                display: flex;
+                flex-grow: 1;
+                align-items: center;
+                justify-content: center;
+                gap: 8px;
+                flex-wrap: wrap;
+            }
+
+            /* Mobile Responsive Design */
+            @media (max-width: 1200px) {
+                .top-nav-social {
+                    display: none;
+                }
+                
+                .mega-menu {
+                    width: 500px;
+                }
+                
+                .mega-menu-grid {
+                    grid-template-columns: repeat(2, 1fr);
+                }
+            }
+
+            @media screen and (max-width: 992px) {
+                .top-nav {
+                    padding: 10px 15px !important;
+                    justify-content: center;
+                }
+                
+                .logo-section {
+                    flex-basis: 100%;
+                    justify-content: center;
+                }
+                
+                .search-container {
+                    order: 3;
+                    max-width: 100% !important;
+                    margin-top: 10px;
+                    flex-basis: 100%;
+                }
+
+                .top-nav-contact {
+                    order: 2;
+                    flex-direction: column;
+                    gap: 8px;
+                    margin-top: 10px;
+                    text-align: center;
+                    flex-basis: 100%;
+                }
+
+                .contact-separator {
+                display: none; /* Hide separators on mobile */
+                }
+                
+                #navLinks2 {
+                    display: none;
+                    flex-direction: column;
+                    align-items: flex-start;
+                    width: 100%;
+                    background-color: #135597;
+                    position: absolute;
+                    top: 100%;
+                    left: 0;
+                    padding: 10px 0;
+                    z-index: 1000;
+                    box-shadow: 0 5px 10px rgba(0,0,0,0.2);
+                }
+
+                #hamburger-icon {
+                    display: block;
+                }
+
+                .dropdown {
+                    width: 100%;
+                }
+
+                #navLinks2 .nav-link {
+                    padding: 0.8rem 1.5rem;
+                    width: 100%;
+                    box-sizing: border-box;
+                    text-align: left;
+                }
+
+                .dropdown-menu {
+                    position: static;
+                    display: none;
+                    width: 100%;
+                    box-shadow: none;
+                    background-color: #1a6ab5;
+                    border-radius: 0;
+                }
+
+                .dropdown-menu a, .mega-menu .menu-item {
+                    color: white;
+                    background-color: transparent;
+                    box-shadow: none;
+                    border-bottom: 1px solid #3385d1;
+                    padding-left: 2.5rem;
+                }
+
+                .dropdown-menu a.active, .mega-menu .menu-item.active {
+                    background-color: #135597;
+                }
+
+                .mega-menu-grid {
+                    grid-template-columns: 1fr;
+                }
+                
+                .mega-menu {
+                    width: 100%;
+                    padding: 10px;
+                }
+            }
+            
+            @media screen and (max-width: 768px) {
+                .top-nav {
+                    gap: 10px;
+                }
+                
+                .logo-section {
+                    min-width: auto;
+                    flex-direction: column;
+                    gap: 5px;
+                }
+                .logo-text {
+                    align-items: center;
+                }
+                
+                .logo-title {
+                    font-size: 18px !important;
+                }
+                
+                .logo-subtitle {
+                    font-size: 18px !important;
+                }
+                
+                .logo-section img {
+                    height: 35px !important;
+                }
+                
+                #searchInput {
+                    font-size: 14px !important;
+                    padding: 8px 35px 8px 12px !important;
+                }
+                
+                .top-nav-right {
+                    gap: 10px;
+                    justify-content: center;
+                    flex-basis: 100%;
+                }
+            }
+            
+            @media screen and (max-width: 480px) {
+                .logo-section > div span:first-child {
+                    font-size: 18px !important;
+                }
+                
+                .logo-section > div span:last-child {
+                    font-size: 14px !important;
+                }
+                
+                .top-nav {
+                    padding: 8px 10px !important;
+                }
+                
+                .nav-link {
+                    padding: 0.4rem 0.8rem;
+                    font-size: 14px;
+                }
+            }
+        </style>
+
+        <!-- Top Navigation Bar -->
+        <div class="top-nav">
+            <!-- Left: Logo, Title & Search Bar -->
+            <div class="logo-section">
+                <img src="img/24x7health-logo.png" alt="Logo" style="height: 40px; border-radius: 10%;">
+                <div class="logo-text">
+                    <span class="logo-title">HEALTHCARE</span>
+                    <span class="logo-subtitle">SERVICES</span>
+                </div>
+                
+                <!-- Search Bar -->
+                <div class="search-container">
+                    <input type="text" id="searchInput" placeholder="Search Doctors, Diagnostics, Tests" autocomplete="off"/>
+                    <i class="fas fa-search search-icon"></i>
+                    <div id="suggestionsBox"></div>
+                </div>
+            </div>
+
+            <!-- Center: Contact Info -->
+            <div class="top-nav-contact">
+                <a href="mailto:support@24x7health.in" class="contact-link">
+                    <i class="fas fa-envelope"></i> support@24x7health.in
+                </a> <span class="contact-separator" style="margin: 0 5px;">|</span>
+                <a href="tel:+919908793602" class="contact-link">
+                    <i class="fas fa-phone"></i>  +91-9908793602,  +91-8790170525
+                </a>
+            </div>
+
+            <!-- Right: Social Icons, Language & Profile -->
+            <div class="top-nav-right">
+                <!-- Social Media -->
+                <div class="top-nav-social">
+                    <a href="https://www.facebook.com/share/1CC3vxsppD/" target="_blank" class="social-link"><i class="fab fa-facebook"></i></a>
+                    <a href="https://x.com/BeeOptic?t=LB5TDI4096CJEldX9Ccswg&s=09" target="_blank" class="social-link"><i class="fab fa-twitter"></i></a>
+                    <a href="https://www.instagram.com/optic.bee/" target="_blank" class="social-link"><i class="fab fa-instagram"></i></a>
+                    <a href="https://linkedin.com" target="_blank" class="social-link"><i class="fab fa-linkedin"></i></a>
+                    <a href="https://youtube.com/@opticbee-i7j?si=w9ynFoGer27Kb82g" target="_blank" class="social-link"><i class="fab fa-youtube"></i></a>
+                </div>
+                
+                <!-- Language Dropdown -->
+                <div class="language-container">
+                    <div id="languageTab">
+                        <span id="currentLang">English</span> ▼
+                    </div>
+
+                    <!-- Dropdown -->
+                    <div id="languageMenu">
+                        <div class="language-option" onclick="setLanguage('en','English',event)">English</div>
+                        <div class="language-option" onclick="setLanguage('hi','हिंदी',event)">हिंदी</div>
+                        <div class="language-option" onclick="setLanguage('te','తెలుగు',event)">తెలుగు</div>
+                        <div class="language-option" onclick="setLanguage('ta','தமிழ்',event)">தமிழ்</div>
+                        <div class="language-option" onclick="setLanguage('kn','ಕನ್ನಡ',event)">ಕನ್ನಡ</div>
+                        <div class="language-option" onclick="setLanguage('ml','മലയാളം',event)">മലയാളം</div>
+                        <div class="language-option" onclick="setLanguage('mr','मराठी',event)">मराठी</div>
+                        <div class="language-option" onclick="setLanguage('gu','ગુજરાતી',event)">ગુજરાતી</div>
+                        <div class="language-option" onclick="setLanguage('bn','বাংলা',event)">বাংলা</div>
+                        <div class="language-option" onclick="setLanguage('ur','اردو',event)">اردو</div>
+                        <div class="language-option" onclick="setLanguage('fr','Français',event)">Français</div>
+                        <div class="language-option" onclick="setLanguage('de','Deutsch',event)">Deutsch</div>
+                    </div>
+                </div>
+                
+                <!-- Profile Icon -->
+                <a href="login.html" id="loginNav1" title="Login/Profile" class="social-link" style="margin-left: 10px;">
+                    <i class="fas fa-user-circle"></i>
+                    <span id="userName1"></span>
+                </a>
+            </div>
+        </div>
+
+        <!-- Second Navigation Bar -->
+        <div class="second-nav">
+            <div class="nav-inner">
+                <!-- Hamburger Icon -->
+                <div id="hamburger-icon">&#9776;</div>
+                
+                <div id="navLinks2">
+                    <a href="index.html" class="nav-link">Home</a>
+                    
+                    <div class="dropdown">
+                        <a href="healthRecords.html" class="nav-link">Health Records <i class="fas fa-caret-down fa-xs"></i></a>
+                        <div class="dropdown-menu">
+                            <a href="bloodtest.html">Blood Tests</a>
+                            <a href="donations.html">Donations</a>
+                            <a href="inventory.html">Inventory</a>
+                        </div>
+                    </div>
+
+                    <div class="dropdown">
+                        <a href="#" class="nav-link">Appointments <i class="fas fa-caret-down fa-xs"></i></a>
+                        <div class="dropdown-menu">
+                            <a href="doctors.html">Doctors</a>
+                            <a href="DiagnosticsAppointments.html">Diagnostics</a>
+                        </div>
+                    </div>
+                    
+                    <div class="dropdown">
+                        <a href="Diagnostics.html" class="nav-link">Diagnostics <i class="fas fa-caret-down fa-xs"></i></a>
+                        <div class="dropdown-menu mega-menu">
+                        <div class="mega-menu-grid">
+                                <a href="xray.html" class="menu-item">X-Ray</a>
+                                <a href="ultrasound.html" class="menu-item">Ultrasound</a>
+                                <a href="mri.html" class="menu-item">MRI</a>
+                                <a href="diagnostic-services.html?category=cbc" class="menu-item">Complete Blood Count</a>
+                                <a href="diagnostic-services.html?category=pathology" class="menu-item">Pathology Tests</a>
+                                <a href="diagnostic-services.html?category=microbiology" class="menu-item">Microbiology Tests</a>
+                                <a href="diagnostic-services.html?category=radiology" class="menu-item">Radiology & Imaging</a>
+                                <a href="diagnostic-services.html?category=cardiology" class="menu-item">Cardiology</a>
+                                <a href="diagnostic-services.html?category=neurology" class="menu-item">Neurology</a>
+                                <a href="diagnostic-services.html?category=ophthalmology" class="menu-item">Ophthalmology</a>
+                                <a href="diagnostic-services.html?category=ent" class="menu-item">ENT</a>
+                                <a href="diagnostic-services.html?category=dental" class="menu-item">Dental</a>
+                                <a href="diagnostic-services.html?category=fertility" class="menu-item">Prenatal & Fertility</a>
+                                <a href="diagnostic-services.html?category=genetic" class="menu-item">Genetic Testing</a>
+                                <a href="diagnostic-services.html?category=packages" class="menu-item">Health Packages</a>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <a href="clinic.html" class="nav-link">Clinic</a>
+                    
+                    <div class="dropdown">
+                        <a href="Physician.html" class="nav-link">Physicians <i class="fas fa-caret-down fa-xs"></i></a>
+                        <div class="dropdown-menu mega-menu">
+                            <div class="mega-menu-grid">
+                                <a href="cardiologist.html" class="menu-item">Cardiologist</a>
+                                <a href="neurologist.html" class="menu-item">Neurologist</a>
+                                <a href="dermatologist.html" class="menu-item">Dermatologist</a>
+                                <a href="orthopedic.html" class="menu-item">Orthopedic</a>
+                                <a href="pediatrician.html" class="menu-item">Pediatrician</a>
+                                <a href="gynecologist.html" class="menu-item">Gynecologist</a>
+                                <a href="urologist.html" class="menu-item">Urologist</a>
+                                <a href="oncologist.html" class="menu-item">Oncologist</a>
+                                <a href="endocrinologist.html" class="menu-item">Endocrinologist</a>
+                                <a href="gastroenterologist.html" class="menu-item">Gastroenterologist</a>
+                                <a href="pulmonologist.html" class="menu-item">Pulmonologist</a>
+                                <a href="rheumatologist.html" class="menu-item">Rheumatologist</a>
+                                <a href="psychiatrist.html" class="menu-item">Psychiatrist</a>
+                                <a href="ophthalmologist.html" class="menu-item">Ophthalmologist</a>
+                                <a href="general-physician.html" class="menu-item">General Physician</a>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="dropdown">
+                        <a href="fertility.html" class="nav-link">Fertility <i class="fas fa-caret-down fa-xs"></i></a>
+                        <div class="dropdown-menu mega-menu">
+                            <div class="mega-menu-grid">
+                                <a href="IVF.html" class="menu-item">IVF</a>
+                                <a href="iui.html" class="menu-item">IUI</a>
+                                <a href="sarogasi.html" class="menu-item">Surrogacy</a>
+                                <a href="fertility.html#egg-donation" class="menu-item">Egg Donation</a>
+                                <a href="fertility.html#sperm-donation" class="menu-item">Sperm Donation</a>
+                                <a href="fertility.html#embryo-transfer" class="menu-item">Embryo Transfer</a>
+                                <a href="fertility.html#fertility-preservation" class="menu-item">Fertility Preservation</a>
+                                <a href="fertility.html#pcos-treatment" class="menu-item">PCOS Treatment</a>
+                                <a href="fertility.html#male-infertility" class="menu-item">Male Infertility</a>
+                                <a href="fertility.html#female-infertility" class="menu-item">Female Infertility</a>
+                                <a href="fertility.html#prenatal-care" class="menu-item">Prenatal Care</a>
+                                <a href="fertility.html#genetic-testing" class="menu-item">Genetic Testing</a>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <a href="blood.html" class="nav-link">Blood</a>
+                    <a href="Eyecare.html" class="nav-link">Eye Care</a>
+                    <a href="Dental.html" class="nav-link">Dental</a>
+                    <a href="ENT.html" class="nav-link">ENT</a>
+                    
+                    <div class="dropdown">
+                        <a href="Cancer.html" class="nav-link">Cancer <i class="fas fa-caret-down fa-xs"></i></a>
+                        <div class="dropdown-menu mega-menu" style="right: 0; left: auto;">
+                        <div class="mega-menu-grid">
+                                <a href="Cancer.html#breast-cancer" class="menu-item">Breast Cancer</a>
+                                <a href="Cancer.html#lung-cancer" class="menu-item">Lung Cancer</a>
+                                <a href="Cancer.html#prostate-cancer" class="menu-item">Prostate Cancer</a>
+                                <a href="Cancer.html#colorectal-cancer" class="menu-item">Colorectal Cancer</a>
+                                <a href="Cancer.html#skin-cancer" class="menu-item">Skin Cancer</a>
+                                <a href="Cancer.html#leukemia" class="menu-item">Leukemia</a>
+                                <a href="Cancer.html#lymphoma" class="menu-item">Lymphoma</a>
+                                <a href="Cancer.html#pancreatic-cancer" class="menu-item">Pancreatic Cancer</a>
+                                <a href="Cancer.html#ovarian-cancer" class="menu-item">Ovarian Cancer</a>
+                                <a href="Cancer.html#bladder-cancer" class="menu-item">Bladder Cancer</a>
+                                <a href="Cancer.html#kidney-cancer" class="menu-item">Kidney Cancer</a>
+                                <a href="Cancer.html#thyroid-cancer" class="menu-item">Thyroid Cancer</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ambulance -->
+                    <a href="Ambulance.html" class="nav-link">Ambulance</a>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            document.addEventListener('DOMContentLoaded', () => {
+                // --- ADVANCED LOCATION SERVICES SCRIPT ---
+
+                /**
+                 * Appends the encoded location to a given URL.
+                 * @param {string} url The URL to modify.
+                 * @returns {string} The new URL with the location parameter.
+                 */
+                function appendLocationToUrl(url) {
+                    const encodedLocation = localStorage.getItem('userEncodedLocation');
+                    if (!encodedLocation) return url;
+                    if (url.includes('location=')) return url;
+                    const separator = url.includes('?') ? '&' : '?';
+                    return `${url}${separator}location=${encodedLocation}`;
+                }
+
+                // --- Mobile Menu Functionality ---
+                const hamburger = document.getElementById('hamburger-icon');
+                const navLinks = document.getElementById('navLinks2');
+                const dropdownLinks = navLinks.querySelectorAll('.dropdown > a');
+                
+                if (window.innerWidth <= 992) {
+                    navLinks.style.display = 'none';
+                }
+
+                hamburger.addEventListener('click', () => {
+                    const isVisible = navLinks.style.display === 'flex';
+                    navLinks.style.display = isVisible ? 'none' : 'flex';
+                });
+
+                dropdownLinks.forEach(link => {
+                    link.addEventListener('click', (e) => {
+                        if (window.innerWidth <= 992) {
+                            e.preventDefault();
+                            const menu = link.nextElementSibling;
+                            const isMenuVisible = menu.style.display === 'block';
+                            
+                            navLinks.querySelectorAll('.dropdown-menu').forEach(m => {
+                                if (m !== menu) {
+                                    m.style.display = 'none';
+                                }
+                            });
+
+                            menu.style.display = isMenuVisible ? 'none' : 'block';
+                        }
+                    });
+                });
+
+                window.addEventListener('resize', () => {
+                    if (window.innerWidth > 992) {
+                        navLinks.style.display = 'flex';
+                        navLinks.querySelectorAll('.dropdown-menu').forEach(m => {
+                            m.style.display = ''; 
+                        });
+                    } else {
+                        navLinks.style.display = 'none';
+                        navLinks.querySelectorAll('.dropdown-menu').forEach(m => {
+                            m.style.display = 'none';
+                        });
+                    }
+                });
+
+                // --- Search Suggestions Functionality ---
+                const searchInput = document.getElementById('searchInput');
+                const suggestionsBox = document.getElementById('suggestionsBox');
+                let debounceTimer;
+
+                searchInput.addEventListener('input', () => {
+                    clearTimeout(debounceTimer);
+                    const query = searchInput.value.trim();
+                    if (query.length < 2) {
+                        suggestionsBox.style.display = 'none';
+                        return;
+                    }
+                    debounceTimer = setTimeout(() => fetchSuggestions(query), 300);
+                });
+
+                async function fetchSuggestions(query) {
+                    try {
+                        const response = await fetch(`https://24x7health.in/api/specializations?q=${encodeURIComponent(query)}`);
+                        if (!response.ok) throw new Error('Network response was not ok');
+                        const suggestions = await response.json();
+                        displaySuggestions(suggestions);
+                    } catch (error) {
+                        console.error('Error fetching suggestions:', error);
+                        suggestionsBox.style.display = 'none';
+                    }
+                }
+
+                function displaySuggestions(suggestions) {
+                    if (suggestions.length === 0) {
+                        suggestionsBox.style.display = 'none';
+                        return;
+                    }
+                    suggestionsBox.innerHTML = '';
+                    suggestions.forEach(spec => {
+                        const item = document.createElement('div');
+                        item.textContent = spec;
+                        item.style.padding = '12px 15px';
+                        item.style.cursor = 'pointer';
+                        item.onmouseenter = () => item.style.backgroundColor = '#f0f0f0';
+                        item.onmouseleave = () => item.style.backgroundColor = 'white';
+                        item.onclick = () => {
+                            const baseUrl = `doctors.html?specialization=${encodeURIComponent(spec)}`;
+                            // Use the helper function to ensure location is appended
+                            window.location.href = appendLocationToUrl(baseUrl);
+                        };
+                        suggestionsBox.appendChild(item);
+                    });
+                    suggestionsBox.style.display = 'block';
+                }
+
+                document.addEventListener('click', (event) => {
+                    if (!searchInput.contains(event.target) && !suggestionsBox.contains(event.target)) {
+                        suggestionsBox.style.display = 'none';
+                    }
+                });
+
+                // --- Active Nav Link Highlighting ---
+                const currentPath = window.location.pathname;
+                const currentSearch = window.location.search;
+                const currentFullPath = currentPath + currentSearch;
+                let bestMatchLink = null;
+                let longestMatch = -1;
+                document.querySelectorAll('#navLinks2 a[href]').forEach(link => {
+                    const linkHref = link.getAttribute('href');
+                    if (linkHref === '#') return;
+                    const linkUrl = new URL(linkHref, window.location.href);
+                    const linkFullPath = linkUrl.pathname + linkUrl.search;
+                    if (currentFullPath.startsWith(linkFullPath)) {
+                        if (linkFullPath.length > longestMatch) {
+                            longestMatch = linkFullPath.length;
+                            bestMatchLink = link;
+                        }
+                    }
+                });
+                if (bestMatchLink) {
+                    bestMatchLink.classList.add('active');
+                    const parentDropdown = bestMatchLink.closest('.dropdown');
+                    if (parentDropdown) {
+                        const mainDropdownLink = parentDropdown.querySelector('a.nav-link');
+                        if (mainDropdownLink) mainDropdownLink.classList.add('active');
+                    }
+                } else if (currentPath === '/' || currentPath.endsWith('index.html')) {
+                    const homeLink = document.querySelector('#navLinks2 a[href="index.html"]');
+                    if (homeLink) homeLink.classList.add('active');
+                }
+
+                // --- User Authentication ---
+                const userName1 = document.getElementById("userName1");
+                const loginLink1 = document.getElementById("loginNav1");
+                const doctorName = localStorage.getItem("doctorName");
+                const patientName = localStorage.getItem("fullName");
+                const diagnosticName = localStorage.getItem("diagnosticName");
+                let currentUser = patientName || doctorName || diagnosticName;
+                if (currentUser) {
+                    userName1.textContent = currentUser;
+                    loginLink1.innerHTML = `<i class="fas fa-user-circle"></i><span id="userName1" style="margin-right: 5px; font-size: 14px;">${currentUser}</span>`;
+                    loginLink1.addEventListener("click", (e) => {
+                        e.preventDefault();
+                        localStorage.clear();
+                        sessionStorage.clear();
+                        window.location.href = "index.html";
+                    });
+                }
+                
+                // --- Language Menu Toggle ---
+                const languageTab = document.getElementById("languageTab");
+                const languageMenu = document.getElementById("languageMenu");
+                if (languageTab && languageMenu) {
+                    languageTab.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        languageMenu.style.display = languageMenu.style.display === "block" ? "none" : "block";
+                    });
+                    document.addEventListener('click', () => { languageMenu.style.display = "none"; });
+                    languageMenu.addEventListener('click', (e) => { e.stopPropagation(); });
+                }
+
+                // --- Location Services Logic ---
+
+                /**
+                 * Updates all navigation links on the page with the stored location.
+                 */
+                function updateNavLinksWithLocation() {
+                    document.querySelectorAll('nav a[href]').forEach(link => {
+                        const originalHref = link.getAttribute('href');
+                        if (!originalHref || originalHref.startsWith('#') || originalHref.startsWith('javascript:')) return;
+                        link.setAttribute('href', appendLocationToUrl(originalHref));
+                    });
+                }
+
+                /**
+                 * Stores an encoded string (lat,lng) in localStorage.
+                 */
+                function storeEncodedLocation(latitude, longitude) {
+                    const locationString = `${latitude},${longitude}`;
+                    const encodedString = btoa(locationString);
+                    localStorage.setItem('userEncodedLocation', encodedString);
+                    console.log('Stored Encoded Location:', encodedString);
+                    updateNavLinksWithLocation();
+                }
+
+                /**
+                 * Fetches location using IP address as a fallback.
+                 */
+                async function fetchLocationByIp() {
+                    console.log("User denied geolocation. Falling back to IP-based location.");
+                    try {
+                        const response = await fetch('https://ipapi.co/json/');
+                        if (!response.ok) throw new Error('IP API request failed');
+                        const data = await response.json();
+                        if (data.latitude && data.longitude) {
+                            storeEncodedLocation(data.latitude, data.longitude);
+                        } else {
+                        console.error("Could not determine location from IP.");
+                        }
+                    } catch (error) {
+                        console.error("Error fetching location by IP:", error);
+                    }
+                }
+                
+                /**
+                 * Asks for browser's geolocation and handles success or failure.
+                 */
+                function requestBrowserLocation() {
+                    if (navigator.geolocation) {
+                        navigator.geolocation.getCurrentPosition(
+                            (position) => {
+                                console.log("Geolocation permission granted.");
+                                storeEncodedLocation(position.coords.latitude, position.coords.longitude);
+                            },
+                            fetchLocationByIp 
+                        );
+                    } else {
+                        console.error("Geolocation is not supported by this browser.");
+                        fetchLocationByIp(); 
+                    }
+                }
+
+                // --- Main Location Execution ---
+                const isIndexPage = window.location.pathname.endsWith('/') || window.location.pathname.endsWith('index.html');
+                const locationExists = localStorage.getItem('userEncodedLocation');
+
+                if (isIndexPage && !locationExists) {
+                    requestBrowserLocation();
+                }
+                
+                if(locationExists){
+                    updateNavLinksWithLocation();
+                }
+                // --- END OF LOCATION SERVICES SCRIPT ---
+
+            });
+
+            // --- Language Functionality ---
+            async function setLanguage(lang, label, event) {
+                if (event) event.stopPropagation();
+                localStorage.setItem("language", lang);
+                document.getElementById("currentLang").innerText = label;
+                document.getElementById("languageMenu").style.display = "none";
+
+                const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, null, false);
+                const nodes = [];
+                while (walker.nextNode()) {
+                    const node = walker.currentNode;
+                    if (node.parentNode.nodeName === "SCRIPT" || node.parentNode.nodeName === "STYLE" || !node.nodeValue.trim()) continue;
+                    if (!node.originalText) node.originalText = node.nodeValue;
+                    nodes.push(node);
+                }
+
+                if (lang === 'en') {
+                    nodes.forEach(node => { if (node.originalText) node.nodeValue = node.originalText; });
+                    return;
+                }
+
+                const originals = nodes.map(n => n.originalText);
+                const apiKey = "AIzaSyB3ebJaiaYFyB30sGAx1PmfmgnDPFCajKk";
+                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
+                const textToTranslate = originals.join("|||");
+                const prompt = `Translate the following text parts into ${label}. The parts are separated by "|||". Maintain the "|||" separator in your output. Do not translate "24x7 Health" or "24x7 Health Service". If a part is a number or symbol, return it as is. \n\nTEXT: ${textToTranslate}`;
+                
+                document.body.style.opacity = '0.5';
+                document.body.style.pointerEvents = 'none';
+
+                try {
+                    const payload = {
+                        contents: [{ parts: [{ text: prompt }] }],
+                        safetySettings: [
+                            { category: "HARM_CATEGORY_HARASSMENT", threshold: "BLOCK_NONE" },
+                            { category: "HARM_CATEGORY_HATE_SPEECH", threshold: "BLOCK_NONE" },
+                            { category: "HARM_CATEGORY_SEXUALLY_EXPLICIT", threshold: "BLOCK_NONE" },
+                            { category: "HARM_CATEGORY_DANGEROUS_CONTENT", threshold: "BLOCK_NONE" },
+                        ]
+                    };
+                    const response = await fetch(apiUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+                    if (!response.ok) throw new Error(`API request failed: ${response.status}`);
+                    const result = await response.json();
+                    const translatedText = result?.candidates?.[0]?.content?.parts?.[0]?.text;
+
+                    if (translatedText) {
+                        const parts = translatedText.split("|||");
+                        nodes.forEach((node, i) => { node.nodeValue = (parts[i] || originals[i]).trim(); });
+                    } else {
+                    throw new Error("Invalid API response format");
+                    }
+                } catch (err) {
+                    console.error("Translation failed", err);
+                    nodes.forEach(node => { if (node.originalText) node.nodeValue = node.originalText; });
+                } finally {
+                    document.body.style.opacity = '1';
+                    document.body.style.pointerEvents = 'auto';
+                }
+            }
+
+            document.addEventListener("click", function(e) {
+                const menu = document.getElementById("languageMenu");
+                const tab = document.getElementById("languageTab");
+                if (menu && tab && !menu.contains(e.target) && !tab.contains(e.target)) {
+                    menu.style.display = "none";
+                }
+            });
+        </script>
+    <!-- Navbar Code Ends -->
+
+  <div class="container">
+    <div class="form-header">
+      <h2>Diagnostic Center Registration</h2>
+      <p>Please fill in all required information to register your diagnostic center</p>
+    </div>
+    
+    <div class="progress-bar">
+      <div class="progress-step active" data-step="1"></div>
+      <div class="progress-step" data-step="2"></div>
+      <div class="progress-step" data-step="3"></div>
+      <div class="progress-step" data-step="4"></div>
+      <div class="progress-step" data-step="5"></div>
+    </div>
+    
+    <div class="alert alert-success" id="successAlert"></div>
+    <div class="alert alert-danger" id="errorAlert"></div>
+    
+    <form id="registrationForm">
+      <!-- Step 1: Account Verification -->
+      <div class="form-step active" id="step-1">
+        <div class="form-group">
+          <label for="email" class="required">Email Address</label>
+          <div class="otp-group">
+            <input type="email" id="email" required placeholder="Enter your email address">
+            <button type="button" class="btn btn-primary btn-otp" onclick="sendOtp()">
+              <i class="fas fa-paper-plane"></i> Send OTP
+            </button>
+          </div>
+        </div>
+        
+        <div class="form-group" id="otpField" style="display: none;">
+          <label for="otp" class="required">Verification Code</label>
+          <div class="otp-group">
+            <input type="text" id="otp" maxlength="6" placeholder="Enter 6-digit OTP">
+            <button type="button" class="btn btn-success btn-otp" onclick="verifyOtp()">
+              <i class="fas fa-check"></i> Verify
+            </button>
+          </div>
+        </div>
+        
+        <div class="form-group">
+          <label for="password" class="required">Password</label>
+          <input type="password" id="password" required placeholder="Create a strong password">
+        </div>
+        
+        <div class="button-group">
+          <!-- Login Button -->
+          <button type="button" class="btn btn-primary" onclick="window.location.href='diagnosticLogin.html'">
+            Login &nbsp;<i class="fas fa-sign-in-alt" ></i>
+          </button>
+
+          <!-- Example Next Step Button -->
+          <button type="button" class="btn btn-primary" onclick="nextStep(2)">
+            Next &nbsp; <i class="fas fa-arrow-right"></i>
+          </button>
+        </div>
+      </div>
+      
+      <!-- Step 2: Basic Information -->
+      <div class="form-step" id="step-2">
+        <div class="form-row">
+          <div class="form-group">
+            <label for="centerName" class="required">Center Name</label>
+            <input type="text" id="centerName" required placeholder="Enter diagnostic center name">
+          </div>
+          <div class="form-group">
+            <label for="ownerName" class="required">Owner Name</label>
+            <input type="text" id="ownerName" required placeholder="Enter owner's full name">
+          </div>
+        </div>
+        
+        <div class="form-row">
+          <div class="form-group">
+            <label for="centerType" class="required">Center Type</label>
+            <select id="centerType" required>
+              <option value="">Select center type</option>
+              <option value="Pathology">Pathology</option>
+              <option value="Radiology">Radiology</option>
+              <option value="Multi-specialty">Multi-specialty</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="registrationNumber" class="required">Registration Number</label>
+            <input type="text" id="registrationNumber" required placeholder="Enter registration number">
+          </div>
+        </div>
+        
+        <div class="button-group">
+          <button type="button" class="btn btn-secondary" onclick="prevStep(1)"><i class="fas fa-arrow-left"></i> Previous</button>
+          <button type="button" class="btn btn-primary" onclick="nextStep(3)">Next <i class="fas fa-arrow-right"></i></button>
+        </div>
+      </div>
+      
+      <!-- Step 3: Contact & Address -->
+      <div class="form-step" id="step-3">
+        <div class="form-row">
+          <div class="form-group">
+            <label for="phone" class="required">Phone Number</label>
+            <input type="text" id="phone" maxlength="10" required placeholder="Enter 10-digit phone number">
+          </div>
+          <div class="form-group">
+            <label for="altPhone">Alternate Phone</label>
+            <input type="text" id="altPhone" maxlength="10" placeholder="Optional alternate number">
+          </div>
+        </div>
+        
+        <div class="form-group">
+          <label for="whatsapp">WhatsApp Number</label>
+          <input type="text" id="whatsapp" maxlength="10" placeholder="Enter WhatsApp number if different">
+        </div>
+        
+        <div class="form-group">
+          <label for="address" class="required">Full Address</label>
+          <textarea id="address" rows="3" required placeholder="Enter complete address of your center"></textarea>
+        </div>
+        
+        <div class="form-row">
+          <div class="form-group">
+            <label for="city" class="required">City</label>
+            <input type="text" id="city" required placeholder="Enter city">
+          </div>
+          <div class="form-group">
+            <label for="state" class="required">State</label>
+            <input type="text" id="state" required placeholder="Enter state">
+          </div>
+          <div class="form-group">
+            <label for="pincode" class="required">Pincode</label>
+            <input type="text" id="pincode" maxlength="6" required placeholder="6-digit pincode">
+          </div>
+        </div>
+        
+        <div class="form-group">
+          <label for="mapUrl">Google Maps Location URL</label>
+          <input type="url" id="mapUrl" placeholder="Paste Google Maps link to your location">
+        </div>
+        
+        <div class="button-group">
+          <button type="button" class="btn btn-secondary" onclick="prevStep(2)"><i class="fas fa-arrow-left"></i> Previous</button>
+          <button type="button" class="btn btn-primary" onclick="nextStep(4)">Next <i class="fas fa-arrow-right"></i></button>
+        </div>
+      </div>
+      
+      <!-- Step 4: Documents & Services -->
+      <div class="form-step" id="step-4">
+        <div class="form-row">
+          <div class="form-group">
+            <label for="gstNumber">GST Number</label>
+            <input type="text" id="gstNumber" placeholder="Enter GST number if available">
+          </div>
+          <div class="form-group">
+            <label for="homeSample">Home Sample Collection</label>
+            <select id="homeSample">
+              <option value="Yes">Yes</option>
+              <option value="No">No</option>
+            </select>
+          </div>
+        </div>
+        
+        <div class="form-row">
+          <div class="form-group">
+            <label for="fromTime">Opening Time</label>
+            <input type="time" id="fromTime">
+          </div>
+          <div class="form-group">
+            <label for="toTime">Closing Time</label>
+            <input type="time" id="toTime">
+          </div>
+        </div>
+        
+        <div class="form-group">
+          <label for="services">Services Offered</label>
+          <input type="text" id="services" placeholder="e.g., Blood Test, X-Ray, MRI (type and press Enter)">
+          <div class="services-tags" id="servicesTags"></div>
+        </div>
+        
+        <div class="form-group">
+          <label>Upload Documents</label>
+          <div class="file-upload-wrapper">
+            <label class="file-upload-label" for="panAadharJpeg">
+              <i class="fas fa-id-card"></i>
+              <span>PAN/Aadhaar Document</span>
+              <small>JPEG or PNG (Max 2MB)</small>
+              <input type="file" id="panAadharJpeg" class="file-upload-input" accept="image/jpeg,image/png">
+            </label>
+          </div>
+          <div class="file-preview" id="panAadharPreview"></div>
+        </div>
+        
+        <div class="form-group">
+          <div class="file-upload-wrapper">
+            <label class="file-upload-label" for="licenseCopyJpeg">
+              <i class="fas fa-file-alt"></i>
+              <span>License Copy</span>
+              <small>JPEG or PNG (Max 2MB)</small>
+              <input type="file" id="licenseCopyJpeg" class="file-upload-input" accept="image/jpeg,image/png">
+            </label>
+          </div>
+          <div class="file-preview" id="licensePreview"></div>
+        </div>
+        
+        <div class="button-group">
+          <button type="button" class="btn btn-secondary" onclick="prevStep(3)"><i class="fas fa-arrow-left"></i> Previous</button>
+          <button type="button" class="btn btn-primary" onclick="nextStep(5)">Next <i class="fas fa-arrow-right"></i></button>
+        </div>
+      </div>
+      
+      <!-- Step 5: Bank Details -->
+      <div class="form-step" id="step-5">
+        <div class="form-row">
+          <div class="form-group">
+            <label for="accountHolderName" class="required">Account Holder Name</label>
+            <input type="text" id="accountHolderName" required placeholder="As per bank records">
+          </div>
+          <div class="form-group">
+            <label for="bankName" class="required">Bank Name</label>
+            <input type="text" id="bankName" required placeholder="Name of your bank">
+          </div>
+        </div>
+        
+        <div class="form-row">
+          <div class="form-group">
+            <label for="accountNumber" class="required">Account Number</label>
+            <input type="text" id="accountNumber" required placeholder="Your bank account number">
+          </div>
+          <div class="form-group">
+            <label for="ifscCode" class="required">IFSC Code</label>
+            <input type="text" id="ifscCode" required placeholder="Bank branch IFSC code">
+          </div>
+        </div>
+        
+        <div class="form-row">
+          <div class="form-group">
+            <label for="upiId">UPI ID</label>
+            <input type="text" id="upiId" placeholder="Your UPI ID for payments">
+          </div>
+          <div class="form-group">
+            <label for="upiQrCodeJpeg">UPI QR Code</label>
+            <div class="file-upload-wrapper">
+              <label class="file-upload-label" for="upiQrCodeJpeg">
+                <i class="fas fa-qrcode"></i>
+                <span>Upload UPI QR Code</span>
+                <small>JPEG or PNG (Max 2MB)</small>
+                <input type="file" id="upiQrCodeJpeg" class="file-upload-input" accept="image/jpeg,image/png">
+              </label>
+            </div>
+            <div class="file-preview" id="upiQrPreview"></div>
+          </div>
+        </div>
+        
+        <div class="button-group">
+          <button type="button" class="btn btn-secondary" onclick="prevStep(4)"><i class="fas fa-arrow-left"></i> Previous</button>
+          <button type="submit" class="btn btn-success"><i class="fas fa-check-circle"></i> Submit Registration</button>
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <script>
+    const baseUrl = 'https://24x7health.in/api/diagnostics';
+    let servicesList = [];
+    let uploadedFiles = {
+      panAadhar: null,
+      license: null,
+      upiQr: null
+    };
+
+    // Initialize form
+    document.addEventListener('DOMContentLoaded', function() {
+      // Setup file uploads
+      setupFileUpload('panAadharJpeg', 'panAadharPreview', 'panAadhar');
+      setupFileUpload('licenseCopyJpeg', 'licensePreview', 'license');
+      setupFileUpload('upiQrCodeJpeg', 'upiQrPreview', 'upiQr');
+      
+      // Setup services tags
+      document.getElementById('services').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          const service = this.value.trim();
+          if (service && !servicesList.includes(service)) {
+            servicesList.push(service);
+            updateServicesTags();
+            this.value = '';
+          }
+        }
+      });
+    });
+
+    function setupFileUpload(inputId, previewId, fileKey) {
+      const input = document.getElementById(inputId);
+      const preview = document.getElementById(previewId);
+      
+      input.addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (file) {
+          if (file.size > 2 * 1024 * 1024) {
+            showAlert('File size should be less than 2MB', 'error');
+            return;
+          }
+          
+          const reader = new FileReader();
+          reader.onload = function(event) {
+            uploadedFiles[fileKey] = {
+              name: file.name,
+              data: event.target.result
+            };
+            
+            preview.innerHTML = `
+              <div class="file-preview-item">
+                <img src="${event.target.result}" alt="${file.name}">
+                <div class="remove-file" onclick="removeFile('${fileKey}')">&times;</div>
+              </div>
+            `;
+          };
+          reader.readAsDataURL(file);
+        }
+      });
+    }
+    
+    function removeFile(fileKey) {
+      uploadedFiles[fileKey] = null;
+      document.getElementById(`${fileKey}Preview`).innerHTML = '';
+      document.getElementById(`${fileKey}Jpeg`).value = '';
+    }
+    
+    function updateServicesTags() {
+      const container = document.getElementById('servicesTags');
+      container.innerHTML = servicesList.map(service => `
+        <div class="tag">
+          ${service}
+          <span class="tag-remove" onclick="removeService('${service}')">&times;</span>
+        </div>
+      `).join('');
+    }
+    
+    function removeService(service) {
+      servicesList = servicesList.filter(s => s !== service);
+      updateServicesTags();
+    }
+    
+    function showAlert(message, type) {
+      const alert = document.getElementById(`${type}Alert`);
+      alert.textContent = message;
+      alert.style.display = 'block';
+      
+      setTimeout(() => {
+        alert.style.display = 'none';
+      }, 5000);
+    }
+    
+    function nextStep(step) {
+      // Validate current step before proceeding
+      if (!validateStep(step - 1)) {
+        return;
+      }
+      
+      // Hide current step
+      document.querySelector(`.form-step.active`).classList.remove('active');
+      document.querySelector(`.progress-step[data-step="${step - 1}"]`).classList.remove('active');
+      
+      // Show next step
+      document.getElementById(`step-${step}`).classList.add('active');
+      document.querySelector(`.progress-step[data-step="${step}"]`).classList.add('active');
+      
+      // Mark previous step as completed
+      document.querySelector(`.progress-step[data-step="${step - 1}"]`).classList.add('completed');
+      
+      // Scroll to top
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+    
+    function prevStep(step) {
+      // Hide current step
+      document.querySelector(`.form-step.active`).classList.remove('active');
+      document.querySelector(`.progress-step[data-step="${step + 1}"]`).classList.remove('active');
+      
+      // Show previous step
+      document.getElementById(`step-${step}`).classList.add('active');
+      document.querySelector(`.progress-step[data-step="${step}"]`).classList.add('active');
+      
+      // Scroll to top
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+    
+    function validateStep(step) {
+      // Step 1 validation
+      if (step === 1) {
+        const email = document.getElementById('email').value;
+        const password = document.getElementById('password').value;
+        
+        if (!email || !isValidEmail(email)) {
+          showAlert('Please enter a valid email address', 'error');
+          return false;
+        }
+        
+        if (!password || password.length < 8) {
+          showAlert('Password must be at least 8 characters long', 'error');
+          return false;
+        }
+        
+        if (!document.getElementById('otpField').style.display === 'block') {
+          showAlert('Please verify your email with OTP first', 'error');
+          return false;
+        }
+      }
+      
+      // Step 2 validation
+      if (step === 2) {
+        const centerName = document.getElementById('centerName').value;
+        const ownerName = document.getElementById('ownerName').value;
+        const centerType = document.getElementById('centerType').value;
+        const regNumber = document.getElementById('registrationNumber').value;
+        
+        if (!centerName || !ownerName || !centerType || !regNumber) {
+          showAlert('Please fill all required fields', 'error');
+          return false;
+        }
+      }
+      
+      // Add validation for other steps as needed
+      
+      return true;
+    }
+    
+    function isValidEmail(email) {
+      return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    }
+    
+    async function sendOtp() {
+      const email = document.getElementById('email').value;
+      
+      if (!email || !isValidEmail(email)) {
+        showAlert('Please enter a valid email address', 'error');
+        return;
+      }
+      
+      try {
+        const res = await fetch(`${baseUrl}/send-otp`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email })
+        });
+        
+        const data = await res.json();
+        
+        if (res.ok) {
+          showAlert(data.message || 'OTP sent to your email', 'success');
+          document.getElementById('otpField').style.display = 'block';
+        } else {
+          showAlert(data.error || 'Failed to send OTP', 'error');
+        }
+      } catch (error) {
+        showAlert('Network error. Please try again.', 'error');
+      }
+    }
+    
+    async function verifyOtp() {
+      const email = document.getElementById('email').value;
+      const otp = document.getElementById('otp').value;
+      
+      if (!email || !otp || otp.length !== 6) {
+        showAlert('Please enter a valid 6-digit OTP', 'error');
+        return;
+      }
+      
+      try {
+        const res = await fetch(`${baseUrl}/verify-otp`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, otp })
+        });
+        
+        const data = await res.json();
+        
+        if (res.ok) {
+          showAlert(data.message || 'Email verified successfully', 'success');
+        } else {
+          showAlert(data.error || 'Invalid OTP. Please try again.', 'error');
+        }
+      } catch (error) {
+        showAlert('Network error. Please try again.', 'error');
+      }
+    }
+    
+    document.getElementById('registrationForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      if (!validateStep(5)) {
+        return;
+      }
+      
+      const formData = {
+        email: document.getElementById('email').value,
+        password: document.getElementById('password').value,
+        centerName: document.getElementById('centerName').value,
+        ownerName: document.getElementById('ownerName').value,
+        centerType: document.getElementById('centerType').value,
+        phone: document.getElementById('phone').value,
+        altPhone: document.getElementById('altPhone').value,
+        whatsapp: document.getElementById('whatsapp').value,
+        address: document.getElementById('address').value,
+        city: document.getElementById('city').value,
+        state: document.getElementById('state').value,
+        pincode: document.getElementById('pincode').value,
+        mapUrl: document.getElementById('mapUrl').value,
+        registrationNumber: document.getElementById('registrationNumber').value,
+        gstNumber: document.getElementById('gstNumber').value,
+        panAadharJpeg: uploadedFiles.panAadhar ? uploadedFiles.panAadhar.data : null,
+        licenseCopyJpeg: uploadedFiles.license ? uploadedFiles.license.data : null,
+        services: servicesList,
+        homeSample: document.getElementById('homeSample').value,
+        operationalHours: document.getElementById('fromTime').value + " - " + document.getElementById('toTime').value,
+        accountHolderName: document.getElementById('accountHolderName').value,
+        bankName: document.getElementById('bankName').value,
+        accountNumber: document.getElementById('accountNumber').value,
+        ifscCode: document.getElementById('ifscCode').value,
+        upiId: document.getElementById('upiId').value,
+        upiQrCodeJpeg: uploadedFiles.upiQr ? uploadedFiles.upiQr.data : null
+      };
+      
+      try {
+        const res = await fetch(`${baseUrl}/register`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(formData)
+        });
+        
+        const result = await res.json();
+        
+        if (res.ok) {
+          showAlert('Registration successful! Our team will contact you shortly.', 'success');
+          window.location.href = 'login.html'
+          document.getElementById('registrationForm').reset();
+          servicesList = [];
+          uploadedFiles = { panAadhar: null, license: null, upiQr: null };
+          document.querySelectorAll('.file-preview').forEach(el => el.innerHTML = '');
+          document.getElementById('servicesTags').innerHTML = '';
+          
+          // Reset to first step
+          document.querySelector('.form-step.active').classList.remove('active');
+          document.getElementById('step-1').classList.add('active');
+          document.querySelectorAll('.progress-step').forEach(el => {
+            el.classList.remove('active', 'completed');
+          });
+          document.querySelector('.progress-step[data-step="1"]').classList.add('active');
+        } else {
+          showAlert(result.error || 'Registration failed. Please try again.', 'error');
+        }
+      } catch (error) {
+        showAlert('Network error. Please try again.', 'error');
+      }
+    });
+  </script>
+</body>
+</html>

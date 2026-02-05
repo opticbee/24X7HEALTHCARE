@@ -1,0 +1,141 @@
+<!-- Chatbot Icon -->
+<div id="chatbot-icon" style="position: fixed; bottom: 40px; right: 20px; width: 60px; height: 60px; background-color: #ffffffc0; border-radius: 50%; display: flex; justify-content: center; align-items: center; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2); cursor: pointer; z-index: 1000; transition: all 0.3s ease-in-out;">
+    <i class="fas fa-comments" style="font-size: 30px; color: #2c3e50;"></i>
+</div>
+
+<!-- Chatbot Container -->
+<div id="chatbot-container" style="position: fixed; bottom: 80px; right: 20px; width: 320px; background-color: #fff; border-radius: 20px; box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15); padding: 20px; display: none; z-index: 1000; transform: translateY(20px); opacity: 0; transition: all 0.3s ease-in-out;">
+    <!-- Header -->
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+        <h3 style="margin: 0; font-size: 18px; font-weight: bold; color: #2c3e50;">24x7 Health AI Chatbot</h3>
+        <button id="close-chat" style="background-color: #e74c3c; border: none; color: white; font-size: 16px; border-radius: 10%; width: 25px; height: 25px; cursor: pointer;">X</button>
+    </div>
+
+    <!-- Chat Area -->
+    <div id="chat-area" style="background-color: #cfcfcf; height: 250px; overflow-y: auto; padding: 10px; border-radius: 10px; margin-bottom: 15px; background: linear-gradient(to bottom, #fafafa, #f0f0f0); display: flex; flex-direction: column;">
+        <!-- Welcome Message -->
+        <div class="message bot-message">Hi! How can I assist you today?</div>
+    </div>
+
+    <!-- Input -->
+    <div style="display: flex; align-items: center;">
+        <input type="text" id="user-input" placeholder="Type your message..." style="width: 75%; padding: 10px; border-radius: 10px; border: 1px solid #ddd; font-size: 16px; margin-right: 10px; background-color: #f9f9f9;" />
+        <button id="send-btn" style="width: 20%; background-color:#2c3e50; color: white; font-size: 16px; border-radius: 10px; padding: 10px; border: none; cursor: pointer;">Send</button>
+    </div>
+</div>
+
+<!-- Styles -->
+<style>
+    .user-message {
+        border-radius: 10px 0 0 10px !important;
+        background-color: #007bff;
+        color: white;
+        padding: 8px 12px;
+        margin: 5px 0;
+        max-width: 75%;
+        margin-left: auto;
+        font-size: 16px;
+    }
+
+    .bot-message {
+        border-radius: 0 10px 10px 0 !important;
+        background-color: #d6dee4;
+        color: black;
+        padding: 8px 12px;
+        margin: 5px 0;
+        max-width: 75%;
+        margin-right: auto;
+        font-size: 16px;
+    }
+</style>
+
+<!-- Script -->
+<script>
+    const chatbotIcon = document.getElementById('chatbot-icon');
+    const chatbotContainer = document.getElementById('chatbot-container');
+    const closeBtn = document.getElementById('close-chat');
+    const sendBtn = document.getElementById('send-btn');
+    const userInput = document.getElementById('user-input');
+    const chatArea = document.getElementById('chat-area');
+
+    chatbotIcon.onclick = () => {
+        chatbotContainer.style.display = 'block';
+        chatbotContainer.style.transform = 'translateY(0)';
+        chatbotContainer.style.opacity = '1';
+        chatbotIcon.style.display = 'none';
+    };
+
+    closeBtn.onclick = () => {
+        chatbotContainer.style.display = 'none';
+        chatbotIcon.style.display = 'flex';
+    };
+
+    sendBtn.onclick = sendMessage;
+    userInput.addEventListener('keypress', e => {
+        if (e.key === 'Enter') sendMessage();
+    });
+
+    function sendMessage() {
+        const msg = userInput.value.trim();
+        if (!msg) return;
+
+        const userMsgDiv = document.createElement('div');
+        userMsgDiv.classList.add('message', 'user-message');
+        userMsgDiv.textContent = msg;
+        chatArea.appendChild(userMsgDiv);
+
+        userInput.value = '';
+        chatArea.scrollTop = chatArea.scrollHeight;
+
+        setTimeout(() => {
+            const botMsgDiv = document.createElement('div');
+            botMsgDiv.classList.add('message', 'bot-message');
+            botMsgDiv.textContent = getBotReply(msg);
+            chatArea.appendChild(botMsgDiv);
+            chatArea.scrollTop = chatArea.scrollHeight;
+        }, 1000);
+    }
+
+    function getBotReply(input) {
+        const message = input.toLowerCase();
+        const responses = {
+            "hi": "Hello, How are you?",
+            "hello": "Hi, How are you?",
+            "how are you": "I'm just a bot, but I'm doing great! How about you?",
+            "good morning": "Good morning! Have a fantastic day ahead!",
+            "good night": "Good night! Sweet dreams!",
+            "thank you": "You're welcome! 😊",
+            "what's your name": "I'm your friendly chatbot!",
+            "who created you": "I was created by Naveen Teja! 😉",
+            "who is your master": "My Master is NaveenTeja. He holds root access to my system.",
+            "bye": "Goodbye! Have a great day!",
+            "what can you do": "I can chat with you! Ask me anything. 😊",
+
+            // Health
+            "what are common health checkups": "Common health checkups include blood tests, cholesterol tests, BP monitoring, diabetes screening, and full-body checkups.",
+            "what is cbc test": "A CBC test measures red/white blood cells, hemoglobin, and platelets.",
+            "how often should i get a health checkup": "Usually once a year, or more if your doctor advises.",
+            "what is an mri scan": "MRI uses magnets and radio waves to make detailed images of body organs.",
+            "how can i check my blood sugar levels": "Use a glucometer or get FBS/HbA1c tests from a lab.",
+            "what are the symptoms of high blood pressure": "Symptoms include headache, dizziness, blurred vision—but often it has none!",
+            "what is a lipid profile test": "It checks LDL, HDL, triglycerides—key cholesterol markers.",
+            "what is a thyroid test": "It measures TSH, T3, and T4 hormones for thyroid function.",
+            "what are the symptoms of diabetes": "Frequent urination, thirst, fatigue, weight loss, blurry vision.",
+            "how to improve immunity": "Eat well, exercise, sleep, stay hydrated, and manage stress.",
+
+            // Fertility
+            "how to check fertility in men": "Semen analysis checks sperm count, motility, shape.",
+            "how to check fertility in women": "Hormone tests, ultrasounds, and ovulation tracking help assess.",
+            "what are common causes of infertility": "Hormones, age, low sperm, blocked tubes, PCOS, stress.",
+            "what is ivf": "In IVF, sperm and egg meet in a lab, then the embryo is placed in the uterus.",
+            "how to increase chances of conception": "Eat well, track ovulation, avoid stress, be consistent.",
+            "what are signs of ovulation": "Pelvic twinge, clear mucus, temperature rise, LH surge.",
+            "what foods boost fertility": "Leafy greens, nuts, fish, eggs, whole grains, folate-rich foods.",
+            "what is pcos and how does it affect fertility": "PCOS causes hormonal imbalance and irregular ovulation.",
+            "how long does it take to get pregnant": "Most conceive within 1 year; consult doctor after 12 months.",
+            "can stress affect fertility": "Yes, chronic stress impacts hormones and ovulation.",
+            "what are the treatment options for infertility": "Lifestyle changes, meds, IUI, IVF, surgery depending on cause."
+        };
+        return responses[message] || "I'm not sure how to respond to that. Can you try something else?";
+    }
+</script>

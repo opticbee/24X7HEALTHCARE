@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Payment Page</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+  <link rel="icon" href="images/favicon.ico" type="image/x-icon">
+  <style>
+    body {
+      font-family: "Segoe UI", sans-serif;
+      margin: 0;
+      padding: 0;
+      background: #f2f6fa;
+    }
+    .container {
+      max-width: 500px;
+      margin: 60px auto;
+      background: #fff;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+      text-align: center;
+    }
+    h2 {
+      color: #004080;
+      margin-bottom: 25px;
+    }
+    .test-info {
+      font-size: 18px;
+      margin-bottom: 15px;
+      color: #444;
+    }
+    .amount {
+      font-size: 22px;
+      font-weight: bold;
+      color: #e60000;
+      margin-bottom: 30px;
+    }
+    .pay-btn {
+      background-color: #00bcd4;
+      color: white;
+      padding: 12px 25px;
+      font-size: 16px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+      margin: 10px;
+    }
+    .pay-btn:hover {
+      background-color: #0097a7;
+    }
+    .back-btn {
+      background-color: #f44336;
+      color: white;
+      padding: 12px 25px;
+      font-size: 16px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+      margin: 10px;
+    }
+    .back-btn:hover {
+      background-color: #d32f2f;
+    }
+    .form-group {
+      margin-bottom: 20px;
+      text-align: left;
+    }
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: #333;
+    }
+    .form-group input {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      font-size: 16px;
+      box-sizing: border-box;
+    }
+    .payment-options {
+      text-align: left;
+      margin: 20px 0;
+    }
+    .payment-option {
+      margin-bottom: 10px;
+    }
+    .payment-option input[type="checkbox"] {
+      margin-right: 10px;
+    }
+    .payment-option label {
+      cursor: pointer;
+    }
+    .payment-option.disabled {
+      color: #999;
+    }
+    .info-message {
+      color: #e60000;
+      font-size: 14px;
+      margin-top: 5px;
+      display: none;
+    }
+    @media (max-width: 600px) {
+      .container {
+        margin: 30px 15px;
+        padding: 20px;
+      }
+      .test-info {
+        font-size: 16px;
+      }
+      .amount {
+        font-size: 20px;
+      }
+      .pay-btn, .back-btn {
+        width: 100%;
+        margin: 5px 0;
+      }
+    }
+  </style>
+</head>
+<body style="font-family: Arial, sans-serif;">
+  <div class="container">
+    <h2>Book Test Payment</h2>
+    <div class="test-info"><strong>Test Name:</strong> <span id="test-name">Loading...</span></div>
+    <div class="amount">Amount: ₹<span id="test-price">0</span></div>
+    
+    <div class="form-group">
+      <label for="patient-name">Patient Name</label>
+      <input type="text" id="patient-name" placeholder="Enter patient's full name" required>
+    </div>
+    
+    <div class="form-group">
+      <label for="patient-email">Email</label>
+      <input type="email" id="patient-email" placeholder="Enter patient's email" required>
+    </div>
+    
+    <div class="form-group">
+      <label for="patient-mobile">Mobile Number</label>
+      <input type="tel" id="patient-mobile" placeholder="Enter patient's mobile number" required>
+    </div>
+    
+    <div class="payment-options">
+      <h3>Payment Method</h3>
+      <div class="payment-option disabled">
+        <input type="checkbox" id="online-banking" disabled>
+        <label for="online-banking">Online Banking</label>
+        <div class="info-message" id="online-banking-message">Currently we are accepting cash payments only</div>
+      </div>
+      
+      <div class="payment-option disabled">
+        <input type="checkbox" id="upi-apps" disabled>
+        <label for="upi-apps">UPI Apps</label>
+        <div class="info-message" id="upi-apps-message">Currently we are accepting cash payments only</div>
+      </div>
+      
+      <div class="payment-option">
+        <input type="checkbox" id="cash-payment" checked>
+        <label for="cash-payment">Pay with Cash</label>
+      </div>
+    </div>
+    
+    <button class="pay-btn" onclick="processPayment()">Confirm Booking</button>
+    <button class="back-btn" onclick="goBack()">Back to Tests</button>
+  </div>
+
+  <script>
+    // Get test name and price from URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const testName = urlParams.get("test") || "Selected Test";
+    const testPrice = parseInt(urlParams.get("price") || "0");
+
+    // Display on page
+    document.getElementById("test-name").textContent = testName;
+    document.getElementById("test-price").textContent = testPrice;
+
+    // Show messages when trying to select disabled options
+    document.getElementById('online-banking').addEventListener('click', function(e) {
+      e.preventDefault();
+      document.getElementById('online-banking-message').style.display = 'block';
+      setTimeout(() => {
+        document.getElementById('online-banking-message').style.display = 'none';
+      }, 3000);
+    });
+
+    document.getElementById('upi-apps').addEventListener('click', function(e) {
+      e.preventDefault();
+      document.getElementById('upi-apps-message').style.display = 'block';
+      setTimeout(() => {
+        document.getElementById('upi-apps-message').style.display = 'none';
+      }, 3000);
+    });
+
+    // Ensure only cash payment can be selected
+    document.getElementById('cash-payment').addEventListener('change', function() {
+      if (!this.checked) {
+        this.checked = true;
+      }
+    });
+
+    function processPayment() {
+      // Get form values
+      const patientName = document.getElementById('patient-name').value.trim();
+      const patientEmail = document.getElementById('patient-email').value.trim();
+      const patientMobile = document.getElementById('patient-mobile').value.trim();
+      const paymentMethod = 'Cash'; // Only option available
+      
+      // Simple validation
+      if (!patientName || !patientEmail || !patientMobile) {
+        alert('Please fill in all patient details');
+        return;
+      }
+      
+      // Email validation
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(patientEmail)) {
+        alert('Please enter a valid email address');
+        return;
+      }
+      
+      // Mobile validation (simple 10 digit check)
+      if (patientMobile.length !== 10 || !/^\d+$/.test(patientMobile)) {
+        alert('Please enter a valid 10-digit mobile number');
+        return;
+      }
+      
+      // Prepare data for backend
+      const paymentData = {
+        testName: testName,
+        amount: testPrice,
+        paymentMethod: paymentMethod,
+        patientName: patientName,
+        patientEmail: patientEmail,
+        patientMobile: patientMobile,
+        timestamp: new Date().toISOString()
+      };
+      
+      // Send data to backend
+      sendToBackend(paymentData);
+    }
+
+    function sendToBackend(data) {
+      fetch('https://24x7health.in/api/payment/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data)
+      })
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        return response.json();
+      })
+      .then(data => {
+        alert('Booking confirmed successfully!');
+        console.log('Success:', data);
+        window.location.href = "index.html";
+        // You can redirect to a success page here if needed
+      })
+      .catch((error) => {
+        console.error('Error:', error);
+        alert('Booking confirmation failed. Please try again or contact support.');
+      });
+    }
+
+    function goBack() {
+      window.location.href = "index.html"; // Change this if your main page has different name
+    }
+  </script>
+
+<!-- Placeholder where chatbot will be inserted -->
+<div id="chatbot-placeholder"></div>
+
+<!-- JS to load the chatbot -->
+<script>
+    fetch('chatbot.html')
+      .then(res => res.text())
+      .then(html => {
+        const container = document.getElementById('chatbot-placeholder');
+        container.innerHTML = html;
+
+        // ⛔ At this point, any <script> tags inside chatbot.html are just inserted as text.
+        // ✅ So, we must find and re-run those <script> blocks manually:
+        const scripts = container.querySelectorAll("script");
+        scripts.forEach(script => {
+          const newScript = document.createElement("script");
+          if (script.src) {
+            newScript.src = script.src;
+          } else {
+            newScript.textContent = script.textContent;
+          }
+          document.body.appendChild(newScript);
+        });
+      });
+</script>
+
+</body>
+</html>
