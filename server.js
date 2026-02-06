@@ -151,7 +151,7 @@ const ambulancebookingRoutes = require('./routes/ambulancebooking');
 /* =====================
    API Routes (AFTER IMPORTS)
 ===================== */
-app.use('/api/unified-login', unifiedLoginRoutes);
+app.use('/api', unifiedLoginRoutes);
 app.use('/api', unifiedPasswordResetRoutes);
 app.use('/api', bloodRoutes);
 app.use('/api', ambulancebookingRoutes);

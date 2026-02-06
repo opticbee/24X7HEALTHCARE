@@ -1474,6 +1474,11 @@ services from trusted labs near your location. </p>
                             resultsContainer.innerHTML = '<div class="col-span-full py-12 text-center text-red-500">Failed to load providers. Please try again later.</div>';
                         }
                     }
+                    displayedProviders = allProviders;
+                    offset = 0;
+                    resultsContainer.innerHTML = '';
+                    displayProvidersBatch(displayedProviders.slice(0, BATCH_SIZE));
+
                 };
 
                 const loadProvidersFromCache = () => {
@@ -1638,8 +1643,11 @@ services from trusted labs near your location. </p>
 
                     const filtered = allProviders.filter(p => {
                         const matchType = providerType === 'all' || p.type === providerType;
-                        const matchCountry = !country || (p.country && p.country.toLowerCase() === country.toLowerCase());
-                        const matchState = !state || (p.state && p.state.toLowerCase() === state.toLowerCase());
+                        const matchCountry = !country || 
+                        (p.address && p.address.toLowerCase().includes(country.toLowerCase()));
+
+                        const matchState = !state || 
+                        (p.address && p.address.toLowerCase().includes(state.toLowerCase()));
                         const matchZip = !zipCode || (p.zip_code && p.zip_code.startsWith(zipCode));
                         return matchType && matchCountry && matchState && matchZip;
                     });
