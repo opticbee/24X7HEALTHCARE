@@ -27,23 +27,24 @@ const io = new Server(server, {
   }
 });
 
-
+const allowedOrigins = [
+  "https://24x7health.in",
+  "https://www.24x7health.in"
+];
 
 app.use(cors({
   origin: (origin, callback) => {
-    if (!origin) return callback(null, true); // allow curl, server, mobile
+    if (!origin) return callback(null, true); // Postman, curl
 
     if (allowedOrigins.includes(origin)) {
       return callback(null, true);
     }
 
     console.log("❌ CORS blocked:", origin);
-    return callback(null, false);
+    return callback(new Error("Not allowed by CORS"));
   },
   credentials: true
 }));
-
-
 
 
 app.set('trust proxy', 1);
