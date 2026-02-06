@@ -28,30 +28,21 @@ const io = new Server(server, {
 });
 
 
-// Middleware setup
-// CORS Configuration
-const allowedOrigins = [
-  "https://24x7health.in",
-  "https://www.24x7health.in"
-];
 
 app.use(cors({
   origin: (origin, callback) => {
-    // Allow server-side / same-origin
-    if (!origin) return callback(null, true);
+    if (!origin) return callback(null, true); // allow curl, server, mobile
 
-    if (
-      origin.startsWith("https://www.24x7health.in") ||
-      origin.startsWith("https://24x7health.in")
-    ) {
-      return callback(null, origin); // MUST echo origin
+    if (allowedOrigins.includes(origin)) {
+      return callback(null, true);
     }
 
-    console.error("Blocked by CORS:", origin);
-    return callback(new Error("Not allowed by CORS"));
+    console.log("❌ CORS blocked:", origin);
+    return callback(null, false);
   },
   credentials: true
 }));
+
 
 
 
