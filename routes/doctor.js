@@ -3,6 +3,7 @@ const router = express.Router();
 const db = require("../db");
 const multer = require("multer");
 const path = require("path");
+const crypto = require("crypto");
 
 // --- MULTER CONFIGURATION FOR PROFILE IMAGE UPLOADS ---
 const storage = multer.diskStorage({
@@ -25,6 +26,7 @@ const fileFilter = (req, file, cb) => {
 };
 
 const upload = multer({ storage: storage, fileFilter: fileFilter });
+const uploadNoFile = multer(); // handles form-data without files
 
 
 // --- DOCTORS TABLE ---
@@ -65,8 +67,224 @@ db.query(createDoctorsTable, (err) => {
   else console.log("✅ Doctors table ready.");
 });
 
+// --- APPOINTMENTS TABLE ---
+const createAppointmentsTable = `
+  CREATE TABLE IF NOT EXISTS appointments (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    doctor_id INT NOT NULL,
+    doctor_uid VARCHAR(10),
+    patient_id INT,
+    patient_name VARCHAR(100),
+    appointment_time TIME NOT NULL,
+    appointment_date DATE NOT NULL,
+    slot_time TIME,
+    slot_date DATE,
+    mode VARCHAR(50),
+    payment_status VARCHAR(50),
+    status VARCHAR(50) DEFAULT 'Pending',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE KEY unique_slot (doctor_id, appointment_time, appointment_date)
+  )
+`;
 
-// --- GET DOCTOR BY UID ---
+db.query(createAppointmentsTable, (err, result) => {
+  if (err) {
+    console.error('Error creating appointments table:', err);
+  } else {
+    console.log('✅ Appointments table ensured/created successfully.');
+  }
+});
+
+
+
+// ==================== REGISTRATION & LOGIN ====================
+
+// Register Doctor (from eyedoctors.js)
+router.post("/doctors", upload.single("profile_image"), (req, res) => {
+  
+  let profileImagePath = null;
+
+  if (req.file) {
+    profileImagePath = `/uploads/doctor_profiles/${req.file.filename}`;
+  }
+
+  const {first_name, last_name, email, mobile, door_no, area, city, state, country, zipcode, clinic, license_number, aadhar_card, experience, degree,university,specialization,availability,from_time,to_time,additional_info,password } = req.body;
+
+  const uid = crypto.randomBytes(5).toString("hex"); // Generate 10-char UID
+
+  // Check for duplicate Aadhar
+  db.query("SELECT * FROM doctors WHERE aadhar_card = ?", [aadhar_card], (err, results) => {
+      if (err) return res.status(500).json({ message: "Error checking Aadhar." });
+
+      if (results.length > 0) {
+          return res.status(400).json({ message: "Aadhar already registered." });
+      }
+
+      // If not duplicate, insert into DB
+      const sql = `INSERT INTO doctors 
+                  (uid, first_name, last_name, email, mobile,
+                  door_no, area, city, state, country, zipcode,
+                  clinic, license_number, aadhar_card,
+                  experience, degree, university, specialization,
+                  availability, from_time, to_time, additional_info,
+                  password, profile_image_url)
+                  VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                  `;
+
+      const values = [ uid, first_name, last_name, email,mobile, door_no, area,city,state, country,zipcode, clinic, license_number,aadhar_card,experience,degree,university, specialization,availability,from_time, to_time,additional_info,password,profileImagePath];
+      
+      db.query(sql, values, (err, result) => {
+          if (err) {
+              console.error(err);
+              return res.status(500).json({ message: "Error inserting doctor." });
+          }
+
+          res.status(201).json({ message: "Doctor registered successfully", uid });
+      });
+  });
+});
+
+// Doctor Login (from eyedoctors.js)
+router.post("/doctorlogin", async (req, res) => {
+    const { email, password } = req.body;
+
+    db.query("SELECT * FROM doctors WHERE email = ?", [email], (err, results) => {
+        if (err) return res.status(500).json({ message: "Database error!" });
+
+        if (results.length === 0) {
+            return res.status(404).json({ message: "Doctor not found!" });
+        }
+
+        const doctor = results[0];
+        if (doctor.password !== password) {
+            return res.status(401).json({ message: "Invalid credentials!" });
+        }
+
+        res.status(200).json({
+            message: "Login successful",
+            uid: doctor.uid,
+            doctor: {
+                name: doctor.first_name + " " + doctor.last_name,
+                email: doctor.email,
+                specialization: doctor.specialization
+            }
+        });
+    });
+});
+
+// ==================== APPOINTMENT BOOKING ====================
+
+// POST: Book a time slot (from eyedoctors.js)
+router.post('/bookSlot', (req, res) => {
+  const {
+    doctorId,
+    doctorUid,
+    slot,
+    date = new Date().toISOString().split('T')[0],
+    patientName = 'Anonymous'
+  } = req.body;
+
+  const sql = `INSERT INTO appointments (doctor_id, doctor_uid, slot_time, slot_date, patient_name)
+               VALUES (?, ?, ?, ?, ?)`;
+
+  db.query(sql, [doctorId, doctorUid, slot, date, patientName], (err, result) => {
+    if (err) {
+      if (err.code === 'ER_DUP_ENTRY') {
+        return res.status(409).json({ message: 'Slot already booked.' });
+      }
+      console.error('Booking Error:', err);
+      return res.status(500).json({ message: 'Internal server error' });
+    }
+    res.json({ message: 'Slot booked successfully!' });
+  });
+});
+
+// GET BOOKED SLOTS by doctorUid + date (merged - uses appointment_time)
+router.get("/getBookedSlots", (req, res) => {
+  const { doctorUid, date } = req.query;
+  if (!doctorUid || !date) {
+    return res.status(400).json({ error: "Doctor UID and date are required." });
+  }
+
+  const sql = `
+    SELECT a.appointment_time
+    FROM appointments a
+    WHERE a.doctor_uid = ? AND a.appointment_date = ?
+    ORDER BY a.appointment_time
+  `;
+
+  db.query(sql, [doctorUid, date], (err, results) => {
+    if (err) {
+      console.error("Error fetching booked slots:", err);
+      return res.status(500).json({ error: "Database query failed" });
+    }
+    const bookedSlots = results.map(row => row.appointment_time);
+    res.status(200).json(bookedSlots);
+  });
+});
+
+// ==================== FILTERS & SEARCH ====================
+
+// Get Filters (Specialization, Clinics, Locations) (from eyedoctors.js)
+router.get("/getfilters", (req, res) => {
+    const filters = {
+        specialization: [],
+        clinic: [],
+        city: []
+    };
+
+    db.query("SELECT DISTINCT specialization FROM doctors", (err, specResults) => {
+        if (err) return res.status(500).send(err);
+        filters.specialization = specResults.map(r => r.specialization);
+
+        db.query("SELECT DISTINCT clinic FROM doctors", (err, clinicResults) => {
+            if (err) return res.status(500).send(err);
+            filters.clinic = clinicResults.map(r => r.clinic);
+
+            db.query("SELECT DISTINCT city FROM doctors", (err, locResults) => {
+                if (err) return res.status(500).send(err);
+                filters.city = locResults.map(r => r.city);
+                res.json(filters);
+            });
+        });
+    });
+});
+
+// Get Doctor Specializations for Search Suggestions (from doctor.js)
+router.get("/specializations", (req, res) => {
+    const query = req.query.q || '';
+    if (!query) {
+        return res.json([]);
+    }
+
+    const sql = "SELECT DISTINCT specialization FROM doctors WHERE specialization LIKE ? LIMIT 10";
+    const searchTerm = `${query}%`;
+
+    db.query(sql, [searchTerm], (err, results) => {
+        if (err) {
+            console.error("Error fetching specializations:", err);
+            return res.status(500).json({ error: "Database query failed" });
+        }
+        const specializations = results.map(row => row.specialization);
+        res.status(200).json(specializations);
+    });
+});
+
+// ==================== GET DOCTORS ====================
+
+// Get All Doctors (merged - includes uid from both files)
+router.get("/getdoctors", (req, res) => {
+    const sql = "SELECT id, uid, first_name, last_name, email, experience, specialization, clinic, door_no, area, city, state, country, zipcode, degree, university, availability, from_time, to_time, profile_image_url FROM doctors";
+    db.query(sql, (err, results) => {
+        if (err) {
+            console.error("Error fetching doctors:", err);
+            return res.status(500).json({ error: "Database query failed" });
+        }
+        res.status(200).json(results);
+    });
+});
+
+// Get Doctor by UID (merged - simpler version)
 router.get("/gdoctors/:uid", (req, res) => {
   const { uid } = req.params;
   db.query("SELECT * FROM doctors WHERE uid = ?", [uid], (err, rows) => {
@@ -76,10 +294,12 @@ router.get("/gdoctors/:uid", (req, res) => {
   });
 });
 
-// --- GET DOCTOR STATS ---
+// ==================== DOCTOR STATS & APPOINTMENTS ====================
+
+// Get Doctor Stats (from doctor.js)
 router.get("/doctors/:uid/stats", (req, res) => {
     const { uid } = req.params;
-    const today = new Date().toISOString().slice(0, 10); // YYYY-MM-DD
+    const today = new Date().toISOString().slice(0, 10);
 
     const queries = {
         today: `SELECT COUNT(*) as count FROM appointments WHERE doctor_uid = ? AND appointment_date = ?`,
@@ -105,8 +325,7 @@ router.get("/doctors/:uid/stats", (req, res) => {
     });
 });
 
-
-// --- GET DOCTOR APPOINTMENTS ---
+// Get Doctor Appointments (from doctor.js)
 router.get("/doctors/:uid/appointments", (req, res) => {
     const { uid } = req.params;
     const sql = `
@@ -132,7 +351,7 @@ router.get("/doctors/:uid/appointments", (req, res) => {
     });
 });
 
-// --- GET DOCTOR TREATMENT HISTORY ---
+// Get Doctor Treatment History (from doctor.js)
 router.get("/doctors/:uid/history", (req, res) => {
     const { uid } = req.params;
     const sql = `
@@ -156,14 +375,20 @@ router.get("/doctors/:uid/history", (req, res) => {
     });
 });
 
+// ==================== UPDATE DOCTOR ====================
 
-// --- UPDATE DOCTOR PROFILE ---
+// Update Doctor Profile (merged - includes all fields from both files)
 router.put("/updatedoctors/:uid", upload.single('profile_image'), (req, res) => {
   const { uid } = req.params;
-  const doctorData = req.body;
+  const {
+    first_name, last_name, email, mobile, door_no, area, city, state, country, zipcode, clinic, license_number,
+    aadhar_card, experience, degree, university, specialization,
+    availability, from_time, to_time, additional_info
+  } = req.body;
 
+  let profileImagePath = null;
   if (req.file) {
-    doctorData.profile_image_url = `/uploads/doctor_profiles/${req.file.filename}`;
+    profileImagePath = `/uploads/doctor_profiles/${req.file.filename}`;
   }
 
   const sql = `UPDATE doctors SET 
@@ -174,11 +399,10 @@ router.put("/updatedoctors/:uid", upload.single('profile_image'), (req, res) => 
     WHERE uid = ?`;
 
   const values = [
-    doctorData.first_name, doctorData.last_name, doctorData.email, doctorData.mobile, 
-    doctorData.door_no, doctorData.area, doctorData.city, doctorData.state, doctorData.country, doctorData.zipcode, doctorData.clinic, doctorData.license_number, doctorData.aadhar_card, 
-    doctorData.experience, doctorData.degree, doctorData.university, doctorData.specialization,
-    doctorData.availability, doctorData.from_time, doctorData.to_time, doctorData.additional_info,
-    doctorData.profile_image_url,
+    first_name, last_name, email, mobile, door_no, area, city, state, country, zipcode, clinic, license_number,
+    aadhar_card, experience, degree, university, specialization,
+    availability, from_time, to_time, additional_info,
+    profileImagePath,
     uid
   ];
 
@@ -204,69 +428,24 @@ router.put("/updatedoctors/:uid", upload.single('profile_image'), (req, res) => 
   });
 });
 
-// --- GET DOCTOR SPECIALIZATIONS FOR SEARCH SUGGESTIONS ---
-router.get("/specializations", (req, res) => {
-    const query = req.query.q || '';
-    if (!query) {
-        return res.json([]);
-    }
+// ==================== DELETE DOCTOR ====================
 
-    const sql = "SELECT DISTINCT specialization FROM doctors WHERE specialization LIKE ? LIMIT 10";
-    const searchTerm = `${query}%`;
+// Delete Doctor (from eyedoctors.js)
+router.delete("/deletedoctors/:uid", (req, res) => {
+    const { uid } = req.params;
 
-    db.query(sql, [searchTerm], (err, results) => {
+    db.query("DELETE FROM doctors WHERE uid = ?", [uid], (err, result) => {
         if (err) {
-            console.error("Error fetching specializations:", err);
-            return res.status(500).json({ error: "Database query failed" });
+            console.error("Error:", err);
+            return res.status(500).json({ message: "Server error!" });
         }
-        const specializations = results.map(row => row.specialization);
-        res.status(200).json(specializations);
+
+        if (result.affectedRows === 0) {
+            return res.status(404).json({ message: "Doctor not found!" });
+        }
+
+        res.status(200).json({ message: "Doctor deleted successfully!" });
     });
 });
-
-// =================================================================
-// ✅ MODIFIED: GET ALL DOCTORS (Now includes uid)
-// =================================================================
-router.get("/getdoctors", (req, res) => {
-    const sql = "SELECT id, uid, first_name, last_name, email, experience, specialization, clinic, door_no, area, city, state, country, zipcode, degree, university, availability, from_time, to_time FROM doctors";
-    db.query(sql, (err, results) => {
-        if (err) {
-            console.error("Error fetching doctors:", err);
-            return res.status(500).json({ error: "Database query failed" });
-        }
-        res.status(200).json(results);
-    });
-});
-
-// =================================================================
-// ✅ FIXED: GET BOOKED SLOTS (Reverted to use doctorUid)
-// =================================================================
-// GET BOOKED SLOTS by doctorUid + date (joins through doctors to map uid -> id)
-router.get("/getBookedSlots", (req, res) => {
-  const { doctorUid, date } = req.query;
-  if (!doctorUid || !date) {
-    return res.status(400).json({ error: "Doctor UID and date are required." });
-  }
-
-  // UPDATED SQL: Query the 'appointments' table and select 'appointment_time'
-  const sql = `
-    SELECT a.appointment_time
-    FROM appointments a
-    WHERE a.doctor_uid = ? AND a.appointment_date = ?
-  `;
-
-  db.query(sql, [doctorUid, date], (err, results) => {
-    if (err) {
-      console.error("Error fetching booked slots:", err);
-      return res.status(500).json({ error: "Database query failed" });
-    }
-    // Send back just the time strings in an array
-    const bookedSlots = results.map(row => row.appointment_time);
-    res.status(200).json(bookedSlots);
-  });
-});
-
-
-
 
 module.exports = router;

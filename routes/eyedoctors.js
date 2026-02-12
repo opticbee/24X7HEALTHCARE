@@ -51,27 +51,6 @@ db.query(createDoctorsTable, (err) => {
 });
 
 
- const createAppointmentsTable = `
-  CREATE TABLE IF NOT EXISTS appointments (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    doctor_id INT NOT NULL,
-    doctor_uid VARCHAR(10),
-    patient_name VARCHAR(100),
-    slot_time TIME NOT NULL,
-    slot_date DATE NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    UNIQUE KEY unique_slot (doctor_id, slot_time, slot_date)
-  )
-`;
-
-
-  db.query(createAppointmentsTable, (err, result) => {
-    if (err) {
-      console.error('Error creating appointments table:', err);
-    } else {
-      console.log('✅ Appointments table ensured/created successfully.');
-    }
-  });
 
 
 
@@ -150,7 +129,7 @@ router.post("/doctors", upload.single("profile_image"), (req, res) => {
                     experience, degree, university, specialization,
                     availability, from_time, to_time, additional_info,
                     password, profile_image_url)
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                     `;
 
   const values = [ uid, first_name, last_name, email,mobile, door_no, area,city,state, country,zipcode, clinic, license_number,aadhar_card,experience,degree,university, specialization,availability,from_time, to_time,additional_info,password,profileImagePath];
