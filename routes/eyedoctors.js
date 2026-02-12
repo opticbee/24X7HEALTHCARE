@@ -111,12 +111,17 @@ router.get('/getBookedSlots', (req, res) => {
 
 
 // Register Doctor
-router.post("/doctors", upload.none(), async (req, res) => {
-    const {
-        first_name, last_name, email, mobile, address, clinic, license_number,
-        aadhar_card, experience, degree, university, specialization,
-        availability, from_time, to_time, additional_info, password
-    } = req.body;
+router.post("/doctors", upload.single("profile_image"), (req, res) => {
+  
+  let profileImagePath = null;
+
+  if (req.file) {
+    profileImagePath = `/uploads/doctor_profiles/${req.file.filename}`;
+  }
+
+
+    const {first_name, last_name, email, mobile, door_no, area, city, state, country, zipcode, clinic, license_number, aadhar_card, experience, degree,university,specialization,availability,from_time,to_time,additional_info,password } = req.body;
+
 
     const uid = crypto.randomBytes(3).toString("hex"); // Generate 6-char UID
 
@@ -130,15 +135,16 @@ router.post("/doctors", upload.none(), async (req, res) => {
 
         // If not duplicate, insert into DB
         const sql = `INSERT INTO doctors 
-            (uid, first_name, last_name, email, mobile, address, clinic, license_number, aadhar_card,
-            experience, degree, university, specialization, availability, from_time, to_time, additional_info, password) 
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+                    (uid, first_name, last_name, email, mobile,
+                    door_no, area, city, state, country, zipcode,
+                    clinic, license_number, aadhar_card,
+                    experience, degree, university, specialization,
+                    availability, from_time, to_time, additional_info,
+                    password, profile_image_url)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    `;
 
-        const values = [
-            uid, first_name, last_name, email, mobile, address, clinic, license_number, aadhar_card,
-            experience, degree, university, specialization, availability, from_time, to_time, additional_info, password
-        ];
-
+  const values = [ uid, first_name, last_name, email,mobile, door_no, area,city,state, country,zipcode, clinic, license_number,aadhar_card,experience,degree,university, specialization,availability,from_time, to_time,additional_info,password,profileImagePath];
         db.query(sql, values, (err, result) => {
             if (err) {
                 console.error(err);
@@ -183,7 +189,7 @@ router.get("/getfilters", (req, res) => {
     const filters = {
         specialization: [],
         clinic: [],
-        address: []
+        city: []
     };
 
     db.query("SELECT DISTINCT specialization FROM doctors", (err, specResults) => {
@@ -194,9 +200,9 @@ router.get("/getfilters", (req, res) => {
             if (err) return res.status(500).send(err);
             filters.clinic = clinicResults.map(r => r.clinic);
 
-            db.query("SELECT DISTINCT address FROM doctors", (err, locResults) => {
+            db.query("SELECT DISTINCT city FROM doctors", (err, locResults) => {
                 if (err) return res.status(500).send(err);
-                filters.address = locResults.map(r => r.address);
+                filters.city = locResults.map(r => r.city);
                 res.json(filters); // Final response after all three queries
             });
         });
@@ -236,19 +242,19 @@ router.get("/gdoctors/:uid", (req, res) => {
 router.put("/updatedoctors/:uid", (req, res) => {
     const { uid } = req.params;
     const {
-        first_name, last_name, email, mobile, address, clinic, license_number,
+        first_name, last_name, email, mobile, door_no, area, city, state, country, zipcode, clinic, license_number,
         aadhar_card, experience, degree, university, specialization,
         availability, from_time, to_time, additional_info
     } = req.body;
 
     const sql = `UPDATE doctors SET 
-        first_name = ?, last_name = ?, email = ?, mobile = ?, address = ?, clinic = ?, 
+        first_name = ?, last_name = ?, email = ?, mobile = ?, door_no = ?, area = ?, city = ?, state = ?, country = ?, zipcode = ?, clinic = ?, 
         license_number = ?, aadhar_card = ?, experience = ?, degree = ?, university = ?, 
         specialization = ?, availability = ?, from_time = ?, to_time = ?, additional_info = ? 
         WHERE uid = ?`;
 
     db.query(sql, [
-        first_name, last_name, email, mobile, address, clinic, license_number,
+        first_name, last_name, email, mobile, door_no, area, city, state, country, zipcode , clinic, license_number,
         aadhar_card, experience, degree, university, specialization,
         availability, from_time, to_time, additional_info, uid
     ], (err, result) => {

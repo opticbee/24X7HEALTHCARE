@@ -30,28 +30,34 @@ const upload = multer({ storage: storage, fileFilter: fileFilter });
 // --- DOCTORS TABLE ---
 const createDoctorsTable = `
   CREATE TABLE IF NOT EXISTS doctors (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    uid VARCHAR(10) UNIQUE,
-    first_name VARCHAR(100),
-    last_name VARCHAR(100),
-    email VARCHAR(100),
-    mobile VARCHAR(20),
-    address TEXT,
-    clinic VARCHAR(255),
-    license_number VARCHAR(100),
-    aadhar_card VARCHAR(20) UNIQUE,
-    experience VARCHAR(50),
-    degree VARCHAR(100),
-    university VARCHAR(100),
-    specialization VARCHAR(100),
-    availability VARCHAR(50),
-    from_time VARCHAR(20),
-    to_time VARCHAR(20),
-    additional_info TEXT,
-    password VARCHAR(255),
-    profile_image_url VARCHAR(255), 
-    otp_code VARCHAR(6) DEFAULT NULL
-  )
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  uid VARCHAR(10) UNIQUE,
+  first_name VARCHAR(100),
+  last_name VARCHAR(100),
+  email VARCHAR(100),
+  mobile VARCHAR(20),
+
+  door_no VARCHAR(100),
+  area VARCHAR(150),
+  city VARCHAR(100),
+  state VARCHAR(100),
+  country VARCHAR(100),
+  zipcode VARCHAR(20),
+
+  clinic VARCHAR(255),
+  license_number VARCHAR(100),
+  aadhar_card VARCHAR(20) UNIQUE,
+  experience VARCHAR(50),
+  degree VARCHAR(100),
+  university VARCHAR(100),
+  specialization VARCHAR(100),
+  availability VARCHAR(50),
+  from_time VARCHAR(20),
+  to_time VARCHAR(20),
+  additional_info TEXT,
+  password VARCHAR(255),
+  profile_image_url VARCHAR(255)
+)
 `;
 
 db.query(createDoctorsTable, (err) => {

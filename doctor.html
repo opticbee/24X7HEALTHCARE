@@ -993,7 +993,7 @@
     <!-- Registraion form -->
     <div style="font-family: Arial, sans-serif; margin: 0; padding: 20px;background: url('https://img.freepik.com/free-photo/abstract-design-background-smooth-flowing-lines_1048-14640.jpg?semt=ais_country_boost&w=740') no-repeat center center / cover;">
         <!-- <h2 style="text-align: center; color: #333;">Doctor Registration Form</h2> -->
-        <form id="doctorRegistrationForm" action="https://hitaishihealthcare.com/api/doctors" method="POST" style="max-width: 800px; margin: auto; background: white; padding: 20px; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.1);">
+        <form id="doctorRegistrationForm" action="https://hitaishihealthcare.com/api/doctors" method="POST" style="max-width: 800px; margin: auto; background: white; padding: 20px; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.1);" enctype="multipart/form-data">
             <h2 style="text-align: center; color: blue; margin-bottom: 25px;">Doctor Registration Form</h2>
             
             <h3 style="margin-bottom: 15px;">Personal Information</h3><br>
@@ -1039,15 +1039,15 @@
                 </div>
             </div><br>
             
-            <div style="margin-top: 15px;">
-                <!-- <label for="address" style="font-weight: bold; display: block; margin-bottom: 8px;">Address:</label> -->
-                <div style="position: relative;">
-                    <textarea id="address" name="address" required rows="3" 
-                            style="width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box; resize: vertical;"
-                            placeholder=" "></textarea>
-                    <span style="position: absolute; left: 12px; top: 12px; color: #999; transition: all 0.3s; pointer-events: none;">Address</span>
-                </div>
-            </div>
+            <h3 style="margin: 25px 0 15px 0;">Clinic Address</h3>
+
+            <input type="text" name="door_no" placeholder="Door No" required class="form-input">
+            <input type="text" name="area" placeholder="Area" required class="form-input">
+            <input type="text" name="city" placeholder="City" required class="form-input">
+            <input type="text" name="state" placeholder="State" required class="form-input">
+            <input type="text" name="country" placeholder="Country" required class="form-input">
+            <input type="text" name="zipcode" placeholder="Zip Code" required class="form-input">
+
             
             <h3 style="margin: 25px 0 15px 0;">Educational Background</h3><br>
             <div style="display: flex; gap: 20px; flex-wrap: wrap;">
@@ -1169,9 +1169,17 @@
                     </div>
                 </div>
             </div>
+
+            <div style="margin-top:20px;">
+                <label>Profile Image:</label>
+                <input type="file" name="profile_image" accept="image/*" required>
+            </div>
+
             
-            <button type="submit" style="width: 100%; background-color: #007bff; color: white; padding: 12px; border: none; border-radius: 5m; font-size: 16px; cursor: pointer; margin-top: 25px; transition: background-color 0.3s;" 
-                onmouseover="this.style.backgroundColor='#0069d9'" onmouseout="this.style.backgroundColor='#007bff'">Register</button>
+            <button type="submit" style="width: 100%; background-color: #007bff; color: white; padding: 12px; border: none; border-radius: 5px; font-size: 16px; cursor: pointer; margin-top: 25px; transition: background-color 0.3s;" 
+                onmouseover="this.style.backgroundColor='#0069d9'" onmouseout="this.style.backgroundColor='#007bff'">
+                Register
+            </button>
             
             <!-- Social Login Section -->
             <div style="text-align: center; margin: 25px 0;">
@@ -1246,35 +1254,32 @@
 
     <script>
         const form = document.getElementById('doctorRegistrationForm');
+
         form.addEventListener('submit', async (e) => {
-          e.preventDefault();
-          const formData = new FormData(form);
-      
-          const data = Object.fromEntries(formData.entries());
-      
-          try {
+        e.preventDefault();
+
+        const formData = new FormData(form); // This includes image automatically
+
+        try {
             const res = await fetch('https://hitaishihealthcare.com/api/doctors', {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json'
-              },
-              body: JSON.stringify(data)
+            method: 'POST',
+            body: formData   // ✅ send formData directly
             });
-        
+
             const result = await res.json();
-            
-            alert(result.message); 
+            alert(result.message);
+
             if (res.ok) {
-                window.location.href = "login.html";
+            window.location.href = "doctorlogin.html";  // better redirect
             }
-          } catch (error) {
+
+        } catch (error) {
             console.error("Registration Error:", error);
-            alert("An error occurred during registration. Please try again.");
-          }
+            alert("Registration failed. Please try again.");
+        }
         });
     </script>
-      
-    
+
 
     <!-- footer -->
     <footer style="background-color: black; color: white; padding: 30px 10%; font-family: Arial, sans-serif; ">
