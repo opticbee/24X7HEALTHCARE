@@ -27,9 +27,6 @@ const fileFilter = (req, file, cb) => {
 const upload = multer({ storage: storage, fileFilter: fileFilter });
 
 
-
-
-
 // --- DOCTORS TABLE ---
 const createDoctorsTable = `
   CREATE TABLE IF NOT EXISTS doctors (
@@ -39,13 +36,7 @@ const createDoctorsTable = `
     last_name VARCHAR(100),
     email VARCHAR(100),
     mobile VARCHAR(20),
-    flat_no VARCHAR(50),
-    street TEXT,
-    city VARCHAR(100),
-    state VARCHAR(100),
-    country VARCHAR(100),
-    zip_code VARCHAR(20),
-
+    address TEXT,
     clinic VARCHAR(255),
     license_number VARCHAR(100),
     aadhar_card VARCHAR(20) UNIQUE,
@@ -169,21 +160,16 @@ router.put("/updatedoctors/:uid", upload.single('profile_image'), (req, res) => 
     doctorData.profile_image_url = `/uploads/doctor_profiles/${req.file.filename}`;
   }
 
-
   const sql = `UPDATE doctors SET 
-    first_name = ?, last_name = ?, email = ?, mobile = ?, flat_no = ?, street = ?, 
-    city = ?, state = ?, country = ?, zip_code = ?, 
-     clinic = ?, license_number = ?, aadhar_card = ?, experience = ?, 
-    degree = ?, university = ?, specialization = ?, availability = ?, from_time = ?, 
-    to_time = ?, additional_info = ?, profile_image_url = COALESCE(?, profile_image_url)
+    first_name = ?, last_name = ?, email = ?, mobile = ?, address = ?, clinic = ?, 
+    license_number = ?, aadhar_card = ?, experience = ?, degree = ?, university = ?, 
+    specialization = ?, availability = ?, from_time = ?, to_time = ?, additional_info = ?,
+    profile_image_url = COALESCE(?, profile_image_url)
     WHERE uid = ?`;
 
   const values = [
     doctorData.first_name, doctorData.last_name, doctorData.email, doctorData.mobile, 
-    doctorData.flat_no || null, doctorData.street || null, doctorData.city || null, 
-    doctorData.state || null, doctorData.country || null, doctorData.zip_code || null,
-
-    doctorData.clinic, doctorData.license_number, doctorData.aadhar_card, 
+    doctorData.address, doctorData.clinic, doctorData.license_number, doctorData.aadhar_card, 
     doctorData.experience, doctorData.degree, doctorData.university, doctorData.specialization,
     doctorData.availability, doctorData.from_time, doctorData.to_time, doctorData.additional_info,
     doctorData.profile_image_url,
@@ -233,10 +219,10 @@ router.get("/specializations", (req, res) => {
 });
 
 // =================================================================
-// ✅ MODIFIED: GET ALL DOCTORS (Now includes structured location fields)
+// ✅ MODIFIED: GET ALL DOCTORS (Now includes uid)
 // =================================================================
 router.get("/getdoctors", (req, res) => {
-    const sql = "SELECT id, uid, first_name, last_name, email, experience, specialization, clinic, flat_no, street, city, state, country, zip_code,  degree, university, availability, from_time, to_time FROM doctors";
+    const sql = "SELECT id, uid, first_name, last_name, email, experience, specialization, clinic, address, degree, university, availability, from_time, to_time FROM doctors";
     db.query(sql, (err, results) => {
         if (err) {
             console.error("Error fetching doctors:", err);

@@ -7,19 +7,19 @@
     <meta name="keywords" content="doctors, find doctors, book doctors, dermatologist, dermatology, gynecologist, gynaecologist, obstetrician, pediatrician, cardiologist, cardiology, neurologist, neurology, orthopedist, orthopedic surgeon, ENT, ear nose throat, ophthalmologist, eye specialist, dentist, dental surgeon, urologist, nephrologist, oncologist, oncology, endocrinologist, gastroenterologist, pulmonologist, rheumatologist, psychiatrist, psychologist, physiotherapist, plastic surgeon, fertility specialist, IVF specialist, general physician, family doctor">
     <meta name="robots" content="index, follow">
     <link rel="canonical" href="/doctor.html">
-    <meta property="og:title" content="Find Doctors & Specialists | 24x7 Health Services">
+    <meta property="og:title" content="Find Doctors & Specialists | Hitaishi Healthcare">
     <meta property="og:description" content="Find and book top doctors—dermatology, gynecology, cardiology, pediatrics, neurology and more. Verified profiles, online booking and patient reviews.">
     <meta property="og:type" content="website">
     <meta property="og:url" content="/doctor.html">
-    <meta property="og:image" content="img/24x7health-logo.png">
+    <meta property="og:image" content="/images/Hitaishi HealthCare (1).png">
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="Find Doctors & Specialists | 24x7 Health Services">
+    <meta name="twitter:title" content="Find Doctors & Specialists | Hitaishi Healthcare">
     <meta name="twitter:description" content="Find and book top doctors—dermatology, gynecology, cardiology, pediatrics and more. Verified profiles, online booking and patient reviews.">
-    <meta name="twitter:image" content="/img/24x7health-logo.png">
-    <meta name="author" content="24x7 Health Services">
+    <meta name="twitter:image" content="/images/Hitaishi HealthCare (1).png">
+    <meta name="author" content="Hitaishi Healthcare">
     <meta name="theme-color" content="#e63946">
-    <script type="application/ld+json">{"@context":"https://schema.org","@type":"MedicalOrganization","name":"24x7 Health Services","url":"/","logo":"/images/24x7health-logo.png","description":"Find and book doctors and specialists—dermatologists, gynecologists, cardiologists, pediatricians, neurologists and more.","medicalSpecialty":["Dermatology","Gynecology","Obstetrics","Pediatrics","Cardiology","Neurology","Orthopedics","ENT","Ophthalmology","Dentistry","Urology","Nephrology","Oncology","Endocrinology","Gastroenterology","Pulmonology","Rheumatology","Psychiatry","Physiotherapy","Plastic Surgery","Fertility"]}</script>
-    <title>24x7 Health Services</title>
+    <script type="application/ld+json">{"@context":"https://schema.org","@type":"MedicalOrganization","name":"Hitaishi Healthcare","url":"/","logo":"/images/Hitaishi HealthCare (1).png","description":"Find and book doctors and specialists—dermatologists, gynecologists, cardiologists, pediatricians, neurologists and more.","medicalSpecialty":["Dermatology","Gynecology","Obstetrics","Pediatrics","Cardiology","Neurology","Orthopedics","ENT","Ophthalmology","Dentistry","Urology","Nephrology","Oncology","Endocrinology","Gastroenterology","Pulmonology","Rheumatology","Psychiatry","Physiotherapy","Plastic Surgery","Fertility"]}</script>
+    <title>Hitaishi Healthcare Services</title>
     <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="icon" href="images/favicon.ico" type="image/x-icon">
@@ -148,13 +148,13 @@
 
             .logo-title {
                 color: #fff;
-                font-size: 18px;
+                font-size: 22px;
                 font-weight: bold;
             }
 
             .logo-subtitle {
                 color: #fff;
-                font-size: 18px;
+                font-size: 16px;
             }
 
             .search-container {
@@ -428,11 +428,11 @@
                 }
                 
                 .logo-title {
-                    font-size: 18px !important;
+                    font-size: 20px !important;
                 }
                 
                 .logo-subtitle {
-                    font-size: 18px !important;
+                    font-size: 14px !important;
                 }
                 
                 .logo-section img {
@@ -475,10 +475,10 @@
         <div class="top-nav">
             <!-- Left: Logo, Title & Search Bar -->
             <div class="logo-section">
-                <img src="img/24x7health-logo.png" alt="Logo" style="height: 40px; border-radius: 10%;">
+                <img src="images/Hitaishi HealthCare (1).png" alt="Logo" style="height: 40px; border-radius: 50%;">
                 <div class="logo-text">
-                    <span class="logo-title">HEALTHCARE</span>
-                    <span class="logo-subtitle">SERVICES</span>
+                    <span class="logo-title">HITAISHI</span>
+                    <span class="logo-subtitle">HEALTHCARE</span>
                 </div>
                 
                 <!-- Search Bar -->
@@ -491,8 +491,8 @@
 
             <!-- Center: Contact Info -->
             <div class="top-nav-contact">
-                <a href="mailto:support@24x7health.in" class="contact-link">
-                    <i class="fas fa-envelope"></i> support@24x7health.in
+                <a href="mailto:support@hitaishihealthcare.com" class="contact-link">
+                    <i class="fas fa-envelope"></i> support@hitaishihealthcare.com
                 </a> <span class="contact-separator" style="margin: 0 5px;">|</span>
                 <a href="tel:+919908793602" class="contact-link">
                     <i class="fas fa-phone"></i>  +91-9908793602,  +91-8790170525
@@ -659,9 +659,6 @@
                             </div>
                         </div>
                     </div>
-
-                    <!-- ambulance -->
-                    <a href="Ambulance.html" class="nav-link">Ambulance</a>
                 </div>
             </div>
         </div>
@@ -746,7 +743,7 @@
 
                 async function fetchSuggestions(query) {
                     try {
-                        const response = await fetch(`https://24x7health.in/api/specializations?q=${encodeURIComponent(query)}`);
+                        const response = await fetch(`https://hitaishihealthcare.com/api/specializations?q=${encodeURIComponent(query)}`);
                         if (!response.ok) throw new Error('Network response was not ok');
                         const suggestions = await response.json();
                         displaySuggestions(suggestions);
@@ -858,10 +855,53 @@
                     });
                 }
 
-               
+                /**
+                 * Stores an encoded string (lat,lng) in localStorage.
+                 */
+                function storeEncodedLocation(latitude, longitude) {
+                    const locationString = `${latitude},${longitude}`;
+                    const encodedString = btoa(locationString);
+                    localStorage.setItem('userEncodedLocation', encodedString);
+                    console.log('Stored Encoded Location:', encodedString);
+                    updateNavLinksWithLocation();
+                }
 
+                /**
+                 * Fetches location using IP address as a fallback.
+                 */
+                async function fetchLocationByIp() {
+                    console.log("User denied geolocation. Falling back to IP-based location.");
+                    try {
+                        const response = await fetch('https://ipapi.co/json/');
+                        if (!response.ok) throw new Error('IP API request failed');
+                        const data = await response.json();
+                        if (data.latitude && data.longitude) {
+                            storeEncodedLocation(data.latitude, data.longitude);
+                        } else {
+                        console.error("Could not determine location from IP.");
+                        }
+                    } catch (error) {
+                        console.error("Error fetching location by IP:", error);
+                    }
+                }
                 
-
+                /**
+                 * Asks for browser's geolocation and handles success or failure.
+                 */
+                function requestBrowserLocation() {
+                    if (navigator.geolocation) {
+                        navigator.geolocation.getCurrentPosition(
+                            (position) => {
+                                console.log("Geolocation permission granted.");
+                                storeEncodedLocation(position.coords.latitude, position.coords.longitude);
+                            },
+                            fetchLocationByIp 
+                        );
+                    } else {
+                        console.error("Geolocation is not supported by this browser.");
+                        fetchLocationByIp(); 
+                    }
+                }
 
                 // --- Main Location Execution ---
                 const isIndexPage = window.location.pathname.endsWith('/') || window.location.pathname.endsWith('index.html');
@@ -903,7 +943,7 @@
                 const apiKey = "AIzaSyB3ebJaiaYFyB30sGAx1PmfmgnDPFCajKk";
                 const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
                 const textToTranslate = originals.join("|||");
-                const prompt = `Translate the following text parts into ${label}. The parts are separated by "|||". Maintain the "|||" separator in your output. Do not translate "24x7 Health" or "24x7 Health Service". If a part is a number or symbol, return it as is. \n\nTEXT: ${textToTranslate}`;
+                const prompt = `Translate the following text parts into ${label}. The parts are separated by "|||". Maintain the "|||" separator in your output. Do not translate "Hitaishi" or "Hitaishi HealthCare Service". If a part is a number or symbol, return it as is. \n\nTEXT: ${textToTranslate}`;
                 
                 document.body.style.opacity = '0.5';
                 document.body.style.pointerEvents = 'none';
@@ -946,13 +986,14 @@
                 }
             });
         </script>
-    <!-- Navbar Code Ends -->
+    <!-- Navbar Code Ends-- -->
+
 
 
     <!-- Registraion form -->
     <div style="font-family: Arial, sans-serif; margin: 0; padding: 20px;background: url('https://img.freepik.com/free-photo/abstract-design-background-smooth-flowing-lines_1048-14640.jpg?semt=ais_country_boost&w=740') no-repeat center center / cover;">
         <!-- <h2 style="text-align: center; color: #333;">Doctor Registration Form</h2> -->
-        <form id="doctorRegistrationForm" action="https://24x7health.in/api/doctors" method="POST" style="max-width: 800px; margin: auto; background: white; padding: 20px; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.1);">
+        <form id="doctorRegistrationForm" action="https://hitaishihealthcare.com/api/doctors" method="POST" style="max-width: 800px; margin: auto; background: white; padding: 20px; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.1);">
             <h2 style="text-align: center; color: blue; margin-bottom: 25px;">Doctor Registration Form</h2>
             
             <h3 style="margin-bottom: 15px;">Personal Information</h3><br>
@@ -1212,7 +1253,7 @@
           const data = Object.fromEntries(formData.entries());
       
           try {
-            const res = await fetch('https://24x7health.in/api/doctors', {
+            const res = await fetch('https://hitaishihealthcare.com/api/doctors', {
               method: 'POST',
               headers: {
                 'Content-Type': 'application/json'
@@ -1269,7 +1310,7 @@
                 <h3 style="margin-bottom: 15px; font-size: 18px;">Contact</h3>
                 <div style="display: flex; align-items: center; gap: 10px; margin: 10px 0;">
                     <i class="fas fa-envelope"></i>
-                    <span>support@24x7health.in</span>
+                    <span>info@hitaishihealth.com</span>
                 </div>
                 <div style="display: flex; align-items: center; gap: 10px; margin: 10px 0;">
                     <i class="fas fa-phone"></i>
@@ -1287,7 +1328,7 @@
             </div>
         </div>
         <div style="text-align: center; padding-top: 20px; border-top: 1px solid gray; margin-top: 20px;">
-            <p>© Copyright 2025 By 24x7 Health Service. All Rights Reserved</p>
+            <p>© Copyright 2025 By Hitaishi Health Service. All Rights Reserved</p>
             <a href="#" style="color: white; text-decoration: none;">Sitemap</a> |
             <a href="#" style="color: white; text-decoration: none;">Privacy Policy</a> |
             <a href="#" style="color: white; text-decoration: none;">Terms of Use</a>
