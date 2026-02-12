@@ -27,17 +27,7 @@ const fileFilter = (req, file, cb) => {
 const upload = multer({ storage: storage, fileFilter: fileFilter });
 
 
-// --- HELPER FUNCTION TO COMPOSE FULL ADDRESS ---
-const composeFullAddress = (locationData) => {
-  const parts = [];
-  if (locationData.flat_no) parts.push(locationData.flat_no);
-  if (locationData.street) parts.push(locationData.street);
-  if (locationData.city) parts.push(locationData.city);
-  if (locationData.state) parts.push(locationData.state);
-  if (locationData.zip_code) parts.push(locationData.zip_code);
-  if (locationData.country) parts.push(locationData.country);
-  return parts.filter(p => p && p.trim()).join(', ');
-};
+
 
 
 // --- DOCTORS TABLE ---
@@ -55,9 +45,7 @@ const createDoctorsTable = `
     state VARCHAR(100),
     country VARCHAR(100),
     zip_code VARCHAR(20),
-    latitude DECIMAL(10, 8),
-    longitude DECIMAL(11, 8),
-    full_address TEXT,
+
     clinic VARCHAR(255),
     license_number VARCHAR(100),
     aadhar_card VARCHAR(20) UNIQUE,
@@ -181,13 +169,11 @@ router.put("/updatedoctors/:uid", upload.single('profile_image'), (req, res) => 
     doctorData.profile_image_url = `/uploads/doctor_profiles/${req.file.filename}`;
   }
 
-  // Compose full_address from structured location fields
-  const full_address = composeFullAddress(doctorData);
 
   const sql = `UPDATE doctors SET 
     first_name = ?, last_name = ?, email = ?, mobile = ?, flat_no = ?, street = ?, 
-    city = ?, state = ?, country = ?, zip_code = ?, latitude = ?, longitude = ?, 
-    full_address = ?, clinic = ?, license_number = ?, aadhar_card = ?, experience = ?, 
+    city = ?, state = ?, country = ?, zip_code = ?, 
+     clinic = ?, license_number = ?, aadhar_card = ?, experience = ?, 
     degree = ?, university = ?, specialization = ?, availability = ?, from_time = ?, 
     to_time = ?, additional_info = ?, profile_image_url = COALESCE(?, profile_image_url)
     WHERE uid = ?`;
@@ -196,7 +182,7 @@ router.put("/updatedoctors/:uid", upload.single('profile_image'), (req, res) => 
     doctorData.first_name, doctorData.last_name, doctorData.email, doctorData.mobile, 
     doctorData.flat_no || null, doctorData.street || null, doctorData.city || null, 
     doctorData.state || null, doctorData.country || null, doctorData.zip_code || null,
-    doctorData.latitude || null, doctorData.longitude || null, full_address,
+
     doctorData.clinic, doctorData.license_number, doctorData.aadhar_card, 
     doctorData.experience, doctorData.degree, doctorData.university, doctorData.specialization,
     doctorData.availability, doctorData.from_time, doctorData.to_time, doctorData.additional_info,
@@ -250,7 +236,7 @@ router.get("/specializations", (req, res) => {
 // ✅ MODIFIED: GET ALL DOCTORS (Now includes structured location fields)
 // =================================================================
 router.get("/getdoctors", (req, res) => {
-    const sql = "SELECT id, uid, first_name, last_name, email, experience, specialization, clinic, flat_no, street, city, state, country, zip_code, latitude, longitude, full_address, degree, university, availability, from_time, to_time FROM doctors";
+    const sql = "SELECT id, uid, first_name, last_name, email, experience, specialization, clinic, flat_no, street, city, state, country, zip_code,  degree, university, availability, from_time, to_time FROM doctors";
     db.query(sql, (err, results) => {
         if (err) {
             console.error("Error fetching doctors:", err);
@@ -287,5 +273,8 @@ router.get("/getBookedSlots", (req, res) => {
     res.status(200).json(bookedSlots);
   });
 });
+
+
+
 
 module.exports = router;

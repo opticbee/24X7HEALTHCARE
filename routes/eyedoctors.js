@@ -3,284 +3,314 @@ const router = express.Router();
 const db = require("../db");
 const multer = require("multer");
 const crypto = require("crypto");
-const upload = multer(); // handles form-data without files
+const path = require("path");
 
+/* =========================================================
+   MULTER CONFIG – DOCTOR PROFILE IMAGE
+========================================================= */
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, "uploads/doctor_profiles/");
+  },
+  filename: (req, file, cb) => {
+    const unique = Date.now() + "-" + Math.round(Math.random() * 1e9);
+    cb(null, "doctor-" + unique + path.extname(file.originalname));
+  },
+});
 
+const fileFilter = (req, file, cb) => {
+  if (file.mimetype.startsWith("image")) cb(null, true);
+  else cb(new Error("Only image files allowed"), false);
+};
 
-// Create the doctors table if it doesn't exist
+const upload = multer({ storage, fileFilter });
+
+/* =========================================================
+   HELPER – FULL ADDRESS
+========================================================= */
+const composeFullAddress = (data) => {
+  return [
+    data.flat_no,
+    data.street,
+    data.city,
+    data.state,
+    data.zip_code,
+    data.country,
+  ]
+    .filter(Boolean)
+    .join(", ");
+};
+
+/* =========================================================
+   DOCTORS TABLE
+========================================================= */
 const createDoctorsTable = `
-  CREATE TABLE IF NOT EXISTS doctors (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    uid VARCHAR(10) UNIQUE,
-    first_name VARCHAR(100),
-    last_name VARCHAR(100),
-    email VARCHAR(100),
-    mobile VARCHAR(20),
-    address TEXT,
-    clinic VARCHAR(255),
-    license_number VARCHAR(100),
-    aadhar_card VARCHAR(20) UNIQUE,
-    experience VARCHAR(50),
-    degree VARCHAR(100),
-    university VARCHAR(100),
-    specialization VARCHAR(100),
-    availability VARCHAR(50),
-    from_time VARCHAR(20),
-    to_time VARCHAR(20),
-    additional_info TEXT,
-    password VARCHAR(255)
-  )
+CREATE TABLE IF NOT EXISTS doctors (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  uid VARCHAR(10) UNIQUE,
+  first_name VARCHAR(100),
+  last_name VARCHAR(100),
+  email VARCHAR(100),
+  mobile VARCHAR(20),
+
+  flat_no VARCHAR(50),
+  street TEXT,
+  city VARCHAR(100),
+  state VARCHAR(100),
+  country VARCHAR(100),
+  zip_code VARCHAR(20),
+  
+  
+
+  clinic VARCHAR(255),
+  license_number VARCHAR(100),
+  aadhar_card VARCHAR(20) UNIQUE,
+  experience VARCHAR(50),
+  degree VARCHAR(100),
+  university VARCHAR(100),
+  specialization VARCHAR(100),
+
+  availability VARCHAR(50),
+  from_time VARCHAR(20),
+  to_time VARCHAR(20),
+  additional_info TEXT,
+
+  password VARCHAR(255),
+  profile_image_url VARCHAR(255),
+  otp_code VARCHAR(6) DEFAULT NULL
+)
 `;
 
+db.query(createDoctorsTable, () =>
+  console.log("✅ Doctors table ready")
+);
 
-db.query(createDoctorsTable, (err) => {
-  if (err) {
-    console.error("Failed to create doctors table:", err);
-  } else {
-    console.log("✅ Doctors table ready (or already exists).");
+/* =========================================================
+   APPOINTMENTS TABLE
+========================================================= */
+const createAppointmentsTable = `
+CREATE TABLE IF NOT EXISTS appointments (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  doctor_uid VARCHAR(10),
+  patient_id INT,
+  appointment_date DATE,
+  appointment_time VARCHAR(10),
+  mode VARCHAR(20),
+  status VARCHAR(20) DEFAULT 'Pending',
+  payment_status VARCHAR(20),
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+)
+`;
+
+db.query(createAppointmentsTable, () =>
+  console.log("✅ Appointments table ready")
+);
+
+/* =========================================================
+   REGISTER DOCTOR
+========================================================= */
+router.post("/doctors", upload.single("profile_image"), (req, res) => {
+  const data = req.body;
+  const uid = crypto.randomBytes(3).toString("hex");
+
+  if (req.file) {
+    data.profile_image_url = `/uploads/doctor_profiles/${req.file.filename}`;
   }
-});
 
+ 
 
- const createAppointmentsTable = `
-  CREATE TABLE IF NOT EXISTS appointments (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    doctor_id INT NOT NULL,
-    doctor_uid VARCHAR(10),
-    patient_name VARCHAR(100),
-    slot_time TIME NOT NULL,
-    slot_date DATE NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    UNIQUE KEY unique_slot (doctor_id, slot_time, slot_date)
-  )
-`;
+  const sql = `
+    INSERT INTO doctors (
+      uid, first_name, last_name, email, mobile,
+      flat_no, street, city, state, country, zip_code,
+       
+      clinic, license_number, aadhar_card, experience,
+      degree, university, specialization,
+      availability, from_time, to_time,
+      additional_info, password, profile_image_url
+    ) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
+  `;
 
+  const values = [
+    uid,
+    data.first_name,
+    data.last_name,
+    data.email,
+    data.mobile,
+    data.flat_no,
+    data.street,
+    data.city,
+    data.state,
+    data.country,
+    data.zip_code,
+    data.clinic,
+    data.license_number,
+    data.aadhar_card,
+    data.experience,
+    data.degree,
+    data.university,
+    data.specialization,
+    data.availability,
+    data.from_time,
+    data.to_time,
+    data.additional_info,
+    data.password,
+    data.profile_image_url,
+  ];
 
-  db.query(createAppointmentsTable, (err, result) => {
+  db.query(sql, values, (err) => {
     if (err) {
-      console.error('Error creating appointments table:', err);
-    } else {
-      console.log('✅ Appointments table ensured/created successfully.');
+      console.error(err);
+      return res.status(500).json({ message: "Registration failed" });
     }
-  });
-
-
-
-// POST: Book a time slot
-router.post('/bookSlot', (req, res) => {
-  const {
-    doctorId,
-    doctorUid, // added
-    slot,
-    date = new Date().toISOString().split('T')[0],
-    patientName = 'Anonymous'
-  } = req.body;
-
-  const sql = `INSERT INTO appointments (doctor_id, doctor_uid, slot_time, slot_date, patient_name)
-               VALUES (?, ?, ?, ?, ?)`;
-
-  db.query(sql, [doctorId, doctorUid, slot, date, patientName], (err, result) => {
-    if (err) {
-      if (err.code === 'ER_DUP_ENTRY') {
-        return res.status(409).json({ message: 'Slot already booked.' });
-      }
-      console.error('Booking Error:', err);
-      return res.status(500).json({ message: 'Internal server error' });
-    }
-    res.json({ message: 'Slot booked successfully!' });
-  });
-});
-
-router.get('/getBookedSlots', (req, res) => {
-  const doctorId = req.query.doctorId;
-  const date = req.query.date; // take the selected date
-
-  const sql = "SELECT slot_time FROM appointments WHERE doctor_id = ? AND slot_date = ? ORDER BY slot_time";
-
-  db.query(sql, [doctorId, date], (err, results) => {
-    if (err) {
-      console.error('Fetch Error:', err);
-      return res.status(500).json({ message: 'Internal server error' });
-    }
-
-    const bookedSlots = results.map(row => row.slot_time.slice(0, 5)); // e.g., "10:30"
-    res.json(bookedSlots);
+    res.status(201).json({ message: "Doctor registered", uid });
   });
 });
 
+/* =========================================================
+   LOGIN
+========================================================= */
+router.post("/doctorlogin", (req, res) => {
+  const { email, password } = req.body;
 
+  db.query(
+    "SELECT * FROM doctors WHERE email = ?",
+    [email],
+    (err, rows) => {
+      if (err || rows.length === 0)
+        return res.status(401).json({ message: "Invalid login" });
 
-// Register Doctor
-router.post("/doctors", upload.none(), async (req, res) => {
-    const {
-        first_name, last_name, email, mobile, address, clinic, license_number,
-        aadhar_card, experience, degree, university, specialization,
-        availability, from_time, to_time, additional_info, password
-    } = req.body;
+      if (rows[0].password !== password)
+        return res.status(401).json({ message: "Invalid login" });
 
-    const uid = crypto.randomBytes(3).toString("hex"); // Generate 6-char UID
-
-    // Check for duplicate Aadhar
-    db.query("SELECT * FROM doctors WHERE aadhar_card = ?", [aadhar_card], (err, results) => {
-        if (err) return res.status(500).json({ message: "Error checking Aadhar." });
-
-        if (results.length > 0) {
-            return res.status(400).json({ message: "Aadhar already registered." });
-        }
-
-        // If not duplicate, insert into DB
-        const sql = `INSERT INTO doctors 
-            (uid, first_name, last_name, email, mobile, address, clinic, license_number, aadhar_card,
-            experience, degree, university, specialization, availability, from_time, to_time, additional_info, password) 
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
-
-        const values = [
-            uid, first_name, last_name, email, mobile, address, clinic, license_number, aadhar_card,
-            experience, degree, university, specialization, availability, from_time, to_time, additional_info, password
-        ];
-
-        db.query(sql, values, (err, result) => {
-            if (err) {
-                console.error(err);
-                return res.status(500).json({ message: "Error inserting doctor." });
-            }
-
-            res.status(201).json({ message: "Doctor registered successfully", uid });
-        });
-    });
+      res.json({
+        message: "Login successful",
+        uid: rows[0].uid,
+        doctor: rows[0],
+      });
+    }
+  );
 });
 
-// Doctor Login
-router.post("/doctorlogin", async (req, res) => {
-    const { email, password } = req.body;
-
-    db.query("SELECT * FROM doctors WHERE email = ?", [email], (err, results) => {
-        if (err) return res.status(500).json({ message: "Database error!" });
-
-        if (results.length === 0) {
-            return res.status(404).json({ message: "Doctor not found!" });
-        }
-
-        const doctor = results[0];
-        if (doctor.password !== password) {
-            return res.status(401).json({ message: "Invalid credentials!" });
-        }
-
-        res.status(200).json({
-            message: "Login successful",
-            uid: doctor.uid,
-            doctor: {
-                name: doctor.first_name + " " + doctor.last_name,
-                email: doctor.email,
-                specialization: doctor.specialization
-            }
-        });
-    });
-});
-
-// Get Filters (Specialization, Clinics, Locations)
-router.get("/getfilters", (req, res) => {
-    const filters = {
-        specialization: [],
-        clinic: [],
-        address: []
-    };
-
-    db.query("SELECT DISTINCT specialization FROM doctors", (err, specResults) => {
-        if (err) return res.status(500).send(err);
-        filters.specialization = specResults.map(r => r.specialization);
-
-        db.query("SELECT DISTINCT clinic FROM doctors", (err, clinicResults) => {
-            if (err) return res.status(500).send(err);
-            filters.clinic = clinicResults.map(r => r.clinic);
-
-            db.query("SELECT DISTINCT address FROM doctors", (err, locResults) => {
-                if (err) return res.status(500).send(err);
-                filters.address = locResults.map(r => r.address);
-                res.json(filters); // Final response after all three queries
-            });
-        });
-    });
-});
-
-// Get All Doctors
-router.get("/getdoctors", (req, res) => {
-    db.query("SELECT * FROM doctors", (err, rows) => {
-        if (err) {
-            console.error("Error:", err);
-            return res.status(500).json({ message: "Server error!" });
-        }
-        res.status(200).json(rows);
-    });
-});
-
-// Get Doctor by UID
+/* =========================================================
+   GET DOCTOR BY UID
+========================================================= */
 router.get("/gdoctors/:uid", (req, res) => {
-    const { uid } = req.params;
-
-    db.query("SELECT * FROM doctors WHERE uid = ?", [uid], (err, rows) => {
-        if (err) {
-            console.error("Error:", err);
-            return res.status(500).json({ message: "Server error!" });
-        }
-
-        if (rows.length === 0) {
-            return res.status(404).json({ message: "Doctor not found!" });
-        }
-
-        res.status(200).json(rows[0]);
-    });
+  db.query(
+    "SELECT * FROM doctors WHERE uid = ?",
+    [req.params.uid],
+    (err, rows) => {
+      if (err || rows.length === 0)
+        return res.status(404).json({ message: "Doctor not found" });
+      res.json(rows[0]);
+    }
+  );
 });
 
-// Update Doctor
-router.put("/updatedoctors/:uid", (req, res) => {
-    const { uid } = req.params;
-    const {
-        first_name, last_name, email, mobile, address, clinic, license_number,
-        aadhar_card, experience, degree, university, specialization,
-        availability, from_time, to_time, additional_info
-    } = req.body;
+/* =========================================================
+   UPDATE DOCTOR
+========================================================= */
+router.put(
+  "/updatedoctors/:uid",
+  upload.single("profile_image"),
+  (req, res) => {
+    const data = req.body;
 
-    const sql = `UPDATE doctors SET 
-        first_name = ?, last_name = ?, email = ?, mobile = ?, address = ?, clinic = ?, 
-        license_number = ?, aadhar_card = ?, experience = ?, degree = ?, university = ?, 
-        specialization = ?, availability = ?, from_time = ?, to_time = ?, additional_info = ? 
-        WHERE uid = ?`;
+    if (req.file) {
+      data.profile_image_url = `/uploads/doctor_profiles/${req.file.filename}`;
+    }
 
-    db.query(sql, [
-        first_name, last_name, email, mobile, address, clinic, license_number,
-        aadhar_card, experience, degree, university, specialization,
-        availability, from_time, to_time, additional_info, uid
-    ], (err, result) => {
-        if (err) {
-            console.error("Error:", err);
-            return res.status(500).json({ message: "Server error!" });
-        }
+    
 
-        if (result.affectedRows === 0) {
-            return res.status(404).json({ message: "Doctor not found!" });
-        }
+    const sql = `
+      UPDATE doctors SET
+        first_name=?, last_name=?, email=?, mobile=?,
+        flat_no=?, street=?, city=?, state=?, country=?, zip_code=?,
+        
+        clinic=?, license_number=?, aadhar_card=?, experience=?,
+        degree=?, university=?, specialization=?,
+        availability=?, from_time=?, to_time=?,
+        additional_info=?,
+        profile_image_url = COALESCE(?, profile_image_url)
+      WHERE uid=?
+    `;
 
-        res.status(200).json({ message: "Doctor details updated successfully!" });
+    const values = [
+      data.first_name,
+      data.last_name,
+      data.email,
+      data.mobile,
+      data.flat_no,
+      data.street,
+      data.city,
+      data.state,
+      data.country,
+      data.zip_code,
+      
+      data.clinic,
+      data.license_number,
+      data.aadhar_card,
+      data.experience,
+      data.degree,
+      data.university,
+      data.specialization,
+      data.availability,
+      data.from_time,
+      data.to_time,
+      data.additional_info,
+      data.profile_image_url,
+      req.params.uid,
+    ];
+
+    db.query(sql, values, (err, result) => {
+      if (err || result.affectedRows === 0)
+        return res.status(500).json({ message: "Update failed" });
+
+      res.json({ message: "Doctor updated successfully" });
     });
+  }
+);
+
+/* =========================================================
+   GET ALL DOCTORS
+========================================================= */
+router.get("/getdoctors", (req, res) => {
+  db.query("SELECT * FROM doctors", (err, rows) => {
+    if (err) return res.status(500).json({ error: "DB error" });
+    res.json(rows);
+  });
 });
 
-// Delete Doctor
-router.delete("/deletedoctors/:uid", (req, res) => {
-    const { uid } = req.params;
+/* =========================================================
+   SPECIALIZATION SEARCH
+========================================================= */
+router.get("/specializations", (req, res) => {
+  const q = req.query.q || "";
+  db.query(
+    "SELECT DISTINCT specialization FROM doctors WHERE specialization LIKE ? LIMIT 10",
+    [`${q}%`],
+    (err, rows) => {
+      if (err) return res.status(500).json([]);
+      res.json(rows.map((r) => r.specialization));
+    }
+  );
+});
 
-    db.query("DELETE FROM doctors WHERE uid = ?", [uid], (err, result) => {
-        if (err) {
-            console.error("Error:", err);
-            return res.status(500).json({ message: "Server error!" });
-        }
+/* =========================================================
+   BOOKED SLOTS (UID BASED)
+========================================================= */
+router.get("/getBookedSlots", (req, res) => {
+  const { doctorUid, date } = req.query;
 
-        if (result.affectedRows === 0) {
-            return res.status(404).json({ message: "Doctor not found!" });
-        }
-
-        res.status(200).json({ message: "Doctor deleted successfully!" });
-    });
+  db.query(
+    `SELECT appointment_time FROM appointments
+     WHERE doctor_uid=? AND appointment_date=?`,
+    [doctorUid, date],
+    (err, rows) => {
+      if (err) return res.status(500).json([]);
+      res.json(rows.map((r) => r.appointment_time));
+    }
+  );
 });
 
 module.exports = router;
