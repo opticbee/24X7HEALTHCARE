@@ -167,7 +167,7 @@ router.put("/updatedoctors/:uid", upload.single('profile_image'), (req, res) => 
   }
 
   const sql = `UPDATE doctors SET 
-    first_name = ?, last_name = ?, email = ?, mobile = ?, address = ?, clinic = ?, 
+    first_name = ?, last_name = ?, email = ?, mobile = ?, door_no = ?, area = ?, city = ?, state = ?, country = ?, zipcode = ?, clinic = ?, 
     license_number = ?, aadhar_card = ?, experience = ?, degree = ?, university = ?, 
     specialization = ?, availability = ?, from_time = ?, to_time = ?, additional_info = ?,
     profile_image_url = COALESCE(?, profile_image_url)
@@ -175,7 +175,7 @@ router.put("/updatedoctors/:uid", upload.single('profile_image'), (req, res) => 
 
   const values = [
     doctorData.first_name, doctorData.last_name, doctorData.email, doctorData.mobile, 
-    doctorData.address, doctorData.clinic, doctorData.license_number, doctorData.aadhar_card, 
+    doctorData.door_no, doctorData.area, doctorData.city, doctorData.state, doctorData.country, doctorData.zipcode, doctorData.clinic, doctorData.license_number, doctorData.aadhar_card, 
     doctorData.experience, doctorData.degree, doctorData.university, doctorData.specialization,
     doctorData.availability, doctorData.from_time, doctorData.to_time, doctorData.additional_info,
     doctorData.profile_image_url,
@@ -228,7 +228,7 @@ router.get("/specializations", (req, res) => {
 // ✅ MODIFIED: GET ALL DOCTORS (Now includes uid)
 // =================================================================
 router.get("/getdoctors", (req, res) => {
-    const sql = "SELECT id, uid, first_name, last_name, email, experience, specialization, clinic, address, degree, university, availability, from_time, to_time FROM doctors";
+    const sql = "SELECT id, uid, first_name, last_name, email, experience, specialization, clinic, door_no, area, city, state, country, zipcode, degree, university, availability, from_time, to_time FROM doctors";
     db.query(sql, (err, results) => {
         if (err) {
             console.error("Error fetching doctors:", err);
