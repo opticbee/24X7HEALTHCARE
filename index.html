@@ -1458,11 +1458,9 @@ services from trusted labs near your location. </p>
                                 name: d.center_name,
                                 services: services,
 
-                                // ✅ Build full address
-                                address: `${d.address}, ${d.city}, ${d.state} - ${d.pincode}`,
+                                address: `${d.address}, ${d.city}, ${d.state}, ${d.country} - ${d.pincode}`,
 
-                                // ✅ ADD THESE (THIS IS THE FIX)
-                                country: "India",   // if all diagnostics are India
+                                country: d.country,
                                 state: d.state,
                                 zip_code: d.pincode
                             };

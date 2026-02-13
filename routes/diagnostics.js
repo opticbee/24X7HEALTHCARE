@@ -42,6 +42,7 @@ CREATE TABLE IF NOT EXISTS diagnostic_centers (
   address TEXT,
   city VARCHAR(100),
   state VARCHAR(100),
+  country VARCHAR(100),
   pincode VARCHAR(10),
   map_url TEXT,
   registration_number VARCHAR(100),
@@ -71,16 +72,18 @@ db.query(createTable, (err) => {
 
 // EMAIL SETUP
 const transporter = nodemailer.createTransport({
-  service: 'gmail',
+  host: "smtp.zoho.in",
+  port: 465,
+  secure: true,
   auth: {
-    user: 'spltechnologycorp@gmail.com',
-    pass: 'cbkm ntdm cuvp vygh' // App password
+    user: process.env.ZOHO_EMAIL,
+    pass: process.env.ZOHO_PASS
   }
 });
 
 async function sendEmail(to, subject, html) {
   try {
-    await transporter.sendMail({ from: 'spltechnologycorp@gmail.com', to, subject, html });
+    await transporter.sendMail({ from: '24x7health care services', to, subject, html });
     console.log('✅ OTP Email sent');
   } catch (err) {
     console.error('❌ Email error:', err);
@@ -180,7 +183,7 @@ function localRoleLock(targetRole) {
 router.post('/diagnostics/register', localRoleLock('diagnostic'), (req, res) => {
   const {
     email, centerName, ownerName, centerType, phone, altPhone, whatsapp,
-    address, city, state, pincode, mapUrl, registrationNumber, gstNumber,
+    address, city, state, country, pincode, mapUrl, registrationNumber, gstNumber,
     accountHolderName, bankName, accountNumber, ifscCode, upiId,
     fromTime, toTime, services, homeSample, password
   } = req.body;
@@ -194,14 +197,14 @@ router.post('/diagnostics/register', localRoleLock('diagnostic'), (req, res) => 
     const sql = `
       UPDATE diagnostic_centers SET 
         center_id=?, center_name=?, owner_name=?, center_type=?,
-        phone=?, alt_phone=?, whatsapp=?, address=?, city=?, state=?, pincode=?, map_url=?,
+        phone=?, alt_phone=?, whatsapp=?, address=?, city=?, state=?, country=?, pincode=?, map_url=?,
         registration_number=?, gst_number=?, services=?, home_sample=?, operational_hours=?,
         account_holder_name=?, bank_name=?, account_number=?, ifsc_code=?, upi_id=?, password=?
       WHERE email=? AND is_verified=1
     `;
     const values = [
       center_id, centerName, ownerName, centerType,
-      phone, altPhone, whatsapp, address, city, state, pincode, mapUrl,
+      phone, altPhone, whatsapp, address, city, state, country, pincode, mapUrl,
       registrationNumber, gstNumber, JSON.stringify(services), homeSample, operational_hours,
       accountHolderName, bankName, accountNumber, ifscCode, upiId, password, email
     ];
@@ -339,7 +342,7 @@ router.put('/diagnostics/:centerId', upload.single('profile_image'), (req, res) 
 
     const allowedColumns = [
         'center_name', 'owner_name', 'center_type', 'phone', 'alt_phone', 'whatsapp',
-        'address', 'city', 'state', 'pincode', 'map_url', 'registration_number',
+        'address', 'city', 'state', 'country', 'pincode', 'map_url', 'registration_number',
         'gst_number', 'account_holder_name', 'bank_name', 'account_number',
         'ifsc_code', 'upi_id', 'operational_hours', 'services', 'home_sample',
         'profile_image_url'

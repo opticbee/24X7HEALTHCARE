@@ -1482,6 +1482,11 @@
             <input type="text" id="state" required placeholder="Enter state">
           </div>
           <div class="form-group">
+            <label for="country" class="required">Country</label>
+            <input type="text" id="country" required placeholder="Enter country">
+          </div>
+
+          <div class="form-group">
             <label for="pincode" class="required">Pincode</label>
             <input type="text" id="pincode" maxlength="6" required placeholder="6-digit pincode">
           </div>
@@ -1858,6 +1863,7 @@
         address: document.getElementById('address').value,
         city: document.getElementById('city').value,
         state: document.getElementById('state').value,
+        country: document.getElementById('country').value,
         pincode: document.getElementById('pincode').value,
         mapUrl: document.getElementById('mapUrl').value,
         registrationNumber: document.getElementById('registrationNumber').value,
