@@ -83,7 +83,7 @@ const transporter = nodemailer.createTransport({
 
 async function sendEmail(to, subject, html) {
   try {
-    await transporter.sendMail({ from: '24x7health care services', to, subject, html });
+    await transporter.sendMail({ from: `"24x7 Health Care Services" <${process.env.ZOHO_EMAIL}>`, to, subject, html });
     console.log('✅ OTP Email sent');
   } catch (err) {
     console.error('❌ Email error:', err);
@@ -143,7 +143,74 @@ router.post('/diagnostics/send-otp', (req, res) => {
     db.query(sql, [email, otp, otp], (err) => {
       if (err) return res.status(500).json({ error: 'DB error during OTP gen' });
 
-      const html = `<p>Your OTP is: <strong>${otp}</strong>. Valid for 10 minutes.</p>`;
+    const html = `
+    <div style="margin:0;padding:0;background-color:#f4f6fb;font-family:Arial,Helvetica,sans-serif;">
+      <table width="100%" cellpadding="0" cellspacing="0" style="padding:30px 0;">
+        <tr>
+          <td align="center">
+            <table width="600" cellpadding="0" cellspacing="0" style="background:#ffffff;border-radius:10px;overflow:hidden;box-shadow:0 4px 15px rgba(0,0,0,0.08);">
+              
+              <!-- Header -->
+              <tr>
+                <td style="background:linear-gradient(90deg,#2563eb,#1e3a8a);padding:25px;text-align:center;color:#ffffff;">
+                  <h2 style="margin:0;font-size:24px;">24x7 Health Care Services</h2>
+                  <p style="margin:5px 0 0;font-size:14px;opacity:0.9;">Secure Email Verification</p>
+                </td>
+              </tr>
+
+              <!-- Body -->
+              <tr>
+                <td style="padding:40px 30px;text-align:center;">
+                  <h3 style="margin-top:0;color:#111827;">Verify Your Email Address</h3>
+                  <p style="color:#4b5563;font-size:15px;line-height:1.6;">
+                    Thank you for choosing <strong>24x7 Health Care Services</strong>.<br>
+                    Please use the One-Time Password (OTP) below to complete your verification process.
+                  </p>
+
+                  <!-- OTP Box -->
+                  <div style="margin:30px 0;">
+                    <span style="
+                      display:inline-block;
+                      padding:15px 30px;
+                      font-size:26px;
+                      letter-spacing:6px;
+                      font-weight:bold;
+                      color:#2563eb;
+                      background:#f1f5ff;
+                      border-radius:8px;
+                      border:2px dashed #2563eb;">
+                      ${otp}
+                    </span>
+                  </div>
+
+                  <p style="color:#6b7280;font-size:14px;">
+                    This OTP is valid for <strong>10 minutes</strong>.<br>
+                    Do not share this code with anyone for security reasons.
+                  </p>
+                </td>
+              </tr>
+
+              <!-- Divider -->
+              <tr>
+                <td style="padding:0 30px;">
+                  <hr style="border:none;border-top:1px solid #e5e7eb;">
+                </td>
+              </tr>
+
+              <!-- Footer -->
+              <tr>
+                <td style="padding:20px 30px;text-align:center;font-size:13px;color:#9ca3af;">
+                  © ${new Date().getFullYear()} 24x7 Health Care Services<br>
+                  This is an automated message. Please do not reply to this email.
+                </td>
+              </tr>
+
+            </table>
+          </td>
+        </tr>
+      </table>
+    </div>
+    `;
       sendEmail(email, 'Hitaishi OTP Verification', html);
       res.json({ success: true, message: 'OTP sent successfully.' });
     });
