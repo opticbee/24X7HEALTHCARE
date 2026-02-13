@@ -1384,6 +1384,10 @@ services from trusted labs near your location. </p>
                 const resultsSection = document.getElementById('results');
                 const loadingSection = document.getElementById('loading');
                 const clearFiltersBtn = document.getElementById('clear-filters');
+
+                // ✅ Hide results on initial page load
+                resultsSection.classList.add('hidden');
+
                 
                 // Google Maps Geocoding API
                 const GOOGLE_API_KEY = "AIzaSyDqW6tsp_sUG5-Xf6aXFzYuqrvRiGehGXg";
@@ -1422,39 +1426,57 @@ services from trusted labs near your location. </p>
                         const diagnosticsData = await diagnosticsRes.json();
                         
                         const doctors = (Array.isArray(doctorsData) ? doctorsData : []).map(d => ({
+
                             id: d.uid,
                             type: 'doctor',
                             name: `Dr. ${d.first_name} ${d.last_name}`,
                             specialization: d.specialization,
                             clinic: d.clinic,
-                            address: d.address
+
+                            // ✅ Build full address properly
+                            address: `${d.door_no}, ${d.area}, ${d.city}, ${d.state}, ${d.country} - ${d.zipcode}`,
+
+                            // ✅ Store direct filter values
+                            country: d.country,
+                            state: d.state,
+                            zip_code: d.zipcode
                         }));
+
                         
                         const diagnostics = (diagnosticsData.users || []).map(d => {
+
                             let services = [];
                             try {
                                 services = d.services ? JSON.parse(d.services) : [];
                             } catch (e) {
                                 console.error(`Error parsing services for center ID ${d.center_id}:`, e);
                             }
+
                             return {
                                 id: d.center_id,
                                 type: 'diagnostic',
                                 name: d.center_name,
                                 services: services,
-                                address: d.address
+
+                                // ✅ Build full address
+                                address: `${d.address}, ${d.city}, ${d.state} - ${d.pincode}`,
+
+                                // ✅ ADD THESE (THIS IS THE FIX)
+                                country: "India",   // if all diagnostics are India
+                                state: d.state,
+                                zip_code: d.pincode
                             };
                         });
-                        
+
                         allProviders = [...doctors, ...diagnostics];
                         
                         // Kick off background geocoding without waiting for it to finish
-                        await Promise.all(allProviders.map(async provider => {
-                            const { country, state, zip } = await geocodeAddress(provider.address);
-                            provider.country = country;
-                            provider.state = state;
-                            provider.zip_code = zip;
-                        }));
+                        // await Promise.all(allProviders.map(async provider => {
+                        //     const { country, state, zip } = await geocodeAddress(provider.address);
+                        //     provider.country = country;
+                        //     provider.state = state;
+                        //     provider.zip_code = zip;
+                        // }));
 
                         // Store the fetched and geocoded data in local storage
                         const cacheData = {
@@ -1474,10 +1496,12 @@ services from trusted labs near your location. </p>
                             resultsContainer.innerHTML = '<div class="col-span-full py-12 text-center text-red-500">Failed to load providers. Please try again later.</div>';
                         }
                     }
-                    displayedProviders = allProviders;
-                    offset = 0;
-                    resultsContainer.innerHTML = '';
-                    displayProvidersBatch(displayedProviders.slice(0, BATCH_SIZE));
+                    //  it loads before apply filters and before i search it loading automatically
+
+                    // displayedProviders = allProviders;
+                    // offset = 0;
+                    // resultsContainer.innerHTML = '';
+                    // displayProvidersBatch(displayedProviders.slice(0, BATCH_SIZE));
 
                 };
 
@@ -1630,10 +1654,13 @@ services from trusted labs near your location. </p>
                     resultsCount.textContent = `${displayedProviders.length} providers found`;
                 };
 
-                const filterAndDisplayProviders = () => {
+                const filterAndDisplayProviders = async () => {
+
+                    // ✅ If providers not loaded yet, fetch them first
                     if (allProviders.length === 0) {
-                        alert("Provider data is still loading. Please wait a moment and try again.");
-                        return;
+                        loadingSection.classList.remove('hidden');
+                        await fetchAllProviders();
+                        loadingSection.classList.add('hidden');
                     }
 
                     const providerType = providerTypeSelect.value;
@@ -1641,21 +1668,27 @@ services from trusted labs near your location. </p>
                     const state = stateSelect.value;
                     const zipCode = zipInput.value;
 
-                    const filtered = allProviders.filter(p => {
-                        const matchType = providerType === 'all' || p.type === providerType;
-                        const matchCountry = !country || 
-                        (p.address && p.address.toLowerCase().includes(country.toLowerCase()));
+                    // ✅ Optional: Prevent empty search
+                    if (!providerType && !country && !state && !zipCode) {
+                        alert("Please select at least one filter before searching.");
+                        return;
+                    }
 
-                        const matchState = !state || 
-                        (p.address && p.address.toLowerCase().includes(state.toLowerCase()));
-                        const matchZip = !zipCode || (p.zip_code && p.zip_code.startsWith(zipCode));
+                    const filtered = allProviders.filter(p => {
+
+                        const matchType = providerType === 'all' || p.type === providerType;
+                        const matchCountry = !country || p.country === country;
+                        const matchState = !state || p.state === state;
+                        const matchZip = !zipCode || p.zip_code?.startsWith(zipCode);
+
                         return matchType && matchCountry && matchState && matchZip;
                     });
-                    
+
                     displayedProviders = filtered;
                     offset = 0;
                     resultsContainer.innerHTML = '';
-                    displayProvidersBatch(displayedProviders.slice(offset, offset + BATCH_SIZE));
+
+                    displayProvidersBatch(displayedProviders.slice(0, BATCH_SIZE));
                 };
 
                 const clearFilters = () => {
@@ -1696,6 +1729,7 @@ services from trusted labs near your location. </p>
             });
         </script>
     </section>
+
 
     <!-- Countries -->
     <div>
