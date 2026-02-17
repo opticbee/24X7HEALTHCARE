@@ -43,6 +43,11 @@
                     Ambulance Partners
                 </button>
 
+                <button onclick="switchTab('wallet')" id="tab-wallet" class="sidebar-item flex items-center gap-3 w-full p-3 rounded-lg hover:bg-slate-800 hover:text-white group">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="group-hover:text-blue-400"><path d="M21 12v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-6"></path><rect x="3" y="7" width="18" height="4" rx="2"></rect></svg>
+                    Wallet
+                </button>
+
                 <div class="pt-10">
                     <p class="px-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">System</p>
                     <button id="logoutBtn"
@@ -89,6 +94,11 @@
                     <!-- Providers will be rendered here -->
                 </div>
             </section>
+
+            <!-- Wallet View -->
+            <section id="view-wallet" class="view-content hidden">
+                <div id="walletContainer" class="space-y-4"></div>
+            </section>
         </main>
     </div>
 
@@ -116,6 +126,7 @@
             // Load data for specific tab
             if (tabId === 'opinions') fetchPendingOpinions();
             if (tabId === 'ambulance') loadProviders();
+            if (tabId === 'wallet') fetchAdminWallet();
 
             // Close sidebar on mobile after selection
             if(window.innerWidth < 1024) toggleSidebar();
@@ -252,6 +263,41 @@
             } catch (err) {
                 container.innerHTML = `<p class="text-red-500">Error loading partners.</p>`;
             }
+        }
+
+        // --- Wallet Logic ---
+        async function fetchAdminWallet() {
+            const container = document.getElementById('walletContainer');
+            container.innerHTML = `<div class="p-6 bg-white rounded-xl border border-slate-200">Loading wallet transactions...</div>`;
+            try {
+                const res = await fetch(`${API_BASE_URL}/admin/wallet`);
+                const data = await res.json();
+                renderWallet(data.wallet || []);
+            } catch (err) {
+                container.innerHTML = `<div class="p-6 bg-red-50 text-red-600 rounded-xl border border-red-100">Failed to load wallet transactions.</div>`;
+            }
+        }
+
+        function renderWallet(items) {
+            const container = document.getElementById('walletContainer');
+            if (!items || items.length === 0) {
+                container.innerHTML = `<div class="bg-white p-8 rounded-xl shadow-sm border border-slate-200 text-center">No wallet transactions found.</div>`;
+                return;
+            }
+
+            const rows = items.map(t => {
+                const d = new Date(t.created_at);
+                return `
+                <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 flex justify-between items-center gap-4">
+                    <div class="text-sm text-slate-600">${d.toLocaleString()}</div>
+                    <div class="font-medium">${t.type || ''}</div>
+                    <div class="text-slate-700">₹${t.amount || 0}</div>
+                    <div class="text-slate-500 text-sm truncate" style="max-width:40%">${t.description || ''}</div>
+                    <div class="text-xs text-slate-400">Appt: ${t.appointment_id || '-'}</div>
+                </div>`;
+            }).join('');
+
+            container.innerHTML = rows;
         }
 
         async function approveProvider(uid) {

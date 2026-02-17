@@ -1754,6 +1754,8 @@
             <label for="appointmentDate">Select Appointment Date:</label>
             <input type="date" id="appointmentDate" class="date-input" min="${today}" onchange="loadTimeSlots('${doctor.uid}', '${doctor.from_time}', '${doctor.to_time}')">
             <div id="timeSlots" class="time-slots-container"></div>
+            <div id="paymentBox" class="payment-box" style="display:none; margin-top:15px; padding:12px; border:1px solid #e0e0e0; border-radius:8px; background:#fff;">
+            </div>
             <div id="bookingMessage"></div>
         </div>
         </div>
@@ -1852,10 +1854,10 @@
 
     const bookBtn = document.getElementById('bookBtn');
     bookBtn.disabled = true;
-    bookBtn.innerHTML = '<span class="loading"></span> Booking...';
+    bookBtn.innerHTML = '<span class="loading"></span> Creating appointment...';
 
     try {
-        const response = await fetch('https://www.24x7health.in/api/appointments', {
+        const response = await fetch('/api/appointments', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(bookingDetails)
@@ -1863,10 +1865,23 @@
         const data = await response.json();
         if (!response.ok) throw new Error(data.message || 'Booking failed.');
 
+        // appointment created with payment pending; show payment box
+        lastCreatedAppointmentId = data.appointmentId;
         bookingMessageDiv.className = 'success';
-        bookingMessageDiv.textContent = data.message;
-        document.getElementById('timeSlots').innerHTML = '';
-        bookBtn.remove();
+        bookingMessageDiv.textContent = 'Appointment created. Please complete payment below to confirm.';
+
+        const paymentBox = document.getElementById('paymentBox');
+        paymentBox.style.display = 'block';
+        paymentBox.innerHTML = `<p>Consultation Fee: ₹500</p>
+                                <p>Discount (30%): -₹150</p>
+                                <h3>Final Amount: ₹350</h3>
+                                <button id="payBtn" class="submit-btn">Pay ₹350 & Confirm</button>`;
+
+        const payBtn = document.getElementById('payBtn');
+        payBtn.onclick = async () => { payBtn.disabled = true; payBtn.innerHTML = '<span class="loading"></span> Processing...'; await makePayment(); };
+
+        // hide the book button
+        bookBtn.style.display = 'none';
     } catch (error) {
         console.error('Booking Error:', error);
         bookingMessageDiv.className = 'error';
@@ -1969,6 +1984,40 @@
             toast.classList.remove('show');
             setTimeout(() => toast.remove(), 300);
         }, 4000);
+    }
+
+    // --- Payment handling ---
+    let lastCreatedAppointmentId = null;
+
+    async function makePayment() {
+        if (!lastCreatedAppointmentId) {
+            alert('No appointment to pay for. Please create an appointment first.');
+            return;
+        }
+
+        try {
+            const response = await fetch('/api/payment/simulate', {
+                method: 'POST',
+                headers: {'Content-Type':'application/json'},
+                body: JSON.stringify({ appointmentId: lastCreatedAppointmentId })
+            });
+
+            const data = await response.json();
+
+            if (response.ok && data.success) {
+                alert('Payment Successful! Appointment Confirmed.');
+                // refresh slots to reflect booking
+                loadTimeSlots(selectedDoctor.uid, selectedDoctor.from_time, selectedDoctor.to_time);
+                const paymentBox = document.getElementById('paymentBox');
+                if (paymentBox) paymentBox.style.display = 'none';
+            } else {
+                console.error('Payment failed', data);
+                alert('Payment failed. Please try again.');
+            }
+        } catch (err) {
+            console.error('Payment error', err);
+            alert('Payment error. Please try again later.');
+        }
     }
 
 </script>

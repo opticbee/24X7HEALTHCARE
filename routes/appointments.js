@@ -21,10 +21,16 @@ CREATE TABLE IF NOT EXISTS appointments (
   appointment_date DATE,
   appointment_time VARCHAR(50),
   status VARCHAR(50) DEFAULT 'Scheduled',
+  original_fee INT DEFAULT 500,
+  discount_percent INT DEFAULT 30,
+  final_amount INT DEFAULT 350,
+  payment_status VARCHAR(50) DEFAULT 'Pending',
+  payment_id VARCHAR(100),
+  doctor_payout_status VARCHAR(50) DEFAULT 'Pending',
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (patient_id) REFERENCES patients(id),
   FOREIGN KEY (doctor_id) REFERENCES doctors(id)
-)
+);
 `;
 
 db.query(createAppointmentsTable, (err) => {
@@ -73,19 +79,20 @@ router.post("/appointments", (req, res) => {
       }
 
       // --- Insert new appointment ---
+      // Create appointment as payment-pending; payment will be processed next.
       const insertQuery = `
         INSERT INTO appointments (
           patient_id, patient_name, patient_email, patient_mobile,
           doctor_id, doctor_uid, doctor_name, doctor_email, doctor_mobile, doctor_specialization,
-          appointment_date, appointment_time
+          appointment_date, appointment_time, status, payment_status
         )
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
       `;
 
       const values = [
         patientId, patientName, patientEmail, patientMobile,
         doctorId, doctorUid, doctorName, doctorEmail, doctorMobile, doctorSpecialization,
-        appointmentDate, appointmentTime
+        appointmentDate, appointmentTime, 'Payment Pending', 'Pending'
       ];
 
       db.query(insertQuery, values, (insertErr, insertResult) => {
@@ -93,7 +100,39 @@ router.post("/appointments", (req, res) => {
           console.error("❌ Error inserting appointment:", insertErr);
           return res.status(500).json({ success: false, message: "Database error while booking appointment." });
         }
-        res.status(201).json({ success: true, message: "Appointment booked successfully!", appointmentId: insertResult.insertId });
+
+        const newAppointmentId = insertResult.insertId;
+
+        // --- Immediately simulate payment as the next step (calls same DB logic as /payment/simulate) ---
+        const paymentId = "PAY_" + Date.now();
+        const updatePaymentQuery = `
+          UPDATE appointments 
+          SET payment_status = 'Paid', status = 'Scheduled', payment_id = ?
+          WHERE id = ?
+        `;
+
+        db.query(updatePaymentQuery, [paymentId, newAppointmentId], (payErr) => {
+          if (payErr) {
+            console.error('❌ Error updating payment for appointment:', payErr);
+            // Respond with appointment created but payment failed to process
+            return res.status(201).json({ success: true, message: 'Appointment created but payment processing failed', appointmentId: newAppointmentId });
+          }
+
+          const walletQuery = `
+            INSERT INTO wallet_transactions 
+            (appointment_id, type, amount, description)
+            VALUES (?, 'CREDIT_ADMIN', 350, 'Patient appointment payment')
+          `;
+
+          db.query(walletQuery, [newAppointmentId], (walletErr) => {
+            if (walletErr) {
+              console.error('❌ Error inserting wallet transaction:', walletErr);
+              return res.status(201).json({ success: true, message: 'Appointment created; payment recorded but wallet update failed', appointmentId: newAppointmentId, paymentId });
+            }
+
+            return res.status(201).json({ success: true, message: 'Appointment booked and payment simulated successfully', appointmentId: newAppointmentId, paymentId });
+          });
+        });
       });
   });
 });
@@ -167,6 +206,31 @@ router.get("/appointments/patient/:patientId", (req, res) => {
     });
 });
 
+    // =================================================================
+    // Wallet transactions table
+    // =================================================================
+    const createWalletTable = `
+    CREATE TABLE IF NOT EXISTS wallet_transactions (
+      id INT AUTO_INCREMENT PRIMARY KEY,
+      appointment_id INT,
+      doctor_id INT,
+      type VARCHAR(50),
+      amount INT,
+      description TEXT,
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      FOREIGN KEY (appointment_id) REFERENCES appointments(id),
+      FOREIGN KEY (doctor_id) REFERENCES doctors(id)
+    )
+    `;
+
+    db.query(createWalletTable, (err) => {
+      if (err) {
+        console.error("❌ Failed to create wallet_transactions table:", err);
+      } else {
+        console.log("✅ wallet_transactions table is ready.");
+      }
+    });
+
 // Route to fetch all appointments for a specific doctor. reschedule the appointments
 router.get("/appointments/doctor/:doctorId", (req, res) => {
     const doctorId = req.params.doctorId;
@@ -179,6 +243,91 @@ router.get("/appointments/doctor/:doctorId", (req, res) => {
         res.status(200).json({ success: true, appointments: results });
     });
 });
+
+// ================= SIMULATED PAYMENT =================
+
+router.post("/payment/simulate", (req, res) => {
+  const { appointmentId } = req.body;
+
+  const paymentId = "PAY_" + Date.now();
+
+  // 1️⃣ Update appointment as paid
+  const updateQuery = `
+    UPDATE appointments 
+    SET payment_status = 'Paid', 
+        status = 'Scheduled',
+        payment_id = ?
+    WHERE id = ?
+  `;
+
+  db.query(updateQuery, [paymentId, appointmentId], (err) => {
+    if (err) return res.status(500).json({ message: "Payment update failed" });
+
+    // 2️⃣ Add entry to admin wallet
+    const walletQuery = `
+      INSERT INTO wallet_transactions 
+      (appointment_id, type, amount, description)
+      VALUES (?, 'CREDIT_ADMIN', 350, 'Patient appointment payment')
+    `;
+
+    db.query(walletQuery, [appointmentId], (err2) => {
+      if (err2) return res.status(500).json({ message: "Wallet update failed" });
+
+      res.json({ success: true, message: "Payment Successful" });
+    });
+  });
+});
+
+// Admin: fetch wallet transactions
+router.get('/admin/wallet', (req, res) => {
+  const query = `
+    SELECT * FROM wallet_transactions 
+    ORDER BY created_at DESC
+  `;
+
+  db.query(query, (err, results) => {
+    if (err) {
+      console.error('DB error fetching wallet transactions', err);
+      return res.status(500).json({ message: 'DB error' });
+    }
+    res.json({ wallet: results });
+  });
+});
+
+// Doctor completes appointment -> mark Completed and pay doctor
+router.put('/appointments/complete/:id', (req, res) => {
+  const appointmentId = req.params.id;
+
+  const updateQuery = `
+    UPDATE appointments 
+    SET status='Completed'
+    WHERE id=?
+  `;
+
+  db.query(updateQuery, [appointmentId], (err) => {
+    if (err) {
+      console.error('DB error completing appointment', err);
+      return res.status(500).json({ message: 'Error' });
+    }
+
+    // Pay doctor ₹300
+    const walletQuery = `
+      INSERT INTO wallet_transactions 
+      (appointment_id, doctor_id, type, amount, description)
+      VALUES (?, (SELECT doctor_id FROM appointments WHERE id=?),
+              'DEBIT_DOCTOR', 300, 'Doctor payout after completion')
+    `;
+
+    db.query(walletQuery, [appointmentId, appointmentId], (werr) => {
+      if (werr) {
+        console.error('DB error inserting wallet transaction', werr);
+        return res.status(500).json({ message: 'Error inserting wallet transaction' });
+      }
+      res.json({ success: true });
+    });
+  });
+});
+
 
 module.exports = router;
 
