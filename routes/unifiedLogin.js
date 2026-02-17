@@ -38,7 +38,16 @@ router.post("/unified-login", (req, res) => {
         if (patResults.length > 0) {
           const user = patResults[0];
           req.session.isAuthenticated = true;
-          req.session.user = { type: 'patient', id: user.id, unique_id: user.unique_id, name: `${user.first_name} ${user.last_name}`, email: user.email };
+          req.session.user = { 
+            type: 'patient',
+            id: user.id,
+            unique_id: user.unique_id,
+            first_name: user.first_name,
+            last_name: user.last_name,
+            email: user.email,
+            mobile: user.mobile
+          };
+
           return res.json({ success: true, role: "patient", user });
         }
 

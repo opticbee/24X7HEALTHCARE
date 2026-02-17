@@ -86,7 +86,7 @@ router.post("/appointments", (req, res) => {
           doctor_id, doctor_uid, doctor_name, doctor_email, doctor_mobile, doctor_specialization,
           appointment_date, appointment_time, status, payment_status
         )
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
       `;
 
       const values = [
@@ -136,6 +136,34 @@ router.post("/appointments", (req, res) => {
       });
   });
 });
+
+// ================= GET BOOKED SLOTS =================
+router.get('/getBookedSlots', (req, res) => {
+  const { doctorUid, date } = req.query;
+
+  if (!doctorUid || !date) {
+    return res.status(400).json({ message: 'doctorUid and date are required' });
+  }
+
+  const query = `
+    SELECT appointment_time 
+    FROM appointments 
+    WHERE doctor_uid = ? 
+    AND appointment_date = ?
+    AND payment_status = 'Paid'
+  `;
+
+  db.query(query, [doctorUid, date], (err, results) => {
+    if (err) {
+      console.error('Error fetching booked slots:', err);
+      return res.status(500).json({ message: 'Database error' });
+    }
+
+    const bookedSlots = results.map(r => r.appointment_time);
+    res.json(bookedSlots);
+  });
+});
+
 
 // Reschedule doctor appointment
 router.put('/appointments/reschedule/:id', (req, res) => {
