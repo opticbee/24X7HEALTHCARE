@@ -30,7 +30,7 @@ CREATE TABLE IF NOT EXISTS appointments (
   doctor_payout_status VARCHAR(50) DEFAULT 'Pending',
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (patient_id) REFERENCES patients(id),
-  FOREIGN KEY (doctor_id) REFERENCES doctors(id)
+  FOREIGN KEY (doctor_uid) REFERENCES doctors(uid)
 );
 `;
 
@@ -96,16 +96,17 @@ router.post("/appointments", (req, res) => {
 
     // Insert appointment (NO PAYMENT HERE)
     const insertQuery = `
-      INSERT INTO appointments (
-        appointment_uid,
-        patient_id, patient_name, patient_email, patient_mobile,
-        doctor_id, doctor_uid, doctor_name, doctor_email,
-        doctor_mobile, doctor_specialization,
-        appointment_date, appointment_time,
-        status, payment_status
-      )
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    INSERT INTO appointments (
+      appointment_uid,
+      patient_id, patient_name, patient_email, patient_mobile,
+      doctor_id, doctor_uid, doctor_name, doctor_email,
+      doctor_mobile, doctor_specialization,
+      appointment_date, appointment_time,
+      status, payment_status
+    )
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `;
+
 
     const appointmentUid = 'APT_' + Date.now();
     const values = [
@@ -123,8 +124,9 @@ router.post("/appointments", (req, res) => {
       appointmentDate,
       appointmentTime,
       "Payment Pending",
-      "Pending"
+      "Pending"  
     ];
+
 
     db.query(insertQuery, values, (insertErr, insertResult) => {
       if (insertErr) {
@@ -293,34 +295,65 @@ router.get("/appointments/doctor/:doctorId", (req, res) => {
 router.post("/payment/simulate", (req, res) => {
   const { appointmentId } = req.body;
 
+  if (!appointmentId) {
+    return res.status(400).json({
+      success: false,
+      message: "Appointment ID is required"
+    });
+  }
+
   const paymentId = "PAY_" + Date.now();
 
   // 1️⃣ Update appointment as paid
   const updateQuery = `
-    UPDATE appointments 
-    SET payment_status = 'Paid', 
+    UPDATE appointments
+    SET payment_status = 'Paid',
         status = 'Scheduled',
         payment_id = ?
     WHERE id = ?
   `;
 
   db.query(updateQuery, [paymentId, appointmentId], (err) => {
-    if (err) return res.status(500).json({ message: "Payment update failed" });
+    if (err) {
+      console.error("Payment update failed:", err);
+      return res.status(500).json({
+        success: false,
+        message: "Payment update failed"
+      });
+    }
 
-    // 2️⃣ Add entry to admin wallet
+    // 2️⃣ Insert wallet entry (NO appointmentUid variable used)
     const walletQuery = `
-      INSERT INTO wallet_transactions 
-      (appointment_id, appointment_uid, type, amount, description)
-      VALUES (?, ?, 'CREDIT_ADMIN', 350, 'Patient appointment payment')
+      INSERT INTO wallet_transactions
+      (appointment_id, appointment_uid, doctor_uid, type, amount, description, transaction_ref)
+      VALUES (
+        ?,
+        (SELECT appointment_uid FROM appointments WHERE id=?),
+        (SELECT doctor_uid FROM appointments WHERE id=?),
+        'CREDIT_ADMIN',
+        350,
+        'Patient appointment payment',
+        ?
+      )
     `;
 
-    db.query(walletQuery, [appointmentId, appointmentUid], (err2) => {
-      if (err2) return res.status(500).json({ message: "Wallet update failed" });
+    db.query(walletQuery, [appointmentId, appointmentId, appointmentId, paymentId], (err2) => {
+      if (err2) {
+        console.error("Wallet insert failed:", err2);
+        return res.status(500).json({
+          success: false,
+          message: "Wallet update failed"
+        });
+      }
 
-      res.json({ success: true, message: "Payment Successful" });
+      res.json({
+        success: true,
+        message: "Payment Successful. Appointment Confirmed."
+      });
     });
   });
 });
+
 
 // Admin: fetch wallet transactions
 router.get('/admin/wallet', (req, res) => {
