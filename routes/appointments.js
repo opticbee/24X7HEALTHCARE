@@ -8,6 +8,7 @@ const db = require("../db");
 const createAppointmentsTable = `
 CREATE TABLE IF NOT EXISTS appointments (
   id INT AUTO_INCREMENT PRIMARY KEY,
+  appointment_uid VARCHAR(50) UNIQUE,
   patient_id INT,
   patient_name VARCHAR(255),
   patient_email VARCHAR(255),
@@ -61,81 +62,90 @@ router.post("/appointments", (req, res) => {
     appointmentTime
   } = req.body;
 
-  // --- Server-side validation ---
+  // Validation
   if (!patientId || !doctorId || !appointmentDate || !appointmentTime) {
-      return res.status(400).json({ success: false, message: "Missing required appointment details." });
+    return res.status(400).json({
+      success: false,
+      message: "Missing required appointment details."
+    });
   }
 
-  // --- Check for existing booking at the same time slot ---
-  const checkQuery = "SELECT id FROM appointments WHERE doctor_id = ? AND appointment_date = ? AND appointment_time = ?";
+  // Check slot conflict
+  const checkQuery = `
+    SELECT id FROM appointments
+    WHERE doctor_id = ?
+    AND appointment_date = ?
+    AND appointment_time = ?
+  `;
+
   db.query(checkQuery, [doctorId, appointmentDate, appointmentTime], (checkErr, checkResult) => {
-      if (checkErr) {
-          console.error("❌ Error checking for existing appointment:", checkErr);
-          return res.status(500).json({ success: false, message: "Database error while checking for appointment." });
-      }
-
-      if (checkResult.length > 0) {
-          return res.status(409).json({ success: false, message: "This time slot has just been booked. Please select another one." });
-      }
-
-      // --- Insert new appointment ---
-      // Create appointment as payment-pending; payment will be processed next.
-      const insertQuery = `
-        INSERT INTO appointments (
-          patient_id, patient_name, patient_email, patient_mobile,
-          doctor_id, doctor_uid, doctor_name, doctor_email, doctor_mobile, doctor_specialization,
-          appointment_date, appointment_time, status, payment_status
-        )
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-      `;
-
-      const values = [
-        patientId, patientName, patientEmail, patientMobile,
-        doctorId, doctorUid, doctorName, doctorEmail, doctorMobile, doctorSpecialization,
-        appointmentDate, appointmentTime, 'Payment Pending', 'Pending'
-      ];
-
-      db.query(insertQuery, values, (insertErr, insertResult) => {
-        if (insertErr) {
-          console.error("❌ Error inserting appointment:", insertErr);
-          return res.status(500).json({ success: false, message: "Database error while booking appointment." });
-        }
-
-        const newAppointmentId = insertResult.insertId;
-
-        // --- Immediately simulate payment as the next step (calls same DB logic as /payment/simulate) ---
-        const paymentId = "PAY_" + Date.now();
-        const updatePaymentQuery = `
-          UPDATE appointments 
-          SET payment_status = 'Paid', status = 'Scheduled', payment_id = ?
-          WHERE id = ?
-        `;
-
-        db.query(updatePaymentQuery, [paymentId, newAppointmentId], (payErr) => {
-          if (payErr) {
-            console.error('❌ Error updating payment for appointment:', payErr);
-            // Respond with appointment created but payment failed to process
-            return res.status(201).json({ success: true, message: 'Appointment created but payment processing failed', appointmentId: newAppointmentId });
-          }
-
-          const walletQuery = `
-            INSERT INTO wallet_transactions 
-            (appointment_id, type, amount, description)
-            VALUES (?, 'CREDIT_ADMIN', 350, 'Patient appointment payment')
-          `;
-
-          db.query(walletQuery, [newAppointmentId], (walletErr) => {
-            if (walletErr) {
-              console.error('❌ Error inserting wallet transaction:', walletErr);
-              return res.status(201).json({ success: true, message: 'Appointment created; payment recorded but wallet update failed', appointmentId: newAppointmentId, paymentId });
-            }
-
-            return res.status(201).json({ success: true, message: 'Appointment booked and payment simulated successfully', appointmentId: newAppointmentId, paymentId });
-          });
-        });
+    if (checkErr) {
+      console.error("❌ Error checking appointment:", checkErr);
+      return res.status(500).json({
+        success: false,
+        message: "Database error while checking appointment."
       });
+    }
+
+    if (checkResult.length > 0) {
+      return res.status(409).json({
+        success: false,
+        message: "This time slot has just been booked. Please select another one."
+      });
+    }
+
+    // Insert appointment (NO PAYMENT HERE)
+    const insertQuery = `
+      INSERT INTO appointments (
+        appointment_uid,
+        patient_id, patient_name, patient_email, patient_mobile,
+        doctor_id, doctor_uid, doctor_name, doctor_email,
+        doctor_mobile, doctor_specialization,
+        appointment_date, appointment_time,
+        status, payment_status
+      )
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `;
+
+    const appointmentUid = 'APT_' + Date.now();
+    const values = [
+      appointmentUid,
+      patientId,
+      patientName,
+      patientEmail,
+      patientMobile,
+      doctorId,
+      doctorUid,
+      doctorName,
+      doctorEmail,
+      doctorMobile,
+      doctorSpecialization,
+      appointmentDate,
+      appointmentTime,
+      "Payment Pending",
+      "Pending"
+    ];
+
+    db.query(insertQuery, values, (insertErr, insertResult) => {
+      if (insertErr) {
+        console.error("❌ Error inserting appointment:", insertErr);
+        return res.status(500).json({
+          success: false,
+          message: "Database error while booking appointment."
+        });
+      }
+
+      const newAppointmentId = insertResult.insertId;
+
+      return res.status(201).json({
+        success: true,
+        message: "Appointment created successfully. Awaiting payment.",
+        appointmentId: newAppointmentId
+      });
+    });
   });
 });
+
 
 // ================= GET BOOKED SLOTS =================
 router.get('/getBookedSlots', (req, res) => {
@@ -241,7 +251,8 @@ router.get("/appointments/patient/:patientId", (req, res) => {
     CREATE TABLE IF NOT EXISTS wallet_transactions (
       id INT AUTO_INCREMENT PRIMARY KEY,
       appointment_id INT,
-      doctor_id INT,
+      appointment_uid VARCHAR(50),
+      doctor_uid VARCHAR(20),
       type VARCHAR(50),
       amount INT,
       description TEXT,
@@ -252,7 +263,7 @@ router.get("/appointments/patient/:patientId", (req, res) => {
       processed_at TIMESTAMP NULL,
       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
       FOREIGN KEY (appointment_id) REFERENCES appointments(id),
-      FOREIGN KEY (doctor_id) REFERENCES doctors(id)
+      FOREIGN KEY (doctor_uid) REFERENCES doctors(uid)
     );
     `;
 
@@ -299,11 +310,11 @@ router.post("/payment/simulate", (req, res) => {
     // 2️⃣ Add entry to admin wallet
     const walletQuery = `
       INSERT INTO wallet_transactions 
-      (appointment_id, type, amount, description)
-      VALUES (?, 'CREDIT_ADMIN', 350, 'Patient appointment payment')
+      (appointment_id, appointment_uid, type, amount, description)
+      VALUES (?, ?, 'CREDIT_ADMIN', 350, 'Patient appointment payment')
     `;
 
-    db.query(walletQuery, [appointmentId], (err2) => {
+    db.query(walletQuery, [appointmentId, appointmentUid], (err2) => {
       if (err2) return res.status(500).json({ message: "Wallet update failed" });
 
       res.json({ success: true, message: "Payment Successful" });
@@ -314,7 +325,7 @@ router.post("/payment/simulate", (req, res) => {
 // Admin: fetch wallet transactions
 router.get('/admin/wallet', (req, res) => {
   const query = `
-    SELECT wt.*, a.patient_name, a.patient_email, a.doctor_name AS appointment_doctor_name, a.doctor_id AS appointment_doctor_id, a.payment_status, a.appointment_date, a.appointment_time
+    SELECT wt.*, a.patient_name, a.patient_email, a.doctor_name AS appointment_doctor_name, a.doctor_uid AS appointment_doctor_id, a.payment_status, a.appointment_date, a.appointment_time
     FROM wallet_transactions wt
     LEFT JOIN appointments a ON wt.appointment_id = a.id
     ORDER BY wt.created_at DESC
@@ -358,8 +369,8 @@ router.put('/appointments/complete/:id', (req, res) => {
     // Pay doctor ₹300
     const walletQuery = `
       INSERT INTO wallet_transactions 
-      (appointment_id, doctor_id, type, amount, description)
-      VALUES (?, (SELECT doctor_id FROM appointments WHERE id=?),
+      (appointment_id, appointment_uid, doctor_id, type, amount, description)
+      VALUES (?, (SELECT appointment_uid FROM appointments WHERE id=?), (SELECT doctor_id FROM appointments WHERE id=?),
               'DEBIT_DOCTOR', 300, 'Doctor payout after completion')
     `;
 
@@ -375,5 +386,3 @@ router.put('/appointments/complete/:id', (req, res) => {
 
 
 module.exports = router;
-
-
