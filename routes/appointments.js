@@ -245,10 +245,15 @@ router.get("/appointments/patient/:patientId", (req, res) => {
       type VARCHAR(50),
       amount INT,
       description TEXT,
+      admin_payment_amount INT DEFAULT 0,
+      doctor_payment_amount INT DEFAULT 0,
+      transaction_ref VARCHAR(100),
+      processed BOOLEAN DEFAULT FALSE,
+      processed_at TIMESTAMP NULL,
       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
       FOREIGN KEY (appointment_id) REFERENCES appointments(id),
       FOREIGN KEY (doctor_id) REFERENCES doctors(id)
-    )
+    );
     `;
 
     db.query(createWalletTable, (err) => {
@@ -309,8 +314,10 @@ router.post("/payment/simulate", (req, res) => {
 // Admin: fetch wallet transactions
 router.get('/admin/wallet', (req, res) => {
   const query = `
-    SELECT * FROM wallet_transactions 
-    ORDER BY created_at DESC
+    SELECT wt.*, a.patient_name, a.patient_email, a.doctor_name AS appointment_doctor_name, a.doctor_id AS appointment_doctor_id, a.payment_status, a.appointment_date, a.appointment_time
+    FROM wallet_transactions wt
+    LEFT JOIN appointments a ON wt.appointment_id = a.id
+    ORDER BY wt.created_at DESC
   `;
 
   db.query(query, (err, results) => {
@@ -318,7 +325,17 @@ router.get('/admin/wallet', (req, res) => {
       console.error('DB error fetching wallet transactions', err);
       return res.status(500).json({ message: 'DB error' });
     }
-    res.json({ wallet: results });
+
+    // compute total admin credited amount
+    const totalQuery = `SELECT COALESCE(SUM(amount),0) AS total_admin FROM wallet_transactions WHERE type = 'CREDIT_ADMIN'`;
+    db.query(totalQuery, (tErr, tRes) => {
+      if (tErr) {
+        console.error('DB error computing total admin amount', tErr);
+        return res.status(500).json({ message: 'DB error' });
+      }
+      const totalAdmin = (tRes && tRes[0] && tRes[0].total_admin) ? tRes[0].total_admin : 0;
+      res.json({ wallet: results, totalAdmin });
+    });
   });
 });
 
